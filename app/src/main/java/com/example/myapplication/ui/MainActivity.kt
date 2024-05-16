@@ -8,7 +8,9 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.example.myapplication.R
+import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -18,11 +20,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var transactions: ArrayList<String>
     private lateinit var adapter: ArrayAdapter<String>
 
+    private lateinit var binding : ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        replaceFragment(Groups())
 
-        transactionList = findViewById(R.id.transactionList)
+        binding.bottomNavigationView.setOnItemSelectedListener {
+
+            when(it.itemId){
+
+                R.id.groups -> replaceFragment(Groups())
+                R.id.profile -> replaceFragment(Profile())
+                R.id.more -> replaceFragment(More())
+
+                else -> {
+
+                }
+            }
+            true
+
+        }
+
+        /*transactionList = findViewById(R.id.transactionList)
         addTransaction = findViewById(R.id.addTransactionButton)
         transactions = ArrayList()
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, transactions)
@@ -48,8 +70,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             builder.show()
-        }
+        }*/
 
+    }
 
+    private fun replaceFragment(fragment : Fragment){
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frameLayout, fragment)
+        fragmentTransaction.commit()
     }
 }
