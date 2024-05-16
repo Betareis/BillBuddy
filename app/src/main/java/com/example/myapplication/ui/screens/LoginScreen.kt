@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 //import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -67,7 +68,7 @@ fun UsernameTextField() {
         value = username,
         onValueChange = { username = it },
         label = { Text("Enter username") },
-        visualTransformation = PasswordVisualTransformation(),
+        visualTransformation = VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
     )
 }
