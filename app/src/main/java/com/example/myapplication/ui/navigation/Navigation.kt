@@ -6,6 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.screens.LoginScreen
+import com.example.myapplication.ui.screens.BalancesScreen
+import com.example.myapplication.ui.screens.EditTransactionScreen
+import com.example.myapplication.ui.screens.GroupsScreen
+import com.example.myapplication.ui.screens.NewEntryScreen
+import com.example.myapplication.ui.screens.ProfileScreen
+import com.example.myapplication.ui.screens.SignUpScreen
+import com.example.myapplication.ui.screens.TransactionsScreen
+import com.example.myapplication.ui.screens.TransactionInfoScreen
 
 @Composable
 fun AppNavigation() {
@@ -17,37 +25,30 @@ fun AppNavigation() {
     {
         composable( AvailableScreens.LoginScreen.name){
             LoginScreen(navController = navController)
-        }/*
-        composable( AvaliableScreens.MainScreen.name){
-            MainScreen(navController)
         }
-        composable( AvaliableScreens.MyCocktailsScreen.name){
-            MyCocktailsScreen(navController)
+        composable( AvailableScreens.BalancesScreen.name){
+            BalancesScreen(navController)
         }
-        composable( AvaliableScreens.LoginScreen.name){
-            LoginScreen(navController)
+        composable( AvailableScreens.EditTransactionScreen.name){
+            EditTransactionScreen(navController)
         }
-        composable( AvaliableScreens.RegisterScreen.name){
-            RegisterScreen(navController)
+        composable( AvailableScreens.GroupsScreen.name){
+            GroupsScreen(navController)
         }
-        composable( AvaliableScreens.CocktailSearchScreen.name){
-            CocktailSearchScreen(navController)
+        composable( AvailableScreens.NewEntryScreen.name){
+            NewEntryScreen(navController)
         }
-        composable( AvaliableScreens.CocktailAddScreen.name){
-            CocktailAddScreen(navController)
+        composable( AvailableScreens.ProfileScreen.name){
+            ProfileScreen(navController)
         }
-        composable(
-            "${AvaliableScreens.CocktailDetailsScreen.name}/?cocktail={cocktail}",
-            arguments = listOf(
-                navArgument("cocktail") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-            val encodedCocktail = backStackEntry.arguments?.getString("cocktail")
-            val decodedCocktail = Uri.decode(encodedCocktail)
-            CocktailDetailsScreen(navController, decodedCocktail)
-        }*/
-
+        composable( AvailableScreens.SignUpScreen.name){
+            SignUpScreen(navController)
+        }
+        composable( AvailableScreens.TransactionsScreen.name){
+            TransactionsScreen(navController)
+        }
+        composable( AvailableScreens.TransactionInfoScreen.name){
+            TransactionInfoScreen(navController)
+        }
     }
 }
