@@ -17,11 +17,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var transactionList: ListView
+    /*private lateinit var transactionList: ListView
     private lateinit var addTransactions: FloatingActionButton
     private lateinit var transactions: ArrayList<String>
     private lateinit var adapter: ArrayAdapter<String>
-    //private lateinit var bottomBar: MaterialToolbar
+    private lateinit var bottomBar: MaterialToolbar*/
 
     private lateinit var binding : ActivityMainBinding
 
@@ -39,9 +39,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.profile -> replaceFragment(Profile())
                 R.id.more -> replaceFragment(More())
 
-                else -> {
-
-                }
             }
             true
 
@@ -55,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         transactionList.adapter = adapter
 
-        addTransactions.setOnClickListener {
+        addTransaction.setOnClickListener {
             Intent intent = Intent(this, addTransaction.class)
             startActivity(intent)
         }
