@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
@@ -11,14 +12,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.addTransaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var transactionList: ListView
-    private lateinit var addTransaction: FloatingActionButton
+    private lateinit var addTransactions: FloatingActionButton
     private lateinit var transactions: ArrayList<String>
     private lateinit var adapter: ArrayAdapter<String>
+    //private lateinit var bottomBar: MaterialToolbar
 
     private lateinit var binding : ActivityMainBinding
 
@@ -48,9 +51,14 @@ class MainActivity : AppCompatActivity() {
         addTransaction = findViewById(R.id.addTransactionButton)
         transactions = ArrayList()
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, transactions)
+        //bottomBar = findViewById(R.id.bottomBar)
 
         transactionList.adapter = adapter
 
+        addTransactions.setOnClickListener {
+            Intent intent = Intent(this, addTransaction.class)
+            startActivity(intent)
+        }
         addTransaction.setOnClickListener{
             var builder = AlertDialog.Builder(this)
             builder.setTitle("Add transaction")
