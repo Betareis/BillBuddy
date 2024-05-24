@@ -1,5 +1,4 @@
 package com.example.myapplication.data.model
 
-data class Users(
-    val users: MutableList<User>,
-    )
+class Users(userList: MutableList<Group> = ArrayList()) : ArrayList<Group>(userList)
+

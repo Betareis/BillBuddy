@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56200577824",
+    "project_id": "bill-sharing-f9248",
+    "storage_bucket": "bill-sharing-f9248.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56200577824:android:1a6ac8c6bf94c396f1cd45",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf-66n3FYTafErYmUy31Ryn2ZAZs653aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
