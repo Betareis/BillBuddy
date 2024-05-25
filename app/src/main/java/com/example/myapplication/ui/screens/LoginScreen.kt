@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens
 //import androidx.compose.foundation.background
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,8 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.ui.navigation.AvailableScreens
 
-
-
 data class UserLoginFormData(
     val username: MutableState<String>,
     val password: MutableState<String>,
@@ -43,6 +42,8 @@ fun LoginScreen(navController: NavController) {
 
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "Login", fontSize = 40.sp, color = Color.Black)
+        Spacer(modifier = Modifier.height(40.dp))
+        SwitchTOSignUpButton(navController);
         Spacer(modifier = Modifier.height(80.dp))
         UsernameTextField()
         Spacer(modifier = Modifier.height(40.dp))
@@ -88,6 +89,13 @@ fun PasswordTextField() {
 fun OnSubmitFormButton(navController: NavController) {
     Button(onClick = { navController.navigate(AvailableScreens.GroupsScreen.name) }) {
         Text(text = "Submit")
+    }
+}
+
+@Composable
+fun SwitchTOSignUpButton(navController: NavController) {
+    Button(modifier = Modifier.background(Color(0f,0f,0f, alpha = 0f)), onClick = { navController.navigate(AvailableScreens.SignUpScreen.name) }) {
+        Text(color = Color.White, text = "Register")
     }
 }
 

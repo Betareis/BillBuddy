@@ -1,4 +1,5 @@
 package com.example.myapplication.ui.screens.groups
+
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -93,7 +94,7 @@ fun GroupsScreen(navController: NavController) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel = hiltViewModel()){
+fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel = hiltViewModel()) {
 
     Scaffold(
         contentColor = Color.Black
@@ -121,14 +122,15 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
 }
 
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowData(
     loadGroups: suspend () -> DataRequestWrapper<Groups, String, Exception>,
     navController: NavController
 ) {
-    val groupData = produceState<DataRequestWrapper<Groups, String, Exception>>(initialValue = DataRequestWrapper(state="loading")){
+    val groupData = produceState<DataRequestWrapper<Groups, String, Exception>>(
+        initialValue = DataRequestWrapper(state = "loading")
+    ) {
         value = loadGroups()
     }.value
 
@@ -136,24 +138,43 @@ fun ShowData(
         Text(text = "Group screen")
         CircularProgressIndicator()
     } else if (groupData.data != null && !groupData.data!!.isEmpty()) {
-        Log.d("DONE","LOADING DATA DONE")
+        Log.d("DONE", "LOADING DATA DONE")
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn {
-                for (data in groupData.data!!){
+                for (data in groupData.data!!) {
+
                     item() {
-                        Text(text = data.name)
-                        Text(text = data.transactions.size.toString())
+                        FilledTonalButton(
+                            onClick = {
+                                navController.navigate(AvailableScreens.TransactionsScreen.name)
+                            },
+                            colors = ButtonDefaults.filledTonalButtonColors(),
+                            modifier = Modifier
+                                .offset(
+                                    x = 38.dp,
+                                )
+                                .requiredWidth(width = 285.dp)
+                                .requiredHeight(height = 60.dp)
+                                .testTag("groupButton${data.name}"),
+                            border = BorderStroke(1.dp, Color.Black),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 10.dp
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(data.name, color = Color.White)
+                        }
                     }
                 }
             }
-            Column(modifier = Modifier.padding(50.dp)) {
-                Text(text = "Add groups icon")
-            }
         }
+        Column(modifier = Modifier.padding(50.dp)) {
+            Text(text = "Add groups icon")
+        }
+
     } else {
         Text(text = "no groups found")
-
     }
 }
