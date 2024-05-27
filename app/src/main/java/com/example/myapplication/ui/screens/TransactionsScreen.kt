@@ -143,7 +143,11 @@ fun TransactionsScreen(navController: NavController) {
 }
 
 @Composable
-fun DisplayTransactionsContent(){}
+fun DisplayTransactionsContent(){
+    
+}
 
 @Composable
-fun DisplayBalancesContent(){}
+fun DisplayBalancesContent(){
+
+}
