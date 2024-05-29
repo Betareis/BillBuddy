@@ -3,24 +3,29 @@ package com.example.myapplication.ui.screens.groups
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.myapplication.data.model.Transaction
@@ -44,6 +50,11 @@ import com.example.myapplication.ui.navigation.AvailableScreens
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.data.model.Groups
 import com.example.myapplication.data.wrappers.DataRequestWrapper
+import com.example.myapplication.ui.theme.MainButtonColor;
+import com.example.myapplication.ui.theme.NewWhiteFontColor;
+import com.example.myapplication.ui.theme.ScreenBackgroundColor;
+import com.example.myapplication.ui.theme.ListElementBackgroundColor;
+
 
 val _users = listOf<User>(User("peter", 10.0), User("test", 20.5)).toMutableList<User>()
 
@@ -88,6 +99,11 @@ fun GroupsScreen(navController: NavController) {
         }
     }
 }*/
+
+fun String.toUppercaseFirstLetter(): String {
+    if (isEmpty()) return ""
+    return first().uppercaseChar() + substring(1)
+}
 
 
 
@@ -140,22 +156,22 @@ fun ShowData(
     } else if (groupData.data != null && !groupData.data!!.isEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopStart
         ) {
-            LazyColumn {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 for (data in groupData.data!!) {
-
                     item() {
                         FilledTonalButton(
                             onClick = {
                                 navController.navigate(AvailableScreens.TransactionsScreen.name)
                             },
-                            colors = ButtonDefaults.filledTonalButtonColors(),
+                            colors = ButtonColors(contentColor = NewWhiteFontColor, containerColor = ListElementBackgroundColor, disabledContentColor = Color.LightGray, disabledContainerColor = Color.LightGray),
                             modifier = Modifier
                                 .offset(
-                                    x = 38.dp,
+                                    x = 30.dp,
                                 )
-                                .requiredWidth(width = 285.dp)
+                                .requiredWidth(width = 400.dp)
                                 .requiredHeight(height = 60.dp)
                                 .testTag("groupButton${data.name}"),
                             border = BorderStroke(1.dp, Color.Black),
@@ -164,7 +180,7 @@ fun ShowData(
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text(data.name, color = Color.White)
+                            Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Center)
                         }
                     }
                 }

@@ -1,9 +1,31 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarker</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryColorVariant</item>
+
+        <item name="colorAccent">@color/accentColor</item>
+
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+
     </style>
 
-    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+    <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">#F0E68C</item>  </style>
+
+    <color name="primaryColor">#F0E68C</color>
+    <color name="colorPrimaryDark">#C7BA6A</color>
+    <color name="colorPrimaryDarker">#9E8B40</color>
+    <color name="secondaryColor">#795548</color>
+    <color name="secondaryColorVariant">#604032</color>
+    <color name="accentColor">#00C853</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="textColorSecondary">#808080</color>
+
 </resources>
