@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.myapplication.ui.navigation.NavigationBarScreen
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "ProfileScreen", color= Color.Black)
+        NavigationBarScreen()
     }
 }

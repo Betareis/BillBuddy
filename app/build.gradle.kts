@@ -149,6 +149,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.ui:ui-tooling-preview-android:1.6.7")
     val lifecycle_version = "2.8.0"
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     implementation("androidx.compose.ui:ui")
@@ -166,6 +167,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     val nav_version = "2.7.7"
