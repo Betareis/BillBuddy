@@ -109,7 +109,6 @@ fun TabView(tabBarItems: List<TabBarItem>, navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabBarIconView(
     isSelected: Boolean,
@@ -127,7 +126,6 @@ fun TabBarIconView(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun TabBarBadgeView(count: Int? = null) {
     if (count != null) {
         Badge {
