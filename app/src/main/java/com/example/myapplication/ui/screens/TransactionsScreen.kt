@@ -1,18 +1,28 @@
 package com.example.myapplication.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,8 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.myapplication.data.model.DCGroup
+import com.example.myapplication.data.model.DCTransaction
+import com.example.myapplication.data.model.User
 import com.example.myapplication.ui.navigation.AvailableScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,9 +54,9 @@ fun TransactionsScreen(navController: NavController) {
     var selectedChoice by remember {
         mutableStateOf("Transactions")
     }
+
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "TransactionsScreen", color = Color.Black)
-
     }
 
     Box(
@@ -138,16 +152,73 @@ fun TransactionsScreen(navController: NavController) {
                     )
                 }
             }
+            when (selectedChoice) {
+                "Transactions" -> DisplayTransactionsContent()
+                "Balances" -> DisplayBalancesContent()
+            }
         }
     }
 }
 
 @Composable
-fun DisplayTransactionsContent(){
-    
+fun DisplayTransactionsContent() {
+    val transactions = listOf(
+        DCTransaction(
+            name = "Ausflug",
+            amount = 50.0,
+            payedBy = mutableListOf(User("Alice", 20.0)),
+            containedUsers = mutableListOf(User("Bob", 30.0), User("Marie", 50.0))
+        ),
+        DCTransaction(
+            name = "Einkauf",
+            amount = 75.0,
+            payedBy = mutableListOf(User("Bob", 30.0)),
+            containedUsers = mutableListOf(User("Alice", 20.0))
+        ),
+        DCTransaction(
+            name = "Party",
+            amount = 100.0,
+            payedBy = mutableListOf(User("Alice", 20.0)),
+            containedUsers = mutableListOf(User("Bob", 30.0))
+        )
+    )
+
+    LazyColumn(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        items(transactions) { transaction ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Place,
+                    contentDescription = "Icon",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(8.dp)
+                )
+
+                Text(
+                    text = transaction.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp)
+                )
+
+                Icon(
+                    imageVector = Icons.Outlined.Done,
+                    contentDescription = "Price",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(8.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable
-fun DisplayBalancesContent(){
-
+fun DisplayBalancesContent() {
 }
