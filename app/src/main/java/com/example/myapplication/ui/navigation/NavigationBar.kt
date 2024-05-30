@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,11 +7,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -138,15 +135,8 @@ fun TabBarBadgeView(count: Int? = null) {
 
 @Composable
 fun MoreView() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column {
         Text("Settings")
         Text("Logout")
     }
-}
-
-fun NavigationBar(){
-
-
 }
