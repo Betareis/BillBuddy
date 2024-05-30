@@ -1,8 +1,12 @@
 package com.example.myapplication.data.model
 
-data class Transaction(
+import androidx.compose.ui.graphics.vector.ImageVector
+
+
+data class DCTransaction(
     val name: String = "",
-    val amount: Number = 0,
+    val amount: Double,
     //val payedBy: MutableList<User>,
     //val containedUsers: MutableList<User>,
+    val icon: ImageVector
 )
