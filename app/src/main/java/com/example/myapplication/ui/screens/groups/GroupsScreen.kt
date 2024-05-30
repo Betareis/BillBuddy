@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -168,10 +169,9 @@ fun ShowData(
                             },
                             colors = ButtonColors(contentColor = NewWhiteFontColor, containerColor = ListElementBackgroundColor, disabledContentColor = Color.LightGray, disabledContainerColor = Color.LightGray),
                             modifier = Modifier
-                                .offset(
-                                    x = 30.dp,
-                                )
-                                .requiredWidth(width = 400.dp)
+                                .padding(start = 15.dp, end = 15.dp)
+                                .fillMaxWidth()
+                                .align(alignment = Alignment.Center)
                                 .requiredHeight(height = 60.dp)
                                 .testTag("groupButton${data.name}"),
                             border = BorderStroke(1.dp, Color.Black),

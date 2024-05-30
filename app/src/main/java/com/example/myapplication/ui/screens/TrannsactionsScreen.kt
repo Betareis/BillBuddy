@@ -204,12 +204,12 @@ fun DisplayTransactionsContent() {
                         .padding(start = 12.dp)
                 )
 
-                Icon(
-                    imageVector = Icons.Outlined.Done,
-                    contentDescription = "Price",
-                    tint = Color.Black,
+                Text(
+                    text = transaction.amount.toString(),
                     modifier = Modifier
-                        .padding(8.dp)
+                        .weight(1f)
+                        .padding(end = 12.dp)
+
                 )
             }
         }
