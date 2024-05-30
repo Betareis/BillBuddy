@@ -53,7 +53,7 @@ class FirestoreRepository @Inject constructor() {
             .get()
             .await()
 
-        Log.d("SIZE", result.size().toString())
+        //Log.d("SIZE", result.size().toString())
 
         val groups = result.documents.map { document ->
             val name = document.getString("name") ?: ""
@@ -78,16 +78,16 @@ class FirestoreRepository @Inject constructor() {
         }.toMutableList()
 
 
-        val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
+        //val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
         //val groupRef = FirebaseFirestore.getInstance().collection("groups").document(groupId).collection("transaction")
 
         ///groups/2gQ9AzCpEI8jCdEg4Ezw/transactions
-        val result2 = firestore.collection("transactions")
+        /*val result2 = firestore.collection("transactions")
             .get()
             .await()
+        */
 
-
-        Log.d("SIZE", result2.size().toString())
+        //Log.d("SIZE", result2.size().toString())
 
         /*val transactions_data = result2.documents.map { document ->
 
