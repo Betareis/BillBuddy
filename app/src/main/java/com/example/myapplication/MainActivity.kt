@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.myapplication.ui.navigation.AppNavigation
+import com.example.myapplication.ui.navigation.NavigationBarScreen
 
 
 @AndroidEntryPoint
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        AppNavigation()
+                        NavigationBarScreen()
 
                     }
                 }
