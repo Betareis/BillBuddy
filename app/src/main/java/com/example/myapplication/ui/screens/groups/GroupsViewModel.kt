@@ -11,11 +11,7 @@ import javax.inject.Inject
 class GroupsViewModel @Inject constructor(private val firestoreRepository: FirestoreRepository) :
     ViewModel() {
 
-    suspend fun getGroupsFirestore(): DataRequestWrapper<Groups, String, Exception> {
+    suspend fun getGroupsFirestore(): DataRequestWrapper<MutableList<Group>, String, Exception> {
         return firestoreRepository.getGroups()
-    }
-
-    suspend fun getGroupByName(): DataRequestWrapper<Group, String, Exception> {
-        return firestoreRepository.getGroupByName()
     }
 }

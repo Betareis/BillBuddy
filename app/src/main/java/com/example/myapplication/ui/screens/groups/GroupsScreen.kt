@@ -141,10 +141,10 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowData(
-    loadGroups: suspend () -> DataRequestWrapper<Groups, String, Exception>,
+    loadGroups: suspend () -> DataRequestWrapper<MutableList<Group>, String, Exception>,
     navController: NavController
 ) {
-    val groupData = produceState<DataRequestWrapper<Groups, String, Exception>>(
+    val groupData = produceState<DataRequestWrapper<MutableList<Group>, String, Exception>>(
         initialValue = DataRequestWrapper(state = "loading")
     ) {
         value = loadGroups()

@@ -10,7 +10,6 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Groups
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.Transactions
-import kotlin.math.log
 
 class FirestoreRepository @Inject constructor() {
 
@@ -18,35 +17,7 @@ class FirestoreRepository @Inject constructor() {
     //private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
-    suspend fun getGroupByName(): DataRequestWrapper<Group, String, Exception>{
-        val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
-        val groupRef = FirebaseFirestore.getInstance().collection("groups").document(groupId)
-
-        val transactionsRef = groupRef.collection("transactions")
-        val transactions = Transactions();
-        transactionsRef.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot.documents) {
-                val transactionId = document.id
-                //val payerId = document["payerId"] as String
-                //val payeeId = document["payeeId"] as String
-                val name = document["name"] as String
-                val amount = document["amount"] as Double
-                //val timestamp = document["timestamp"] as Long
-
-                Log.d("DAATA", name)
-
-                transactions.add(Transaction(name, amount))
-                // Process transaction data
-            }
-        }
-
-        Log.d("TAG", "GroupId: " + transactions.size)
-
-        return DataRequestWrapper(data = Group(name = groupRef.id, transactions))
-    }
-
-
-    suspend fun getGroups(): DataRequestWrapper<Groups, String, Exception> {
+    suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
         val result = firestore.collection("groups")
@@ -71,7 +42,7 @@ class FirestoreRepository @Inject constructor() {
                 emptyList() // Return empty list on error
             }
 
-            Log.d("DATTA", "DATA: " + Transactions(transactions.toMutableList()).toString())
+            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
 
             // Create Group object with retrieved transactions
             Group(name, transactions)
@@ -85,10 +56,10 @@ class FirestoreRepository @Inject constructor() {
         /*val result2 = firestore.collection("transactions")
             .get()
             .await()
-        */
 
-        //Log.d("SIZE", result2.size().toString())
 
+        Log.d("SIZE", result2.toString())
+*/
         /*val transactions_data = result2.documents.map { document ->
 
             val name = document.getString("name") ?: ""
@@ -102,7 +73,7 @@ class FirestoreRepository @Inject constructor() {
 
 
 
-        return DataRequestWrapper(Groups(groups), "", null) // Assuming DataRequestWrapper structure
+        return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
 
