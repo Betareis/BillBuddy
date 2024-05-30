@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -39,10 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.myapplication.R
 import com.example.myapplication.data.model.DCGroup
 import com.example.myapplication.data.model.DCTransaction
 import com.example.myapplication.data.model.User
@@ -167,19 +172,22 @@ fun DisplayTransactionsContent() {
             name = "Ausflug",
             amount = 50.0,
             payedBy = mutableListOf(User("Alice", 20.0)),
-            containedUsers = mutableListOf(User("Bob", 30.0), User("Marie", 50.0))
+            containedUsers = mutableListOf(User("Bob", 30.0), User("Marie", 50.0)),
+            icon = ImageVector.vectorResource(id = R.drawable.outline_celebration_24)
         ),
         DCTransaction(
             name = "Einkauf",
             amount = 75.0,
             payedBy = mutableListOf(User("Bob", 30.0)),
-            containedUsers = mutableListOf(User("Alice", 20.0))
+            containedUsers = mutableListOf(User("Alice", 20.0)),
+            icon = ImageVector.vectorResource(id = R.drawable.outline_shopping_cart_24)
         ),
         DCTransaction(
             name = "Party",
             amount = 100.0,
             payedBy = mutableListOf(User("Alice", 20.0)),
-            containedUsers = mutableListOf(User("Bob", 30.0))
+            containedUsers = mutableListOf(User("Bob", 30.0)),
+            icon = ImageVector.vectorResource(id = R.drawable.outline_celebration_24)
         )
     )
 
@@ -191,6 +199,7 @@ fun DisplayTransactionsContent() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
+
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Place,
@@ -207,12 +216,14 @@ fun DisplayTransactionsContent() {
                         .padding(start = 12.dp)
                 )
 
-                Icon(
-                    imageVector = Icons.Outlined.Done,
-                    contentDescription = "Price",
-                    tint = Color.Black,
+                Text(
+                    text = transaction.amount.toString(),
                     modifier = Modifier
-                        .padding(8.dp)
+                        .weight(1f)
+                        .padding(end = 12.dp)
+                        .align(Alignment.CenterVertically)
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.End)
                 )
             }
         }
