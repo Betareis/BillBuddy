@@ -7,9 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import com.example.myapplication.data.model.Group
-import com.example.myapplication.data.model.Groups
 import com.example.myapplication.data.model.Transaction
-import com.example.myapplication.data.model.Transactions
 
 class FirestoreRepository @Inject constructor() {
 

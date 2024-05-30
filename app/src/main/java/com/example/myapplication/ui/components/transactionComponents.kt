@@ -3,7 +3,6 @@ package com.example.myapplication.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredHeight
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.myapplication.data.model.Transaction
-import com.example.myapplication.data.model.Transactions
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
