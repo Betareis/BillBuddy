@@ -149,6 +149,10 @@ fun TransactionsScreen(navController: NavController) {
                     )
                 }
             }
+            when (selectedChoice) {
+                "Transactions" -> DisplayTransactionsContent()
+                "Balances" -> DisplayBalancesContent()
+            }
         }
     }
 }
