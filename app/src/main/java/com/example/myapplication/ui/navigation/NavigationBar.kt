@@ -44,11 +44,11 @@ data class TabBarItem(
     val badgeAmount: Int? = null
 )
 
-val homeTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home)
-val alertsTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7)
+val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home)
+val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7)
 val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List)
 
-val tabBarItems = listOf(homeTab, alertsTab, moreTab)
+val tabBarItems = listOf(groupsTab, profileTab, moreTab)
 
 @Composable
 fun NavigationBarScreen() {
@@ -58,12 +58,12 @@ fun NavigationBarScreen() {
         color = MaterialTheme.colorScheme.background
     ) {
         Scaffold(bottomBar = { TabView(tabBarItems, navController) }) { innerpadding ->
-            NavHost(navController = navController, startDestination = homeTab.title, modifier = Modifier.padding(innerpadding)) {
-                composable(homeTab.title) {
-                    Text(homeTab.title)
+            NavHost(navController = navController, startDestination = groupsTab.title, modifier = Modifier.padding(innerpadding)) {
+                composable(groupsTab.title) {
+                    Text(groupsTab.title)
                 }
-                composable(alertsTab.title) {
-                    Text(alertsTab.title)
+                composable(profileTab.title) {
+                    Text(profileTab.title)
                 }
                 composable(moreTab.title) {
                     MoreView()
