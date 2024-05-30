@@ -14,6 +14,6 @@ import com.example.myapplication.ui.navigation.NavigationBarScreen
 fun ProfileScreen(navController: NavController) {
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "ProfileScreen", color= Color.Black)
-        NavigationBarScreen()
+    //    NavigationBarScreen()
     }
 }

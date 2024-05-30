@@ -32,38 +32,50 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import com.example.myapplication.ui.screens.LoginScreen
+import com.example.myapplication.ui.screens.BalancesScreen
+import com.example.myapplication.ui.screens.EditTransactionScreen
+import com.example.myapplication.ui.screens.groups.GroupsScreen
+import com.example.myapplication.ui.screens.NewEntryScreen
+import com.example.myapplication.ui.screens.ProfileScreen
+import com.example.myapplication.ui.screens.SignUpScreen
+import com.example.myapplication.ui.screens.TransactionsScreen
+import com.example.myapplication.ui.screens.TransactionInfoScreen
 
 data class TabBarItem(
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val badgeAmount: Int? = null
+    val badgeAmount: Int? = null,
+    val route: String
 )
 
-val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home)
-val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7)
-val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List)
+val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, 0, AvailableScreens.GroupsScreen.name)
+val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
+val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List, 0, AvailableScreens.LoginScreen.name)
 
 val tabBarItems = listOf(groupsTab, profileTab, moreTab)
+val AvailableScreensList = listOf(AvailableScreens.GroupsScreen.name, AvailableScreens.ProfileScreen.name, moreTab)
 
 @Composable
 fun NavigationBarScreen() {
-    val navController = rememberNavController()
+    val navController: NavHostController = rememberNavController()
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         Scaffold(bottomBar = { TabView(tabBarItems, navController) }) { innerpadding ->
-            NavHost(navController = navController, startDestination = groupsTab.title, modifier = Modifier.padding(innerpadding)) {
-                composable(groupsTab.title) {
-                    Text(groupsTab.title)
+            NavHost(navController = navController, startDestination = AvailableScreens.GroupsScreen.name, modifier = Modifier.padding(innerpadding)) {
+                composable( AvailableScreens.GroupsScreen.name){
+                    GroupsScreen(navController)
                 }
-                composable(profileTab.title) {
-                    Text(profileTab.title)
+                composable( AvailableScreens.ProfileScreen.name){
+                    ProfileScreen(navController)
                 }
                 composable(moreTab.title) {
                     MoreView()
@@ -83,15 +95,13 @@ fun TabView(tabBarItems: List<TabBarItem>, navController: NavController) {
             NavigationBarItem(
                 selected = selectedTabIndex == index,
                 onClick = {
-                    coroutineScope.launch {
                         selectedTabIndex = index
-                        navController.navigate(tabBarItem.title) {
-                            popUpTo(navController.graph.startDestinationId) {
+                        navController.navigate(tabBarItem.route) {
+                            /*popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
-                            }
+                            }*/
                             launchSingleTop = true
                             restoreState = true
-                        }
                     }
                 },
                 icon = {
