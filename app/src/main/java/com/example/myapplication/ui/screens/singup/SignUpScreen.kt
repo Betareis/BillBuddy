@@ -1,6 +1,5 @@
-package com.example.myapplication.ui.screens
+package com.example.myapplication.ui.screens.singup
 //import androidx.compose.foundation.background
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,17 +35,24 @@ import com.example.myapplication.ui.theme.MainButtonColor;
 import com.example.myapplication.ui.theme.NewWhiteFontColor;
 import com.example.myapplication.ui.theme.ScreenBackgroundColor;
 
-data class UserLoginFormData(
+
+import com.example.myapplication.ui.components.EmailInputField
+import com.example.myapplication.ui.components.PassInputField
+
+data class UserRegisterFormData(
     val username: MutableState<String>,
     val password: MutableState<String>,
 )
 
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController) {
+    val isPasswordVisible = rememberSaveable {
+        mutableStateOf(false)
+    }
     val formData by remember {
         mutableStateOf(
-            UserLoginFormData(
+            UserRegisterFormData(
                 mutableStateOf(""),
                 mutableStateOf("")
             )
@@ -54,41 +60,36 @@ fun LoginScreen(navController: NavController) {
     }
 
     Column(modifier = Modifier.padding(3.dp).background(ScreenBackgroundColor).fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Login", fontSize = 40.sp, color = NewWhiteFontColor, fontFamily = FontFamily.Monospace, textAlign = TextAlign.Center)
+        Text(text = "SignUp", fontSize = 40.sp, color = NewWhiteFontColor, fontFamily = FontFamily.Monospace, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(40.dp))
         Spacer(modifier = Modifier.height(80.dp))
-        UsernameTextField()
+        EmailInputField(Modifier, formData.username)
+        //UsernameTextFieldSignUp()
         Spacer(modifier = Modifier.height(40.dp))
-        PasswordTextField()
+        PassInputField(Modifier, formData.password, "password", false, isPasswordVisible)
+        //PasswordTextFieldSignUp()
         Spacer(modifier = Modifier.height(80.dp))
-        OnSubmitFormButton(navController)
+        OnSubmitFormButtonSignUp(navController)
         Spacer(modifier = Modifier.height(40.dp))
-        SwitchTOSignUpButton(navController);
-
+        SwitchTOLoginButtonSignUp(navController);
     }
-    //value = ,
-    //, onValueChange
-
-    //Text(text = "test", color = Color.Blue)
-    //}
 }
 
 
 @Composable
-fun UsernameTextField() {
+fun UsernameTextFieldSignUp() {
     var username by rememberSaveable { mutableStateOf("") }
 
     TextField(
         value = username,
         onValueChange = { username = it },
         label = { Text("Enter username") },
-        visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
     )
 }
 
 @Composable
-fun PasswordTextField() {
+fun PasswordTextFieldSignUp() {
     var password by rememberSaveable { mutableStateOf("") }
     TextField(
         value = password,
@@ -100,7 +101,7 @@ fun PasswordTextField() {
 }
 
 @Composable
-fun OnSubmitFormButton(navController: NavController) {
+fun OnSubmitFormButtonSignUp(navController: NavController) {
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -113,7 +114,7 @@ fun OnSubmitFormButton(navController: NavController) {
 }
 
 @Composable
-fun SwitchTOSignUpButton(navController: NavController) {
+fun SwitchTOLoginButtonSignUp(navController: NavController) {
     Button(colors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
         contentColor = NewWhiteFontColor,
@@ -124,8 +125,8 @@ fun SwitchTOSignUpButton(navController: NavController) {
             color = NewWhiteFontColor,
             shape = RoundedCornerShape(8.dp) // Example: Rounded corners
         ),
-        onClick = { navController.navigate(AvailableScreens.SignUpScreen.name) }) {
-        Text(color = Color.White, text = "Register")
+        onClick = { navController.navigate(AvailableScreens.LoginScreen.name) }) {
+        Text(color = Color.White, text = "Login")
     }
 }
 

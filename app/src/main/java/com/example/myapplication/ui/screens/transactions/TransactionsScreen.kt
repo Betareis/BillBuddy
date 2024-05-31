@@ -153,10 +153,13 @@ fun TransactionsScreen(navController: NavController, groupId: String, transactio
                     )
                 }
             }
-            when (selectedChoice) {
-                "Transactions" ->  ShowTransactionsData(loadGTransactions = { transactionsViewModel.getGroupTransactionsFirestore(groupId) }, navController = navController)
-                "Balances" -> DisplayBalancesContent()
+            Box(modifier = Modifier.padding(top = 20.dp)){
+                when (selectedChoice) {
+                    "Transactions" ->  ShowTransactionsData(loadGTransactions = { transactionsViewModel.getGroupTransactionsFirestore(groupId) }, navController = navController)
+                    "Balances" -> DisplayBalancesContent()
+                }
             }
+
         }
     }
 }
@@ -174,7 +177,7 @@ fun ShowTransactionsData(
     }.value
 
     if (transactionsData.state == "loading") {
-        Text(text = "Group screen")
+        Text(text = "Transactions screen")
         CircularProgressIndicator()
     } else if (transactionsData.data != null && transactionsData.data!!.isNotEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
@@ -211,7 +214,7 @@ fun ShowTransactionsData(
                 }
             }
         }
-        Column(modifier = Modifier.padding(50.dp)) {
+        Box(modifier = Modifier.padding(top = 80.dp)){
             Text(text = "Add groups icon")
         }
 

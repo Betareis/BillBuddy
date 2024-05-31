@@ -10,13 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.myapplication.ui.screens.LoginScreen
+import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.BalancesScreen
 import com.example.myapplication.ui.screens.EditTransactionScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
 import com.example.myapplication.ui.screens.NewEntryScreen
 import com.example.myapplication.ui.screens.ProfileScreen
-import com.example.myapplication.ui.screens.SignUpScreen
+import com.example.myapplication.ui.screens.singup.SignUpScreen
 import com.example.myapplication.ui.screens.transactions.TransactionsScreen
 import com.example.myapplication.ui.screens.TransactionInfoScreen
 
