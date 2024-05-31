@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -32,8 +34,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.screens.login.PasswordTextField
-
 
 @Composable
 fun EditTransactionForm(transactionName: String) {
@@ -134,7 +134,8 @@ fun EmailInputField(modifier: Modifier,
         textStyle = TextStyle(fontSize = 15.sp, color = Color.Black),
         modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Color.Transparent),
             //.heightIn(min = 80.dp),
             //.background(color = backgroundColor),
             //keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
@@ -160,7 +161,8 @@ fun PassInputField(modifier: Modifier,
         textStyle = TextStyle(fontSize = 15.sp, color = Color.Black),
         modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Color.Transparent),
             //.heightIn(min = 80.dp),
         visualTransformation =   visualTransformation,
         trailingIcon = {isPasswordVisibleIcon(isPasswordVisible = isPasswordVisible)} ,

@@ -36,15 +36,11 @@ data class TabBarItem(
     val route: String
 )
 
-val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, 0, AvailableScreens.GroupsScreen.name)
-val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
-val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List, 0, AvailableScreens.LoginScreen.name)
-
 @Composable
 fun TabView(navController: NavController) {
-    val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, 0, AvailableScreens.GroupsScreen.name)
+    val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, null, AvailableScreens.GroupsScreen.name)
     val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
-    val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List, 0, AvailableScreens.LoginScreen.name)
+    val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List, null, AvailableScreens.LoginScreen.name)
 
     val tabBarItems = listOf(groupsTab, profileTab, moreTab)
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
