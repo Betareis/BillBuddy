@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 //import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,9 +13,9 @@ import androidx.compose.material3.Surface
 //import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.myapplication.ui.navigation.AppNavigation
-import com.example.myapplication.ui.navigation.NavigationBarScreen
 
 
 @AndroidEntryPoint
@@ -31,8 +32,7 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        NavigationBarScreen()
-
+                        AppNavigation(PaddingValues(0.dp));
                     }
                 }
             }

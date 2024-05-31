@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.screens.groups
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -34,60 +35,16 @@ import com.example.myapplication.data.model.User;
 import com.example.myapplication.ui.navigation.AvailableScreens
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.data.wrappers.DataRequestWrapper
+import com.example.myapplication.ui.navigation.NavigationBar
+import com.example.myapplication.ui.navigation.TabView
 import com.example.myapplication.ui.theme.NewWhiteFontColor;
 import com.example.myapplication.ui.theme.ListElementBackgroundColor;
 
-
-val _users = listOf<User>(User("peter", 10.0), User("test", 20.5)).toMutableList<User>()
-
-/*val _transaction: MutableList<Transaction> = listOf(
-    Transaction("", 200.4, _users, _users),
-    Transaction("", .4, _users, _users),
-    Transaction("", 200.4, _users, _users)
-).toMutableList()*/
-
-/*val _groups: MutableList<Group> = listOf(
-    Group("Austria", _transaction),
-    Group("Austria", _transaction),
-    Group("Austria", _transaction),
-).toMutableList()*/
-
-/*@Composable
-fun GroupsScreen(navController: NavController) {
-
-    Column(modifier = Modifier.padding(3.dp)) {
-        Text(text = "GroupsScreen", color = Color.Black)
-        for (group in _groups) {
-            FilledTonalButton(
-                onClick = {
-                    navController.navigate(AvailableScreens.TransactionsScreen.name)
-                },
-                colors = ButtonDefaults.filledTonalButtonColors(),
-                modifier = Modifier
-                    .offset(
-                        x = 38.dp,
-                    )
-                    .requiredWidth(width = 285.dp)
-                    .requiredHeight(height = 60.dp)
-                    .testTag("groupButton${group.name}"),
-                border = BorderStroke(1.dp, Color.Black),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(group.name, color = Color.White)
-            }
-        }
-    }
-}*/
 
 fun String.toUppercaseFirstLetter(): String {
     if (isEmpty()) return ""
     return first().uppercaseChar() + substring(1)
 }
-
-
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +52,9 @@ fun String.toUppercaseFirstLetter(): String {
 fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel = hiltViewModel()) {
 
     Scaffold(
-        contentColor = Color.Black
+        contentColor = Color.Black,
+        bottomBar = { TabView(navController) }
+
 
     ) {
         Surface(
@@ -135,7 +94,7 @@ fun ShowData(
     if (groupData.state == "loading") {
         Text(text = "Group screen")
         CircularProgressIndicator()
-    } else if (groupData.data != null && !groupData.data!!.isEmpty()) {
+    } else if (groupData.data != null && groupData.data!!.isNotEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -146,7 +105,10 @@ fun ShowData(
                     item() {
                         FilledTonalButton(
                             onClick = {
-                                navController.navigate(AvailableScreens.TransactionsScreen.name)
+                                //${Uri.encode(data.id)
+                                //navController.navigate(AvailableScreens.ProfileScreen.name)
+                                //navController.navigate(AvailableScreens.TransactionsScreen.name)
+                                navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupName=${data.id}")
                             },
                             colors = ButtonColors(contentColor = NewWhiteFontColor, containerColor = ListElementBackgroundColor, disabledContentColor = Color.LightGray, disabledContainerColor = Color.LightGray),
                             modifier = Modifier

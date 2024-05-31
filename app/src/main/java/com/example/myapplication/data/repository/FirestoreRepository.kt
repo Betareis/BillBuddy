@@ -15,6 +15,56 @@ class FirestoreRepository @Inject constructor() {
     //private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
+    suspend fun getTransactionsGroup(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
+
+
+        val result = firestore.collection("groups").document(groupId).collection("transactions")
+            .get()
+            .await()
+
+        //Log.d("SIZE", result.size().toString())
+
+
+        val transactions = result.documents.map { document ->
+            val name = document.getString("name") ?: ""
+            val id = document.id;
+            val amount = document.getDouble("amount") ?: 0.0
+            // Access transactions subcollection (assuming it exists)
+
+            Transaction(name, amount)
+
+
+        }.toMutableList()
+
+
+        //val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
+        //val groupRef = FirebaseFirestore.getInstance().collection("groups").document(groupId).collection("transaction")
+
+        ///groups/2gQ9AzCpEI8jCdEg4Ezw/transactions
+        /*val result2 = firestore.collection("transactions")
+            .get()
+            .await()
+
+
+        Log.d("SIZE", result2.toString())
+*/
+        /*val transactions_data = result2.documents.map { document ->
+
+            val name = document.getString("name") ?: ""
+            val amount = document.get("amount") as Number
+
+            Transaction(name, amount)
+        }.toMutableList()
+
+        Log.d("DABA", Transactions(transactions_data).toString())
+*/
+
+
+
+        return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
+    }
+
+
     suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
@@ -26,7 +76,7 @@ class FirestoreRepository @Inject constructor() {
 
         val groups = result.documents.map { document ->
             val name = document.getString("name") ?: ""
-
+            val id = document.id;
             // Access transactions subcollection (assuming it exists)
 
             val transactionsRef = document.reference.collection("transactions")
@@ -43,7 +93,7 @@ class FirestoreRepository @Inject constructor() {
             Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
 
             // Create Group object with retrieved transactions
-            Group(name, transactions)
+            Group(id, name, transactions)
         }.toMutableList()
 
 

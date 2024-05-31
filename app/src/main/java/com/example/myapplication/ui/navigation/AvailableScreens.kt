@@ -13,7 +13,8 @@ enum class AvailableScreens {
     ProfileScreen,
     SignUpScreen,
     TransactionsScreen,
-    TransactionInfoScreen;
+    TransactionInfoScreen,
+    NavigationBarScreen;
 
     companion object {
 
