@@ -51,7 +51,7 @@ import com.example.myapplication.ui.theme.NewWhiteFontColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionsScreen(navController: NavController, groupId: String, transactionsViewModel: TransactionsViewModel = hiltViewModel()) {
+fun TransactionsScreen(navController: NavController, groupId: String, groupName: String, transactionsViewModel: TransactionsViewModel = hiltViewModel()) {
     var selectedChoice by remember {
         mutableStateOf("Transactions")
     }
@@ -83,7 +83,7 @@ fun TransactionsScreen(navController: NavController, groupId: String, transactio
                         )
                     }
                 },
-                title = { Text("Transactions") },
+                title = { Text(groupName) },
             )
 
             Row(

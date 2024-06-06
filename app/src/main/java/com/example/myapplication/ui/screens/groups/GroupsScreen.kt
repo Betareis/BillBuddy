@@ -105,10 +105,7 @@ fun ShowData(
                     item() {
                         FilledTonalButton(
                             onClick = {
-                                //${Uri.encode(data.id)
-                                //navController.navigate(AvailableScreens.ProfileScreen.name)
-                                //navController.navigate(AvailableScreens.TransactionsScreen.name)
-                                navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupName=${data.id}")
+                                navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupId=${data.id}&groupName=${data.name}")
                             },
                             colors = ButtonColors(contentColor = NewWhiteFontColor, containerColor = ListElementBackgroundColor, disabledContentColor = Color.LightGray, disabledContainerColor = Color.LightGray),
                             modifier = Modifier

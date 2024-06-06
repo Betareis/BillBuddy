@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -55,17 +56,24 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
         }*/
 
         composable(
-            "${AvailableScreens.TransactionsScreen.name}/?groupName={groupName}",
+            "${AvailableScreens.TransactionsScreen.name}/?groupId={groupId}&groupName={groupName}",
             arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.StringType
+                },
                 navArgument("groupName") {
                     type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
-            val groupId = backStackEntry.arguments?.getString("groupName")
+            val groupId = backStackEntry.arguments?.getString("groupId")
+            val groupName = backStackEntry.arguments?.getString("groupName")
+
+            Log.d("NavigationArgs", "groupId: $groupId, groupName: $groupName")
+
             //val groupId = Uri.decode(encodedGroupName)
-            if (groupId != null) {
-                TransactionsScreen(navController, groupId)
+            if (groupId != null && groupName != null) {
+                TransactionsScreen(navController, groupId, groupName)
             }
         }
 
