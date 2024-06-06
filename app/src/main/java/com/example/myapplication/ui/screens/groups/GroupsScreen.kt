@@ -40,7 +40,6 @@ import com.example.myapplication.ui.navigation.TabView
 import com.example.myapplication.ui.theme.NewWhiteFontColor;
 import com.example.myapplication.ui.theme.ListElementBackgroundColor;
 
-
 fun String.toUppercaseFirstLetter(): String {
     if (isEmpty()) return ""
     return first().uppercaseChar() + substring(1)
@@ -77,7 +76,6 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
         }
     }
 }
-
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -125,10 +123,14 @@ fun ShowData(
                     }
                 }
             }
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier.padding(top = 300.dp)
+            ) {
+                Text(text = "Add groups icon", color = Color.Black)
+            }
         }
-        Column(modifier = Modifier.padding(50.dp)) {
-            Text(text = "Add groups icon")
-        }
+
 
     } else {
         Text(text = "no groups found")

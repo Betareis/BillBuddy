@@ -26,7 +26,7 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
     val navController: NavHostController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AvailableScreens.LoginScreen.name,
+        startDestination = AvailableScreens.GroupsScreen.name,
         modifier = Modifier.padding(innerPaddingValues)
     )
     {
@@ -51,6 +51,8 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
         composable(AvailableScreens.SignUpScreen.name) {
             SignUpScreen(navController)
         }
+
+        //Todo: Should be remove in production
         /*composable(AvailableScreens.TransactionsScreen.name) {
             TransactionsScreen(navController, "bla")
         }*/
@@ -71,7 +73,6 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
 
             Log.d("NavigationArgs", "groupId: $groupId, groupName: $groupName")
 
-            //val groupId = Uri.decode(encodedGroupName)
             if (groupId != null && groupName != null) {
                 TransactionsScreen(navController, groupId, groupName)
             }
