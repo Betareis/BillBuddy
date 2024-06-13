@@ -14,3 +14,8 @@ class GroupsViewModel @Inject constructor(private val firestoreRepository: Fires
         return firestoreRepository.getGroups()
     }
 }
+
+
+/*suspend fun addGroup(groupData: Map<String, Any>) : DataRequestWrapper<Unit, String, Exception> {
+        return firestoreRepository.createGroup(groupData)
+    }*/

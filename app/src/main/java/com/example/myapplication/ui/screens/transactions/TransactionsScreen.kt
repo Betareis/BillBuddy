@@ -8,14 +8,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -47,7 +52,11 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
+import com.example.myapplication.ui.theme.MainButtonColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -159,7 +168,33 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                     "Balances" -> DisplayBalancesContent()
                 }
             }
-
+        }
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 100.dp).fillMaxSize()
+        ) {
+            IconButton(
+                modifier = Modifier
+                    .size(50.dp) // Adjust size as needed
+                    .background(MainButtonColor)// Set background color to blue
+                    .clip(RoundedCornerShape(80))
+                    .padding(8.dp),
+                onClick = {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val flatGroupData = mapOf(
+                            "name" to "Test",
+                        )
+                        //Todo: Not working right now
+                        //groupViewModel.addGroup(flatGroupData)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add a Group" // Provide a description for accessibility
+                )
+            }
         }
     }
 }
@@ -208,15 +243,30 @@ fun ShowTransactionsData(
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Center)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text("Icon!!", color = NewWhiteFontColor)
+                                Spacer(modifier = Modifier.weight(0.25f))
+                                Text((data.name).toUppercaseFirstLetter(), modifier = Modifier.weight(0.5f), color = NewWhiteFontColor)
+                                Spacer(modifier = Modifier.weight(0.5f))
+                                Text("Amount", color = NewWhiteFontColor)
+                            }
+                            /*Row(modifier = Modifier.fillMaxWidth()) {
+                                Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Left)
+                                //Spacer(modifier = Modifier.width(100.dp))
+                                Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Right)
+                            }*/
                         }
                     }
                 }
             }
         }
-        Box(modifier = Modifier.padding(top = 80.dp)){
+
+        /*Box(modifier = Modifier.padding(top = 80.dp)){
             Text(text = "Add groups icon")
-        }
+        }*/
 
     } else {
         Text(text = "no groups found")

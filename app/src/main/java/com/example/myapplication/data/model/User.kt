@@ -9,7 +9,6 @@ data class User (
         return mutableMapOf(
             "user_id" to this.id,
             "display_name" to this.displayName
-
         )
     }
 }
