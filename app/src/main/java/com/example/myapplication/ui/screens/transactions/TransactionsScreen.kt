@@ -164,7 +164,7 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
             }
             Box(modifier = Modifier.padding(top = 20.dp)){
                 when (selectedChoice) {
-                    "Transactions" ->  ShowTransactionsData(loadGTransactions = { transactionsViewModel.getGroupTransactionsFirestore(groupId) }, navController = navController)
+                    "Transactions" ->  ShowTransactionsData(loadTransactions = { transactionsViewModel.getGroupTransactionsFirestore(groupId) }, navController = navController)
                     "Balances" -> DisplayBalancesContent()
                 }
             }
@@ -196,13 +196,13 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowTransactionsData(
-    loadGTransactions: suspend () -> DataRequestWrapper<MutableList<Transaction>, String, Exception>,
+    loadTransactions: suspend () -> DataRequestWrapper<MutableList<Transaction>, String, Exception>,
     navController: NavController
 ) {
     val transactionsData = produceState<DataRequestWrapper<MutableList<Transaction>, String, Exception>>(
         initialValue = DataRequestWrapper(state = "loading")
     ) {
-        value = loadGTransactions()
+        value = loadTransactions()
     }.value
 
     if (transactionsData.state == "loading") {
@@ -245,7 +245,7 @@ fun ShowTransactionsData(
                                 Spacer(modifier = Modifier.weight(0.25f))
                                 Text((data.name).toUppercaseFirstLetter(), modifier = Modifier.weight(0.5f), color = NewWhiteFontColor)
                                 Spacer(modifier = Modifier.weight(0.5f))
-                                Text("Amount", color = NewWhiteFontColor)
+                                Text(data.amount.toString() + "€", color = NewWhiteFontColor)
                             }
                             /*Row(modifier = Modifier.fillMaxWidth()) {
                                 Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Left)
@@ -266,65 +266,6 @@ fun ShowTransactionsData(
         Text(text = "no transactions found")
     }
 }
-
-/*@Composable
-fun DisplayTransactionsContent() {
-    val transactions = listOf(
-        DCTransaction(
-            name = "Ausflug",
-            amount = 50.0,
-            payedBy = mutableListOf(User("Alice", 20.0)),
-            containedUsers = mutableListOf(User("Bob", 30.0), User("Marie", 50.0))
-        ),
-        DCTransaction(
-            name = "Einkauf",
-            amount = 75.0,
-            payedBy = mutableListOf(User("Bob", 30.0)),
-            containedUsers = mutableListOf(User("Alice", 20.0))
-        ),
-        DCTransaction(
-            name = "Party",
-            amount = 100.0,
-            payedBy = mutableListOf(User("Alice", 20.0)),
-            containedUsers = mutableListOf(User("Bob", 30.0))
-        )
-    )
-
-    LazyColumn(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        items(transactions) { transaction ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Place,
-                    contentDescription = "Icon",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .padding(8.dp)
-                )
-
-                Text(
-                    text = transaction.name,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 12.dp)
-                )
-
-                Text(
-                    text = transaction.amount.toString(),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 12.dp)
-
-                )
-            }
-        }
-    }
-}*/
 
 @Composable
 fun DisplayBalancesContent() {

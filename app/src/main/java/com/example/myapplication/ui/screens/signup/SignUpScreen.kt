@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screens.singup
+package com.example.myapplication.ui.screens.signup
 //import androidx.compose.foundation.background
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

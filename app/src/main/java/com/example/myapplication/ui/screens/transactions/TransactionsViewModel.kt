@@ -4,6 +4,7 @@ import com.example.myapplication.data.repository.FirestoreRepository
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
+import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,4 +15,10 @@ class TransactionsViewModel @Inject constructor(private val firestoreRepository:
     suspend fun getGroupTransactionsFirestore(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
         return firestoreRepository.getTransactionsGroup(groupId)
     }
+
+    /*suspend fun getUsersByGroupFirestore(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception>{
+        return firestoreRepository.getUsersByGroup(groupId)
+
+
+    }*/
 }

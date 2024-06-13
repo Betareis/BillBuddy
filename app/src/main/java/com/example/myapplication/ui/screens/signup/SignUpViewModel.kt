@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screens.singup
+package com.example.myapplication.ui.screens.signup
 
 import com.example.myapplication.ui.screens.FetchingState
 import android.util.Log

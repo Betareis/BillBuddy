@@ -15,9 +15,9 @@ import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.BalancesScreen
 import com.example.myapplication.ui.screens.EditTransactionScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
-import com.example.myapplication.ui.screens.NewEntryScreen
+import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.ProfileScreen
-import com.example.myapplication.ui.screens.singup.SignUpScreen
+import com.example.myapplication.ui.screens.signup.SignUpScreen
 import com.example.myapplication.ui.screens.transactions.TransactionsScreen
 import com.example.myapplication.ui.screens.TransactionInfoScreen
 
