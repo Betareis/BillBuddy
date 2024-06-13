@@ -150,24 +150,23 @@ android {
 
 dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.6.7")
-    val lifecycle_version = "2.8.0"
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation:1.6.7")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1")
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     val nav_version = "2.7.7"
@@ -190,12 +189,13 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     // Kotlin Standard Library
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.24")
 
     // Add the Compose Compiler dependency explicitly
     implementation("androidx.compose.compiler:compiler:1.5.14") // Update this to the latest compatible version

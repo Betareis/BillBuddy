@@ -7,46 +7,36 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import com.example.myapplication.data.model.Group
-import com.example.myapplication.data.model.Groups
 import com.example.myapplication.data.model.Transaction
-import com.example.myapplication.data.model.Transactions
-import kotlin.math.log
+import com.example.myapplication.data.model.User
+import com.google.firebase.auth.FirebaseAuth
 
 class FirestoreRepository @Inject constructor() {
 
     private val firestore = FirebaseFirestore.getInstance()
-    //private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
-    suspend fun getGroupByName(): DataRequestWrapper<Group, String, Exception>{
-        val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
-        val groupRef = FirebaseFirestore.getInstance().collection("groups").document(groupId)
+    /*QUERIES*/
+    suspend fun getTransactionsGroup(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
 
-        val transactionsRef = groupRef.collection("transactions")
-        val transactions = Transactions();
-        transactionsRef.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot.documents) {
-                val transactionId = document.id
-                //val payerId = document["payerId"] as String
-                //val payeeId = document["payeeId"] as String
-                val name = document["name"] as String
-                val amount = document["amount"] as Double
-                //val timestamp = document["timestamp"] as Long
 
-                Log.d("DAATA", name)
+        val result = firestore.collection("groups").document(groupId).collection("transactions")
+            .get()
+            .await()
 
-                transactions.add(Transaction(name, amount))
-                // Process transaction data
-            }
-        }
+        val transactions = result.documents.map { document ->
+            val name = document.getString("name") ?: ""
+            val id = document.id;
+            val amount = document.getDouble("amount") ?: 0.0
+            // Access transactions subcollection (assuming it exists)
+            Transaction(name, amount)
+        }.toMutableList()
 
-        Log.d("TAG", "GroupId: " + transactions.size)
-
-        return DataRequestWrapper(data = Group(name = groupRef.id, transactions))
+        return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
     }
 
-
-    suspend fun getGroups(): DataRequestWrapper<Groups, String, Exception> {
+    suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
         val result = firestore.collection("groups")
@@ -57,7 +47,7 @@ class FirestoreRepository @Inject constructor() {
 
         val groups = result.documents.map { document ->
             val name = document.getString("name") ?: ""
-
+            val id = document.id;
             // Access transactions subcollection (assuming it exists)
 
             val transactionsRef = document.reference.collection("transactions")
@@ -71,175 +61,136 @@ class FirestoreRepository @Inject constructor() {
                 emptyList() // Return empty list on error
             }
 
-            Log.d("DATTA", "DATA: " + Transactions(transactions.toMutableList()).toString())
+            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
 
             // Create Group object with retrieved transactions
-            Group(name, transactions)
+            Group(id, name, transactions)
         }.toMutableList()
 
 
-        //val groupId = "2gQ9AzCpEI8jCdEg4Ezw" // Replace with your actual groupId
-        //val groupRef = FirebaseFirestore.getInstance().collection("groups").document(groupId).collection("transaction")
-
-        ///groups/2gQ9AzCpEI8jCdEg4Ezw/transactions
-        /*val result2 = firestore.collection("transactions")
-            .get()
-            .await()
-        */
-
-        //Log.d("SIZE", result2.size().toString())
-
-        /*val transactions_data = result2.documents.map { document ->
-
-            val name = document.getString("name") ?: ""
-            val amount = document.get("amount") as Number
-
-            Transaction(name, amount)
-        }.toMutableList()
-
-        Log.d("DABA", Transactions(transactions_data).toString())
-*/
-
-
-
-        return DataRequestWrapper(Groups(groups), "", null) // Assuming DataRequestWrapper structure
+        return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
 
-    /*suspend fun getGroups(): DataRequestWrapper<Groups, String, Exception> {
-        val result = firestore.collection("groups")
-            .get()
-            .await()
+    /********************************************* MUTATIONS CREATE ****************************************************************************/
 
-        val groups = result.documents.map { document ->
-            val name = document.getString("name") ?: ""
-
-            val transactionsRefArray = document.get("transactions")
+    //TODO: Implemented here or directly in the formComponent
+    suspend fun createUser(user: User){}
 
 
-            val transactions = try {
-                 (transction in transactionsRefArray)
+    /*Todo: groupId is autogenerated by firestore, maybe remove the groupId in this method or
+       create a new data class without groupId*/
+     suspend fun createGroup(groupData: Map<String, Any>): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            //val auth = FirebaseAuth.getInstance()
+            //val currentUser = auth.currentUser
+            val db = FirebaseFirestore.getInstance()
+            //if (currentUser != null) {
+            //val userId = currentUser.uid
 
-                }
-            } catch (e: Exception) {
-                Log.d("TEST_C", "Fehler!!!")
-                // Handle potential error during transaction retrieval (or if no subcollection exists)
-                emptyList() // Return empty list if error or no subcollection
-            }
+            val groupDocumentRef = db.collection("groups")
+
+            val newGroupDocumentRef = groupDocumentRef.document()
+
+            /*val dataWithTransactions = hashMapOf<String, Any>(
+                "transactions" to hashMapOf<String, Any>(),
+                **groupData** // Spread existing group data
+            )*/
 
 
-            /*val transactions = try {
-                val querySnapshot = transactionsRef.get().await() // Wait for transactions retrieval (if exists)
-                querySnapshot.documents.map { transactionDoc ->
-                    // Access transaction data from transactionDoc
-                    val transactionName = transactionDoc.getString("name") ?: ""
-                    val transactionAmount = transactionDoc.getDouble("amount") ?: 0.0
+            //Todo: should be checked
+            newGroupDocumentRef.set(groupData).await()
 
-                    Log.d("TAG", "Transaction: " + Transaction(transactionName, transactionAmount).toString())
-                    Transaction(transactionName, transactionAmount)
-                }
-            } catch (e: Exception) {
-                Log.d("TEST_C", "Fehler!!!")
-                // Handle potential error during transaction retrieval (or if no subcollection exists)
-                emptyList() // Return empty list if error or no subcollection
+            DataRequestWrapper(data = Unit)
+            /*} else {
+                throw Exception("User ID is null.")
             }*/
-            //Log.d("TEST", Group(name, transactions).toString() + "size transactions array: " + transactions.size)
+        } catch (e: Exception) {
+            Log.d("ADD_GROUP_RESPONSE", e.stackTraceToString())
+            DataRequestWrapper(exception = e)
+        }
+    }
 
-            Group(name, transactions)
-        }.toMutableList()
+     suspend fun createTransactionForGroup(groupId: String, transactionData: HashMap<String, Any>): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            //val auth = FirebaseAuth.getInstance()
+            //val currentUser = auth.currentUser
 
-        Log.d("TAG", "data: " + groups.toString())
+            val db = FirebaseFirestore.getInstance()
 
-        return DataRequestWrapper(data = Groups(groups))
+            //if (currentUser != null) {
+                //val userId = currentUser.uid
 
-        //return Groups(groups) // Handle potential errors
+                val groupDocumentRef = db.collection("groups").document(groupId)
+
+                val transactionCollectionRef = groupDocumentRef.collection("transactions")
+                val newTransactionDocumentRef = transactionCollectionRef.document()
+
+                //Todo: should be checked
+                newTransactionDocumentRef.set(transactionData).await()
+
+                DataRequestWrapper(data = Unit)
+            /*} else {
+                throw Exception("User ID is null.")
+            }*/
+        } catch (e: Exception) {
+            Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
+            DataRequestWrapper(exception = e)
+        }
+    }
+
+
+    /********************************************* MUTATIONS UPDATE ****************************************************************************/
+
+    //Todo: Update debts for members of specific transaction
+
+    /*private suspend fun updateBalanceOfUserInGroup(groupId: String, transactionData: Transaction): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            //val auth = FirebaseAuth.getInstance()
+            //val currentUser = auth.currentUser
+
+            val db = FirebaseFirestore.getInstance()
+
+            //if (currentUser != null) {
+            //val userId = currentUser.uid
+
+            val groupDocumentRef = db.collection("groups").document(groupId)
+
+            val transactionCollectionRef = groupDocumentRef.collection("transactions")
+            val newTransactionDocumentRef = transactionCollectionRef.document()
+
+            newTransactionDocumentRef.set(transactionData).await()
+
+            DataRequestWrapper(data = Unit)
+            /*} else {
+                throw Exception("User ID is null.")
+            }*/
+        } catch (e: Exception) {
+            Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
+            DataRequestWrapper(exception = e)
+        }
     }*/
 
+    /********************************************* MUTATIONS DELETE ****************************************************************************/
 
-    /*suspend fun getGroupsFirestore(): DataRequestWrapper<Groups, String, Exception> {
-        val result = firestore.collection("groups")
-            .get()
-            .await()
+    suspend fun deleteTransactionGroup(groupId: String, transactionId: String): DataRequestWrapper<Unit, String, Exception> {
+        val userId = auth.currentUser?.uid
+        return try {
+            if (userId != null) {
+                firestore.collection("groups")
+                    .document(groupId)
+                    .collection("transactions")
+                    .document(transactionId)
+                    .delete()
+                    .await()
 
-        val groups = result.documents.map { document ->
-            val name = document.getString("name") ?: ""
-            val transactionsRef = document.reference.collection("transactions")
-
-
-            val groupWithTransactions = transactionsRef.get()
-                .addOnSuccessListener { querySnapshot ->
-                    querySnapshot.documents.map { transactionDoc ->
-                        // Access transaction data from transactionDoc
-                        val transactionName = transactionDoc.getString("name") ?: ""
-                        val transactionAmount = transactionDoc.getDouble("amount") ?: 0.0
-                        Transaction(transactionName, transactionAmount)
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Group("")
-                }
-
-
-            Log.d("TAG", "DATA: " + groupWithTransactions.result.toString())
-
-
-
-            Group(name, emptyList()) // Placeholder for transactions
-        }.toMutableList()
-
-        return DataRequestWrapper(data = Groups(groups))
-
-        //Groups(groups) // Handle potential errors
-    }*/
-
-
-
-    //Group Operations
-    /*suspend fun getGroupsFirestore(): DataRequestWrapper<Groups, String, Exception> {
-        val response =
-            try {
-                    val result = firestore.collection("groups")
-                        .get()
-                        .await()
-
-                val groups = result.documents.map { document ->
-                    val name = document.getString("name") ?: ""
-                    val transactionsbla = document.get("transactions", Transactions::class.java) ?: Transactions()
-                    //Log.d("TAG", "DATA: " + transactions.size.toString())
-
-                    val transactionsRef = document.reference.collection("transactions")
-
-                    var GroupCopy = Group()
-
-                    val test = transactionsRef.get()
-                        .addOnSuccessListener { querySnapshot ->
-                            val transactions = querySnapshot.documents.map { transactionDoc ->
-                                // Access transaction data from transactionDoc (assuming a Transaction class exists)
-                                val transactionName = transactionDoc.getString("name") ?: ""
-                                val transactionAmount = transactionDoc.getDouble("amount") ?: 0.0
-                                Transaction(transactionName, transactionAmount)
-                            }
-                            Group(name, transactions)
-                            // ... proceed with group data
-                        }
-                        .addOnFailureListener { exception ->
-                            // Handle error retrieving transactions
-                        }
-
-                    Log.d("TAG", "DATA: " + test.result.)
-
-                    Log.d("TAG", "DATA1: " + name)
-
-                    Group(name, transactionsbla)
-                }.toMutableList()
-
-
-                Groups(groups)
-            } catch (e: Exception) {
-                Log.d("RESPONSE", e.stackTraceToString())
-                return DataRequestWrapper(exception = e)
+                DataRequestWrapper(data = Unit) // Successfully deleted
+            } else {
+                throw Exception("groupId or transactionId is null.")
             }
-
-        return DataRequestWrapper(data = response)
-    }*/
+        } catch (e: Exception) {
+            Log.d("DELETE_RESPONSE", e.stackTraceToString())
+            DataRequestWrapper(exception = e)
+        }
+    }
 }
