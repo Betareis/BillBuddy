@@ -42,9 +42,28 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
         composable(AvailableScreens.GroupsScreen.name) {
             GroupsScreen(navController)
         }
-        composable(AvailableScreens.NewEntryScreen.name) {
-            NewEntryScreen(navController)
+
+        composable(
+            "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}",
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.StringType
+                },
+            )
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+
+            Log.d("NavigationArgs", "groupId $groupId")
+
+            if (groupId != null) {
+                NewEntryScreen(navController, groupId)
+            }
         }
+
+
+        /*composable(AvailableScreens.NewEntryScreen.name) {
+            NewEntryScreen(navController)
+        }*/
         composable(AvailableScreens.ProfileScreen.name) {
             ProfileScreen(navController)
         }

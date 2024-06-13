@@ -53,6 +53,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.clip
+import androidx.lifecycle.liveData
 
 import com.example.myapplication.ui.theme.MainButtonColor
 
@@ -106,7 +107,7 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                                 "name" to "Test",
                             )
                             //Todo: Not working right now
-                            //groupViewModel.addGroup(flatGroupData)
+                            groupViewModel.addGroup(flatGroupData)
                         }
                     }
                 ) {

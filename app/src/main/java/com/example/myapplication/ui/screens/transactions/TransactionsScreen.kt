@@ -181,18 +181,12 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                     .clip(RoundedCornerShape(80))
                     .padding(8.dp),
                 onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val flatGroupData = mapOf(
-                            "name" to "Test",
-                        )
-                        //Todo: Not working right now
-                        //groupViewModel.addGroup(flatGroupData)
-                    }
+                    navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
                 }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add a Group" // Provide a description for accessibility
+                    contentDescription = "Add a Transaction" // Provide a description for accessibility
                 )
             }
         }
@@ -269,7 +263,7 @@ fun ShowTransactionsData(
         }*/
 
     } else {
-        Text(text = "no groups found")
+        Text(text = "no transactions found")
     }
 }
 

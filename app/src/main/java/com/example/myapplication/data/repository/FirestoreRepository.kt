@@ -84,15 +84,19 @@ class FirestoreRepository @Inject constructor() {
         return try {
             //val auth = FirebaseAuth.getInstance()
             //val currentUser = auth.currentUser
-
             val db = FirebaseFirestore.getInstance()
-
             //if (currentUser != null) {
             //val userId = currentUser.uid
 
             val groupDocumentRef = db.collection("groups")
 
             val newGroupDocumentRef = groupDocumentRef.document()
+
+            /*val dataWithTransactions = hashMapOf<String, Any>(
+                "transactions" to hashMapOf<String, Any>(),
+                **groupData** // Spread existing group data
+            )*/
+
 
             //Todo: should be checked
             newGroupDocumentRef.set(groupData).await()
@@ -107,7 +111,7 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
-     suspend fun createTransactionForGroup(groupId: String, transactionData: Transaction): DataRequestWrapper<Unit, String, Exception> {
+     suspend fun createTransactionForGroup(groupId: String, transactionData: HashMap<String, Any>): DataRequestWrapper<Unit, String, Exception> {
         return try {
             //val auth = FirebaseAuth.getInstance()
             //val currentUser = auth.currentUser
