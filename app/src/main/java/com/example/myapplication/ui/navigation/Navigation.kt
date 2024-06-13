@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.BalancesScreen
 import com.example.myapplication.ui.screens.EditTransactionScreen
+import com.example.myapplication.ui.screens.MoreScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
 import com.example.myapplication.ui.screens.NewEntryScreen
 import com.example.myapplication.ui.screens.ProfileScreen
@@ -26,7 +27,7 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
     val navController: NavHostController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AvailableScreens.GroupsScreen.name,
+        startDestination = AvailableScreens.MoreScreen.name,
         modifier = Modifier.padding(innerPaddingValues)
     )
     {
@@ -69,6 +70,9 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
         }
         composable(AvailableScreens.SignUpScreen.name) {
             SignUpScreen(navController)
+        }
+        composable(AvailableScreens.MoreScreen.name) {
+            MoreScreen(navController)
         }
 
         //Todo: Should be remove in production
