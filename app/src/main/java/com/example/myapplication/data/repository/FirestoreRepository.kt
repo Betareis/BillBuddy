@@ -16,7 +16,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 class FirestoreRepository @Inject constructor() {
-
     private val firestore = FirebaseFirestore.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
