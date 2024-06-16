@@ -4,7 +4,7 @@ package com.example.myapplication.ui.screens.newentry
 import com.example.myapplication.data.repository.FirestoreRepository
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.example.myapplication.domain.AddTransactionUseCase
+import com.example.myapplication.domain.transactionManagement.AddTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

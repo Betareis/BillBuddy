@@ -1,9 +1,8 @@
-package com.example.myapplication.domain
+package com.example.myapplication.domain.transactionManagement
 
 import androidx.core.text.isDigitsOnly
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.example.myapplication.ui.screens.newentry.isDouble
 import javax.inject.Inject
 
 
@@ -61,6 +60,9 @@ class AddTransactionUseCase @Inject constructor(private val firestoreRepository:
             )
         }
 
-        return firestoreRepository.createTransactionForGroup(groupId, convertMapValues(transactionData))
+        return firestoreRepository.createTransactionForGroup(
+            groupId,
+            convertMapValues(transactionData)
+        )
     }
 }
