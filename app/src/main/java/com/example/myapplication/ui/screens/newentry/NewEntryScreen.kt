@@ -78,6 +78,8 @@ fun NewEntryScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
 
+    var exceptionMessage by rememberSaveable { mutableStateOf("") }
+
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()
@@ -89,7 +91,7 @@ fun NewEntryScreen(
             modifier = Modifier
                 .padding(3.dp)
         ) {
-            Text(text = groupId, color = Color.White)
+            Text(text = exceptionMessage, color = Color.White)
             OutlinedTextField(
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 value = name,
@@ -184,15 +186,32 @@ fun NewEntryScreen(
                         .background(MainButtonColor),// Set background color to blue
                     onClick = {
                         CoroutineScope(Dispatchers.Main).launch {
-                            if (amount.isNotEmpty() && isDouble(amount) && name.isNotEmpty()){
-                                val flatTransactionData = mapOf(
+                            val result = newEntryViewModel.addTransactionForGroup(
+                                groupId, mapOf(
+                                    "name" to name,
+                                    "amount" to amount
+                                )
+                            )
+
+                            if (result.exception != null) {
+                                exceptionMessage =
+                                    result.exception!!.message.toString()
+                            } else navController.popBackStack()
+
+
+                            /*if (isDouble(amount)){
+                                /*val flatTransactionData = mapOf(
                                     "amount" to amount.toDouble(),
                                     "name" to name
-                                )
+                                )*/
                                 //Todo: Not working right now
-                                newEntryViewModel.addTransactionForGroup(groupId, flatTransactionData)
-                                navController.popBackStack()
-                            }
+                                val result = newEntryViewModel.addTransactionForGroup(groupId, flatTransactionData)
+
+                                if (result.exception != null){
+                                    exceptionMessage = result.exception!!.message.toString()
+                                }
+                                }
+                             */
                         }
                     }
                 ) {

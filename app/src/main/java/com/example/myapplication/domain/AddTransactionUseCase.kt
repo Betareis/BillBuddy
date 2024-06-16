@@ -1,27 +1,66 @@
 package com.example.myapplication.domain
 
+import androidx.core.text.isDigitsOnly
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
+import com.example.myapplication.ui.screens.newentry.isDouble
 import javax.inject.Inject
 
+
+fun convertMapValues(transactionData: Map<String, Any>): Map<String, Any> {
+    return mapOf<String, Any>(
+        "name" to transactionData["name"].toString(),
+        "amount" to transactionData["amount"].toString().toDouble()
+    )
+}
+
+
 class AddTransactionUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {
-    suspend operator fun invoke(groupId: String, transactionData: Map<String, Any>): DataRequestWrapper<Unit, String, Exception> {
+    suspend operator fun invoke(
+        groupId: String,
+        transactionData: Map<String, Any>
+    ): DataRequestWrapper<Unit, String, Exception> {
         if (groupId.isBlank()) {
             return DataRequestWrapper(null, null, Exception("Group cannot be found"))
             //throw Exception("Group cannot be found")
-        }
-        if (transactionData["name"].toString().isEmpty() && transactionData["amount"].toString().isEmpty()) {
+        } else if (transactionData["name"].toString()
+                .isBlank() && transactionData["amount"].toString().isBlank()
+        ) {
             //throw Exception("Please fill out the form")
             return DataRequestWrapper(null, null, Exception("Please fill out the form"))
         }
-        if (transactionData["name"].toString().isEmpty()) {
+
+        //Todo: maybe no special characters and numbers
+        else if (transactionData["name"].toString().isBlank() || transactionData["name"].toString()
+                .isDigitsOnly()
+        ) {
             //throw Exception("Please enter a transaction name")
-            return DataRequestWrapper(null, null, Exception("Please enter a transaction name"))
+            return DataRequestWrapper(
+                null,
+                null,
+                Exception("Please enter a valid transaction name")
+            )
         }
-        if (transactionData["amount"].toString().isEmpty()) {
-            //throw Exception("Please enter a discovery date in the past")
-            return DataRequestWrapper(null, null, Exception("Please enter a transaction amount"))
+
+        //! Try catch, because toDouble or isDouble cannot directly used in if conditions without causing the app to crash
+
+        try {
+            val amountDouble = transactionData["amount"].toString().trim().toDoubleOrNull()
+            if (transactionData["amount"].toString().isBlank() || amountDouble == null) {
+                return DataRequestWrapper(
+                    null,
+                    null,
+                    Exception("Please enter a valid transaction amount")
+                )
+            }
+        } catch (e: Exception) {
+            return DataRequestWrapper(
+                null,
+                null,
+                Exception("Please enter a valid transaction amount")
+            )
         }
-        return firestoreRepository.createTransactionForGroup(groupId, transactionData)
+
+        return firestoreRepository.createTransactionForGroup(groupId, convertMapValues(transactionData))
     }
 }

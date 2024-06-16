@@ -1,4 +1,7 @@
 package com.example.myapplication.domain
 
-class UpdateGroupUsersBalance {
+import com.example.myapplication.data.repository.FirestoreRepository
+import javax.inject.Inject
+
+class UpdateGroupUsersBalance @Inject constructor(private val firestoreRepository: FirestoreRepository) {
 }
