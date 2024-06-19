@@ -58,43 +58,30 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun TransactionsScreen(navController: NavController, groupId: String, groupName: String, transactionsViewModel: TransactionsViewModel = hiltViewModel()) {
+fun TransactionsScreen(
+    navController: NavController,
+    groupId: String,
+    groupName: String,
+    transactionsViewModel: TransactionsViewModel = hiltViewModel()
+) {
     var selectedChoice by remember {
         mutableStateOf("Transactions")
     }
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "TransactionsScreen", color = Color.Black)
-
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CenterAlignedTopAppBar(
-                navigationIcon = {
-                    IconButton(
-                        modifier = Modifier
-                            .then(Modifier.testTag("backArrow")),
-                        onClick = {
-                            navController.navigate(AvailableScreens.GroupsScreen.name)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = "ArrowBack"
-                        )
-                    }
-                },
-                title = { Text(groupName) },
-            )
-
+            TransactionsScreenBar(navController, groupName)
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -103,15 +90,11 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                 ) {
                     Button(
                         onClick = { selectedChoice = "Transactions" },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(0.dp))
-                            .background(Color.Transparent)
-                            .height(35.dp)
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(0.dp))
+                            .background(Color.Transparent).height(35.dp)
                             .then(Modifier.testTag("transactionsTab")),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Color.White
+                            containerColor = Color.Transparent, contentColor = Color.White
                         ),
                         border = BorderStroke(0.dp, Color.Transparent),
                     ) {
@@ -123,9 +106,7 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                     }
 
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
+                        modifier = Modifier.fillMaxWidth().height(2.dp)
                             .background(if (selectedChoice == "Transactions") Color.Black else Color.LightGray)
                     )
                 }
@@ -135,15 +116,11 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                 ) {
                     Button(
                         onClick = { selectedChoice = "Balances" },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(0.dp))
-                            .background(Color.Transparent)
-                            .height(35.dp)
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(0.dp))
+                            .background(Color.Transparent).height(35.dp)
                             .then(Modifier.testTag("balancesTab")),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Color.Black
+                            containerColor = Color.Transparent, contentColor = Color.Black
                         ),
                         border = BorderStroke(0.dp, Color.Transparent),
                     ) {
@@ -155,16 +132,19 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
                     }
 
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
+                        modifier = Modifier.fillMaxWidth().height(1.dp)
                             .background(if (selectedChoice == "Balances") Color.Black else Color.LightGray)
                     )
                 }
             }
-            Box(modifier = Modifier.padding(top = 20.dp)){
+            Box(modifier = Modifier.padding(top = 20.dp)) {
                 when (selectedChoice) {
-                    "Transactions" ->  ShowTransactionsData(loadTransactions = { transactionsViewModel.getGroupTransactionsFirestore(groupId) }, navController = navController)
+                    "Transactions" -> ShowTransactionsData(loadTransactions = {
+                        transactionsViewModel.getGroupTransactionsFirestore(
+                            groupId
+                        )
+                    }, navController = navController, groupId = groupId)
+
                     "Balances" -> DisplayBalancesContent()
                 }
             }
@@ -174,16 +154,11 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(bottom = 100.dp).fillMaxSize()
         ) {
-            IconButton(
-                modifier = Modifier
-                    .size(50.dp) // Adjust size as needed
-                    .background(MainButtonColor)// Set background color to blue
-                    .clip(RoundedCornerShape(80))
-                    .padding(8.dp),
-                onClick = {
-                    navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
-                }
-            ) {
+            IconButton(modifier = Modifier.size(50.dp) // Adjust size as needed
+                .background(MainButtonColor)// Set background color to blue
+                .clip(RoundedCornerShape(80)).padding(8.dp), onClick = {
+                navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
+            }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add a Transaction" // Provide a description for accessibility
@@ -193,17 +168,38 @@ fun TransactionsScreen(navController: NavController, groupId: String, groupName:
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransactionsScreenBar(navController: NavController, groupName: String) {
+    CenterAlignedTopAppBar(
+        navigationIcon = {
+            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+                navController.navigate(AvailableScreens.GroupsScreen.name)
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.ArrowBack, contentDescription = "ArrowBack"
+                )
+            }
+        },
+        title = { Text(groupName) },
+    )
+}
+
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowTransactionsData(
     loadTransactions: suspend () -> DataRequestWrapper<MutableList<Transaction>, String, Exception>,
-    navController: NavController
+    navController: NavController,
+    groupId: String
 ) {
-    val transactionsData = produceState<DataRequestWrapper<MutableList<Transaction>, String, Exception>>(
-        initialValue = DataRequestWrapper(state = "loading")
-    ) {
-        value = loadTransactions()
-    }.value
+    val transactionsData =
+        produceState<DataRequestWrapper<MutableList<Transaction>, String, Exception>>(
+            initialValue = DataRequestWrapper(state = "loading")
+        ) {
+            value = loadTransactions()
+        }.value
 
     if (transactionsData.state == "loading") {
         Text(text = "Transactions screen")
@@ -211,8 +207,7 @@ fun ShowTransactionsData(
     } else if (transactionsData.data != null && transactionsData.data!!.isNotEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopStart
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 for (data in transactionsData.data!!) {
@@ -222,9 +217,14 @@ fun ShowTransactionsData(
                                 //${Uri.encode(data.id)
                                 //navController.navigate(AvailableScreens.ProfileScreen.name)
                                 //navController.navigate(AvailableScreens.TransactionsScreen.name)
-                                //navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupName=${data.id}")
+                                navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${data.id}&transactionName=${data.name}")
                             },
-                            colors = ButtonColors(contentColor = NewWhiteFontColor, containerColor = ListElementBackgroundColor, disabledContentColor = Color.LightGray, disabledContainerColor = Color.LightGray),
+                            colors = ButtonColors(
+                                contentColor = NewWhiteFontColor,
+                                containerColor = ListElementBackgroundColor,
+                                disabledContentColor = Color.LightGray,
+                                disabledContainerColor = Color.LightGray
+                            ),
                             modifier = Modifier
                                 .padding(start = 15.dp, end = 15.dp)
                                 .fillMaxWidth()
@@ -243,11 +243,14 @@ fun ShowTransactionsData(
                             ) {
                                 Text("Icon!!", color = NewWhiteFontColor)
                                 Spacer(modifier = Modifier.weight(0.25f))
-                                Text((data.name).toUppercaseFirstLetter(), modifier = Modifier.weight(0.5f), color = NewWhiteFontColor)
+                                Text(
+                                    (data.name).toUppercaseFirstLetter(),
+                                    modifier = Modifier.weight(0.5f),
+                                    color = NewWhiteFontColor
+                                )
                                 Spacer(modifier = Modifier.weight(0.5f))
                                 Text(data.amount.toString() + "€", color = NewWhiteFontColor)
-                            }
-                            /*Row(modifier = Modifier.fillMaxWidth()) {
+                            }/*Row(modifier = Modifier.fillMaxWidth()) {
                                 Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Left)
                                 //Spacer(modifier = Modifier.width(100.dp))
                                 Text((data.name).toUppercaseFirstLetter(), color = NewWhiteFontColor, textAlign = TextAlign.Right)

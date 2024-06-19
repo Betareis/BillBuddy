@@ -20,7 +20,7 @@ class FirestoreRepository @Inject constructor() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     /*QUERIES*/
-    
+
     suspend fun getTransactionsGroup(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
 
 
@@ -33,7 +33,7 @@ class FirestoreRepository @Inject constructor() {
             val id = document.id;
             val amount = document.getDouble("amount") ?: 0.0
             // Access transactions subcollection (assuming it exists)
-            Transaction(name, amount)
+            Transaction(name = name, id = id, amount = amount)
         }.toMutableList()
 
         return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure

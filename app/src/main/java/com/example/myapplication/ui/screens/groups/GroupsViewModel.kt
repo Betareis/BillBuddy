@@ -6,6 +6,7 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+
 @HiltViewModel
 class GroupsViewModel @Inject constructor(private val firestoreRepository: FirestoreRepository) :
     ViewModel() {
@@ -14,7 +15,7 @@ class GroupsViewModel @Inject constructor(private val firestoreRepository: Fires
         return firestoreRepository.getGroups()
     }
 
-    suspend fun addGroup(groupData: Map<String, Any>) : DataRequestWrapper<Unit, String, Exception> {
+    suspend fun addGroup(groupData: Map<String, Any>): DataRequestWrapper<Unit, String, Exception> {
         return firestoreRepository.createGroup(groupData)
     }
 }
