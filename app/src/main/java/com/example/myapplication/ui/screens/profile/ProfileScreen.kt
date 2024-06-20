@@ -56,7 +56,6 @@ fun ProfileScreen(
 ) {
     Scaffold(
         contentColor = Color.Black,
-        topBar = {},
         bottomBar = { TabView(navController) }
     ) {
         Surface(
@@ -102,7 +101,7 @@ fun ShowData(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopStart
         ) {
-            Text(text = userData.data!!.displayName)
+            Text(text = userData.data!!.getDisplayName())
         }
     } else {
         Text(text = "no groups found")

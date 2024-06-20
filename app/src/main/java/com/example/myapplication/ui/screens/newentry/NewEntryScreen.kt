@@ -18,8 +18,10 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +29,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -109,11 +112,52 @@ fun NewEntryScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            val datePickerState = rememberDatePickerState(
+            /*val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = Instant.now().toEpochMilli()
-            )
+            )*/
 
-            DatePicker(
+
+            val datePickerState =
+                rememberDatePickerState(
+                    initialDisplayedMonthMillis = System.currentTimeMillis(),
+                    yearRange = 2000..2024
+                )
+            val showDatePicker = remember { mutableStateOf(false) }
+
+
+            Button(onClick = { showDatePicker.value = false}) {
+                Text(text = "Select Date")
+            }
+            val selectedDate = datePickerState.selectedDateMillis?.let {
+                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+            }
+
+
+            /*val selectedDate =
+                remember { mutableStateOf("") } // this will store whatever date the user selects*/
+            if (showDatePicker.value) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker.value = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = { showDatePicker.value = false },
+                            enabled = datePickerState.selectedDateMillis != null
+                        ) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker.value = false }) {
+                            Text(text = "Dismiss")
+                        }
+                    }) {
+                    //Setting the selected date
+                    //selectedDate.value = datePickerState.selectedDateMillis.toString()
+                    DatePicker(state = datePickerState)
+                }
+            }
+
+            /*DatePicker(
                 colors = DatePickerDefaults.colors(
                     containerColor = Color.Black,
                     titleContentColor = Color.LightGray,
@@ -136,11 +180,11 @@ fun NewEntryScreen(
                     dayInSelectionRangeContainerColor = Color.LightGray,
                 ),
                 state = datePickerState
-            )
+            )*/
 
-            val selectedDate = datePickerState.selectedDateMillis?.let {
+            /*val selectedDate = datePickerState.selectedDateMillis?.let {
                 Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-            }
+            }*/
 
 // Finally, to get the user value you could do something like this:
             Text(

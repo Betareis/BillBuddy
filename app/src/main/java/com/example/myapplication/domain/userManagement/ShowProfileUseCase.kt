@@ -29,7 +29,8 @@ class ShowProfileUseCase @Inject constructor() {
             return DataRequestWrapper(
                 User(
                     id = userData.id,
-                    displayName = userData["display_name"].toString()
+                    firstname = userData["firstname"].toString(),
+                    name = userData["name"].toString()
                 ), "", null
             )
         }
