@@ -27,16 +27,11 @@ import com.example.myapplication.ui.navigation.AvailableScreens
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionInfoScreen(
-    navController: NavController,
-    groupId: String,
-    transactionId: String,
-    transactionName: String
+    navController: NavController, groupId: String, transactionId: String, transactionName: String
 ) {
 
-    Scaffold(
-        contentColor = Color.Black,
-        topBar = { NavigationBarTransactionInfoScreen(navController, transactionName) }
-    ) {
+    Scaffold(contentColor = Color.Black,
+        topBar = { NavigationBarTransactionInfoScreen(navController, transactionName) }) {
         Surface(
             modifier = Modifier
                 .padding(top = 60.dp)
@@ -52,10 +47,7 @@ fun TransactionInfoScreen(
                     Text(text = transactionName, color = Color.Black)
                 }*/
                 NavigateEditTransactionScreenButton(
-                    navController,
-                    groupId,
-                    transactionId,
-                    transactionName
+                    navController, groupId, transactionId, transactionName
                 )
             }
         }
@@ -83,13 +75,9 @@ fun NavigationBarTransactionInfoScreen(navController: NavController, transaction
     )
 }
 
-
 @Composable
 fun NavigateEditTransactionScreenButton(
-    navController: NavController,
-    groupId: String,
-    transactionId: String,
-    transactionName: String
+    navController: NavController, groupId: String, transactionId: String, transactionName: String
 ) {
     Button(onClick = { navController.navigate("${AvailableScreens.EditTransactionScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}") }) {
         Text(text = "Edit Transaction XXX")
