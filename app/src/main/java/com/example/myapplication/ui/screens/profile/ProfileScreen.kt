@@ -56,7 +56,8 @@ fun ProfileScreen(
 ) {
     Scaffold(
         contentColor = Color.Black,
-        topBar = {}
+        topBar = {},
+        bottomBar = { TabView(navController) }
     ) {
         Surface(
             modifier = Modifier

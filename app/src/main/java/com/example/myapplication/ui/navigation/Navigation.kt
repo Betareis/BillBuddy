@@ -13,11 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.BalancesScreen
-
 import com.example.myapplication.ui.screens.MoreScreen
-
 import com.example.myapplication.ui.screens.edittransaction.EditTransactionScreen
-
 import com.example.myapplication.ui.screens.groups.GroupsScreen
 import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.profile.ProfileScreen

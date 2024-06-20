@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.myapplication.domain.userManagement.LogoutUserUseCase
 import com.example.myapplication.ui.components.EmailInputField
 import com.example.myapplication.ui.components.PassInputField
 import com.example.myapplication.ui.navigation.AvailableScreens
@@ -95,6 +96,7 @@ fun OnSubmitFormButton(
             loginScreenViewModel.logUserIn(formData.username.value.trim(), formData.password.value.trim(),
                 onSuccess = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
+
                 }
             )
         }) {
