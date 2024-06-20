@@ -13,12 +13,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.BalancesScreen
-import com.example.myapplication.ui.screens.EditTransactionScreen
+
 import com.example.myapplication.ui.screens.MoreScreen
+
+import com.example.myapplication.ui.screens.edittransaction.EditTransactionScreen
+
 import com.example.myapplication.ui.screens.groups.GroupsScreen
-import com.example.myapplication.ui.screens.NewEntryScreen
-import com.example.myapplication.ui.screens.ProfileScreen
-import com.example.myapplication.ui.screens.singup.SignUpScreen
+import com.example.myapplication.ui.screens.newentry.NewEntryScreen
+import com.example.myapplication.ui.screens.profile.ProfileScreen
+import com.example.myapplication.ui.screens.signup.SignUpScreen
 import com.example.myapplication.ui.screens.transactions.TransactionsScreen
 import com.example.myapplication.ui.screens.TransactionInfoScreen
 
@@ -29,24 +32,47 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
         navController = navController,
         startDestination = AvailableScreens.MoreScreen.name,
         modifier = Modifier.padding(innerPaddingValues)
-    )
-    {
+    ) {
         composable(AvailableScreens.LoginScreen.name) {
             LoginScreen(navController = navController)
         }
         composable(AvailableScreens.BalancesScreen.name) {
             BalancesScreen(navController)
         }
-        composable(AvailableScreens.EditTransactionScreen.name) {
-            EditTransactionScreen(navController)
+
+        composable(
+            "${AvailableScreens.EditTransactionScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}",
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.StringType
+                },
+                navArgument("transactionId") {
+                    type = NavType.StringType
+                },
+                navArgument("transactionName") {
+                    type = NavType.StringType
+                },
+            )
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+            val transactionId = backStackEntry.arguments?.getString("transactionId")
+            val transactionName = backStackEntry.arguments?.getString("transactionName")
+
+            if (groupId != null && transactionId != null && transactionName != null) {
+                EditTransactionScreen(navController, groupId, transactionId, transactionName)
+            } else LoginScreen(navController = navController)
         }
+
+
+        /*composable(AvailableScreens.EditTransactionScreen.name) {
+            EditTransactionScreen(navController)
+        }*/
         composable(AvailableScreens.GroupsScreen.name) {
             GroupsScreen(navController)
         }
 
         composable(
-            "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}",
-            arguments = listOf(
+            "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}", arguments = listOf(
                 navArgument("groupId") {
                     type = NavType.StringType
                 },
@@ -82,27 +108,43 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
 
         composable(
             "${AvailableScreens.TransactionsScreen.name}/?groupId={groupId}&groupName={groupName}",
-            arguments = listOf(
-                navArgument("groupId") {
-                    type = NavType.StringType
-                },
-                navArgument("groupName") {
-                    type = NavType.StringType
-                }
-            )
+            arguments = listOf(navArgument("groupId") {
+                type = NavType.StringType
+            }, navArgument("groupName") {
+                type = NavType.StringType
+            })
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId")
             val groupName = backStackEntry.arguments?.getString("groupName")
 
-            Log.d("NavigationArgs", "groupId: $groupId, groupName: $groupName")
+            //Log.d("NavigationArgs", "groupId: $groupId, groupName: $groupName")
 
             if (groupId != null && groupName != null) {
                 TransactionsScreen(navController, groupId, groupName)
-            }
+            } else LoginScreen(navController = navController)
         }
 
-        composable(AvailableScreens.TransactionInfoScreen.name) {
-            TransactionInfoScreen(navController)
+        composable(
+            "${AvailableScreens.TransactionInfoScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}",
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.StringType
+                },
+                navArgument("transactionId") {
+                    type = NavType.StringType
+                },
+                navArgument("transactionName") {
+                    type = NavType.StringType
+                },
+            )
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+            val transactionId = backStackEntry.arguments?.getString("transactionId")
+            val transactionName = backStackEntry.arguments?.getString("transactionName")
+
+            if (groupId != null && transactionId != null && transactionName != null) {
+                TransactionInfoScreen(navController, groupId, transactionId, transactionName)
+            } else LoginScreen(navController = navController)
         }
     }
 }

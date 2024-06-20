@@ -27,13 +27,13 @@ import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 
-val _transaction: MutableList<Transaction> = listOf(
+/*val _transaction: MutableList<Transaction> = listOf(
     Transaction("", 200.4),
     Transaction("", .4),
     Transaction("", 200.4)
-).toMutableList()
+).toMutableList()*/
 
-@Composable
+/*@Composable
 fun TransactionsViewComponent(navController: NavController, /*transactions: Transactions*/){
 
     Box(
@@ -67,4 +67,4 @@ fun TransactionsViewComponent(navController: NavController, /*transactions: Tran
             }
         }
     }
-}
+}*/
