@@ -74,7 +74,7 @@ class FirestoreRepository @Inject constructor() {
         return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
-    suspend fun getUsersOfGroups(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
+    suspend fun getUsersOfGroup(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
         val users = mutableListOf<User>()
 
         try {

@@ -23,7 +23,7 @@ class NewEntryScreenViewModel @Inject constructor(
     suspend fun getUsersOfGroup(
         groupId: String
     ): DataRequestWrapper<MutableList<User>, String, Exception> {
-        return firestoreRepository.getUsersOfGroups(groupId)
+        return firestoreRepository.getUsersOfGroup(groupId)
     }
 }
 
