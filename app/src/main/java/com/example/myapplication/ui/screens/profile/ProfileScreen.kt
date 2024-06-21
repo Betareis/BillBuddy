@@ -51,13 +51,9 @@ import kotlin.contracts.contract
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ProfileScreen(
-    navController: NavController,
-    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
+    navController: NavController, profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        contentColor = Color.Black,
-        bottomBar = { TabView(navController) }
-    ) {
+    Scaffold(contentColor = Color.Black, bottomBar = { TabView(navController) }) {
         Surface(
             modifier = Modifier
                 .padding(top = 60.dp)
@@ -65,12 +61,12 @@ fun ProfileScreen(
             color = Color.White,
 
             ) {
-            Column(
+            /*Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = "Profile Screen")
-            }
+            }*/
 
             ShowData(
                 loadUserData = { profileScreenViewModel.getUserProfile() },
@@ -98,8 +94,7 @@ fun ShowData(
     } else if (userData.data != null) {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopStart
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
             Text(text = userData.data!!.getDisplayName())
         }

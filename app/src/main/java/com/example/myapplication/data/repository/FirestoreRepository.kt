@@ -10,6 +10,8 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,9 +26,9 @@ class FirestoreRepository @Inject constructor() {
     suspend fun getTransactionsGroup(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
 
 
-        val result = firestore.collection("groups").document(groupId).collection("transactions")
-            .get()
-            .await()
+        val result =
+            firestore.collection("groups").document(groupId).collection("transactions").get()
+                .await()
 
         val transactions = result.documents.map { document ->
             val name = document.getString("name") ?: ""
@@ -42,9 +44,7 @@ class FirestoreRepository @Inject constructor() {
     suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
-        val result = firestore.collection("groups")
-            .get()
-            .await()
+        val result = firestore.collection("groups").get().await()
 
         //Log.d("SIZE", result.size().toString())
 
@@ -74,10 +74,75 @@ class FirestoreRepository @Inject constructor() {
         return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
+    suspend fun getUsersOfGroups(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
+        val users = mutableListOf<User>()
+
+        try {
+            // Gruppe-Dokument abrufen
+            val groupDoc = firestore.collection("groups").document(groupId).get().await()
+            if (groupDoc.exists()) {
+                val members = groupDoc.get("users") as List<*>
+
+                // Benutzerinformationen für jede Benutzer-ID abrufen
+                for (userId in members) {
+                    val userDoc =
+                        firestore.collection("users").document(userId.toString()).get().await()
+                    if (userDoc.exists()) {
+                        val user = User(
+                            id = userDoc.id,
+                            firstname = userDoc.getString("firstname") ?: "",
+                            name = userDoc.getString("name") ?: "",
+                        )
+                        users.add(user)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Fehler beim Abrufen der Benutzer: ${e.message}")
+        }
+
+        return DataRequestWrapper(data = users)
+    }
+
+
+    /*suspend fun getUsersOfGroups(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
+        val data = firestore.collection("groups").document(groupId).get().await()
+
+
+
+        val userList = data.data?.get("users") as List<*>
+
+        val users = ArrayList<User>()
+
+        for (userId in userList) {
+            val user =
+                getUser(userId.toString(), firestore) // Replace with your user retrieval logic
+            if (user != null) {
+                users.add(user)
+            }
+        }
+
+        if (users.isEmpty()) {
+            return DataRequestWrapper(exception = Exception("No users in group"))
+
+
+        }
+
+        return DataRequestWrapper(data = users.toMutableList())
+    }
+
+    private suspend fun getUser(userId: String, firestore: FirebaseFirestore): User? {
+        return try {
+            firestore.collection("users").document(userId).get().await().toObject<User>()
+        } catch (e: Error) {
+            null;
+        }
+    }*/
+
 
     /********************************************* MUTATIONS CREATE ****************************************************************************/
 
-    //TODO: Implemented here or directly in the formComponent
+//TODO: Implemented here or directly in the formComponent
     suspend fun createUser(user: User) {}
 
 
@@ -104,8 +169,7 @@ class FirestoreRepository @Inject constructor() {
             //Todo: should be checked
             newGroupDocumentRef.set(groupData).await()
 
-            DataRequestWrapper(data = Unit)
-            /*} else {
+            DataRequestWrapper(data = Unit)/*} else {
                 throw Exception("User ID is null.")
             }*/
         } catch (e: Exception) {
@@ -115,8 +179,7 @@ class FirestoreRepository @Inject constructor() {
     }
 
     suspend fun createTransactionForGroup(
-        groupId: String,
-        transactionData: Map<String, Any>
+        groupId: String, transactionData: Map<String, Any>
     ): DataRequestWrapper<Unit, String, Exception> {
         return try {
             //val auth = FirebaseAuth.getInstance()
@@ -135,8 +198,7 @@ class FirestoreRepository @Inject constructor() {
             //Todo: should be checked
             newTransactionDocumentRef.set(transactionData).await()
 
-            DataRequestWrapper(data = Unit)
-            /*} else {
+            DataRequestWrapper(data = Unit)/*} else {
                 throw Exception("User ID is null.")
             }*/
         } catch (e: Exception) {
@@ -148,7 +210,7 @@ class FirestoreRepository @Inject constructor() {
 
     /********************************************* MUTATIONS UPDATE ****************************************************************************/
 
-    //Todo: Update debts for members of specific transaction
+//Todo: Update debts for members of specific transaction
 
     /*private suspend fun updateBalanceOfUserInGroup(groupId: String, transactionData: Transaction): DataRequestWrapper<Unit, String, Exception> {
         return try {
@@ -180,18 +242,13 @@ class FirestoreRepository @Inject constructor() {
     /********************************************* MUTATIONS DELETE ****************************************************************************/
 
     suspend fun deleteTransactionGroup(
-        groupId: String,
-        transactionId: String
+        groupId: String, transactionId: String
     ): DataRequestWrapper<Unit, String, Exception> {
         val userId = auth.currentUser?.uid
         return try {
             if (userId != null) {
-                firestore.collection("groups")
-                    .document(groupId)
-                    .collection("transactions")
-                    .document(transactionId)
-                    .delete()
-                    .await()
+                firestore.collection("groups").document(groupId).collection("transactions")
+                    .document(transactionId).delete().await()
 
                 DataRequestWrapper(data = Unit) // Successfully deleted
             } else {
