@@ -36,6 +36,38 @@ class FirestoreRepository @Inject constructor() {
         return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
     }
 
+    suspend fun getGroupsOfUser(): DataRequestWrapper<MutableList<Group>, String, Exception> {
+
+
+        val result = firestore.collection("groups").get().await()
+
+        val groups = result.documents.map { document ->
+            val name = document.getString("name") ?: ""
+            val id = document.id;
+            // Access transactions subcollection (assuming it exists)
+
+            val transactionsRef = document.reference.collection("transactions")
+
+
+            // Fetch transactions using the subcollection reference
+            val transactions = try {
+                transactionsRef.get().await().toObjects(Transaction::class.java) ?: emptyList()
+            } catch (e: Exception) {
+                Log.d("TEST_C", "Error retrieving transactions: ${e.message}")
+                emptyList() // Return empty list on error
+            }
+
+            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
+
+            // Create Group object with retrieved transactions
+            Group(id, name, transactions)
+        }.toMutableList()
+
+
+        return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
+    }
+
+
     suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
