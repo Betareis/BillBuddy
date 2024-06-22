@@ -35,13 +35,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 
 
 @Composable
 fun MoreScreen(navController: NavController) {
     Scaffold(
         contentColor = Color.Black,
-        bottomBar = { TabView(navController) }
+        bottomBar = { TabView(navController) },
+        //topBar = { BurgerMenuDrawer() },
     ) {paddingValues->
         Surface(
             modifier = Modifier
