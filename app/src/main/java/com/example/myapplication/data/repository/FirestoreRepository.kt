@@ -10,6 +10,7 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.toObject
 
 class FirestoreRepository @Inject constructor() {
     private val firestore = FirebaseFirestore.getInstance()
@@ -212,7 +213,7 @@ class FirestoreRepository @Inject constructor() {
 
     suspend fun createTransactionForGroup(
         groupId: String, transactionData: Map<String, Any>
-    ): DataRequestWrapper<Unit, String, Exception> {
+    ): DataRequestWrapper<Transaction, String, Exception> {
         return try {
             //val auth = FirebaseAuth.getInstance()
             //val currentUser = auth.currentUser
@@ -230,14 +231,47 @@ class FirestoreRepository @Inject constructor() {
             //Todo: should be checked
             newTransactionDocumentRef.set(transactionData).await()
 
-            DataRequestWrapper(data = Unit)/*} else {
-                throw Exception("User ID is null.")
-            }*/
+            val getTransaction = newTransactionDocumentRef.get().await()
+
+            Log.d("test_transaction", getTransaction.toString())
+            DataRequestWrapper(data = getTransaction.toObject<Transaction>())
         } catch (e: Exception) {
             Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
             DataRequestWrapper(exception = e)
         }
     }
+
+    private fun hasNonDoubleValues(map: Map<String, Any>): Boolean {
+        return map.any { (_, value) -> value !is Double }
+    }
+
+    suspend fun setSingleAmounts(
+        groupId: String, transactionId: String, singleAmountData: Map<String, Any>
+    ) {
+        if (hasNonDoubleValues(singleAmountData)) return;
+        try {
+            val groupDocumentRef = firestore.collection("groups").document(groupId)
+
+            val transactionDocumentRef =
+                groupDocumentRef.collection("transactions").document(transactionId)
+            val singleAmountCollectionRef = transactionDocumentRef.collection("singleAmount")
+
+            val batch = firestore.batch() // Create a batch write operation
+
+            singleAmountData.forEach { (key, value) ->
+                val docRef = singleAmountCollectionRef.document(key) // Reference to document
+                val data = mapOf<String, Any>(
+                    "amount" to value as Double   // Extract "amount" field as document value
+                )
+                batch.set(docRef, data) // Add data to the batch for each document
+            }
+
+
+        } catch (e: Exception) {
+            Log.d("Error Update Collection SingleAmount", e.stackTraceToString())
+        }
+    }
+
 
     suspend fun setBalanceForUserInGroup(
         userId: String, groupId: String, amount: Double

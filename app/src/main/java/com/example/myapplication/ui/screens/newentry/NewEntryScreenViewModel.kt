@@ -15,9 +15,9 @@ class NewEntryScreenViewModel @Inject constructor(
     private val addTransactionUseCase: AddTransactionUseCase
 ) : ViewModel() {
     suspend fun addTransactionForGroup(
-        groupId: String, transactionData: Map<String, Any>
+        groupId: String, transactionData: Map<String, Any>, singleAmountData: Map<String, Any>
     ): DataRequestWrapper<Unit, String, Exception> {
-        return addTransactionUseCase(groupId, transactionData)
+        return addTransactionUseCase(groupId, transactionData, singleAmountData)
     }
 
     suspend fun getUsersOfGroup(
