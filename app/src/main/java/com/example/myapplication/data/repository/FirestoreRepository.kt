@@ -1,7 +1,6 @@
 package com.example.myapplication.data.repository
 
 import android.util.Log
-import com.example.myapplication.data.model.Balance
 
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,12 +10,6 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
 
 class FirestoreRepository @Inject constructor() {
     private val firestore = FirebaseFirestore.getInstance()
@@ -104,6 +97,28 @@ class FirestoreRepository @Inject constructor() {
 
         return DataRequestWrapper(data = users)
     }
+
+    suspend fun getSingleAmount(
+        groupId: String, transactionId: String, userId: String
+    ): DataRequestWrapper<Double, String, Exception> {
+
+        return try {
+            // Gruppe-Dokument abrufen
+            val singleAmountDoc =
+                firestore.collection("groups").document(groupId).collection("transactions")
+                    .document(transactionId).collection("singleAmount").document(userId).get()
+                    .await()
+            if (singleAmountDoc.exists()) {
+                DataRequestWrapper(data = singleAmountDoc.getDouble("amount"))
+            } else {
+                DataRequestWrapper(exception = Exception("Document does not exist"))
+            }
+        } catch (e: Exception) {
+            println("Fehler beim Abrufen der singleAmount: ${e.message}")
+            DataRequestWrapper(exception = e)
+        }
+    }
+
 
     /*
     suspend fun getUserBalances(groupId: String): MutableList<Balance> {
@@ -221,6 +236,22 @@ class FirestoreRepository @Inject constructor() {
         } catch (e: Exception) {
             Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
             DataRequestWrapper(exception = e)
+        }
+    }
+
+    suspend fun setBalanceForUserInGroup(
+        userId: String, groupId: String, amount: Double
+    ) {
+        try {
+            val groupDocumentRef =
+                firestore.collection("groups").document(groupId).collection("balances")
+                    .document(userId)
+
+            val oldAmount = groupDocumentRef.get().await().getDouble("balance")
+            groupDocumentRef.update("balance", oldAmount!! + amount).await()
+
+        } catch (e: Exception) {
+            Log.d("Update_Balance_Failed", e.stackTraceToString())
         }
     }
 
