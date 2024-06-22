@@ -18,7 +18,17 @@ class TransactionsViewModel @Inject constructor(private val firestoreRepository:
         return firestoreRepository.getTransactionsGroup(groupId)
     }
 
-    /*suspend fun getUsersByGroupFirestore(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception>{
-        return firestoreRepository.getUsersByGroup(groupId)
-    }*/
+    suspend fun getUsersOfGroup(
+        groupId: String
+    ): DataRequestWrapper<MutableList<User>, String, Exception> {
+        return firestoreRepository.getUsersOfGroup(groupId)
+    }
+
+    /*
+    suspend fun getUserBalances(
+        groupId: String
+    ): DataRequestWrapper<Map<User, Double>, String, Exception> {
+        return firestoreRepository.getUserBalances(groupId)
+    }
+    */
 }

@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens.newentry
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,6 +36,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -205,21 +208,89 @@ fun NewEntryScreen(
                 }
             }
             Spacer(modifier = Modifier.height(50.dp))
-            DropdownPayedByUser(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) })
+            //DropdownPayedByUser(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) })
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(50.dp))
-            LazyColumn {
-                /*
-                * Todo: List of the total expense of each involved group members with quantity
-                * */
-
-            }
-
+            SingleAmountMembers(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount)
         }
-
-
     }
 }
+
+@SuppressLint("MutableCollectionMutableState")
+@Composable
+fun SingleAmountMembers(
+    loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>,
+    amount: String
+) {
+    //val fieldValues by rememberSaveable { mutableStateOf(arrayOf("")) }
+    //var fieldValues by rememberSaveable { mutableStateOf(arrayOf<String>()) }
+    val userListData = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
+        initialValue = DataRequestWrapper(state = "loading")
+    ) {
+        //val result = loadUsers()
+        /*if (result.data != null) {
+            fieldValues = Array(result.data!!.size) { "" }
+        }*/
+
+        //value = result
+
+        value = loadUsers()
+
+        //value = loadUsers()
+    }.value
+
+    // Manage the state for the TextField values
+    var fieldValues by rememberSaveable {
+        mutableStateOf(
+            mutableMapOf<Int, String>()
+        )
+    }
+
+    if (userListData.state == "loading") {
+        Text(text = "Users loading")
+        CircularProgressIndicator()
+    } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
+        val numUsers = userListData.data!!.size
+        fieldValues.putAll((0 until numUsers).associateWith {
+            if (isDouble(amount) && amount.toDouble() > 0) String.format(
+                "%.2f", (amount.toDouble() / numUsers)
+            ) else "0"
+        })/*fieldValues.putAll(
+            mapOf(
+                0 to "Default 0", 1 to "Default 1", 2 to "Default 2"
+            )
+        )*/
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 70.dp)
+        ) {
+            itemsIndexed(userListData.data!!) { index, user ->
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        color = Color.White,
+                        text = user.getDisplayName(),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.weight(0.2f))
+                    TextField(value = fieldValues.getOrElse(index) { "" },
+                        onValueChange = { newValue ->
+                            fieldValues = fieldValues.toMutableMap().apply { put(index, newValue) }
+                        },
+                        modifier = Modifier.weight(2f),
+                    )/*TextField(
+                        value = fieldValues.getOrNull(index) ?: "",
+                        onValueChange = { newValue ->
+                            fieldValues[index] = newValue
+                        }
+                    )*/
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>) {
