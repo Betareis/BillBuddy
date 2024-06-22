@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -27,8 +29,12 @@ import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 
 @Composable
@@ -90,6 +96,9 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
     var currentPassword by remember { mutableStateOf("") }
     val email = auth.currentUser?.email ?: ""
 
+    val currentPasswordVisible = remember { mutableStateOf(false) }
+    val newPasswordVisible = remember { mutableStateOf(false) }
+
     AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text(text = "Change Password") },
@@ -104,7 +113,16 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                     label = { Text("Current Password") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    visualTransformation = if (currentPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { currentPasswordVisible.value = !currentPasswordVisible.value }) {
+                            Icon(
+                                imageVector = if (currentPasswordVisible.value) Icons.Filled.Lock else Icons.Filled.Lock,
+                                contentDescription = if (currentPasswordVisible.value) "Hide password" else "Show password"
+                            )
+                        }
+                    }
                 )
                 OutlinedTextField(
                     value = newPassword,
@@ -112,7 +130,16 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                     label = { Text("New Password") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    visualTransformation = if (newPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { newPasswordVisible.value = !newPasswordVisible.value }) {
+                            Icon(
+                                imageVector = if (newPasswordVisible.value) Icons.Filled.Lock else Icons.Filled.Lock,
+                                contentDescription = if (newPasswordVisible.value) "Hide password" else "Show password"
+                            )
+                        }
+                    }
                 )
             }
         },
