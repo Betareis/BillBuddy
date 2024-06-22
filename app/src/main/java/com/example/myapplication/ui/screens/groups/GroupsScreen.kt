@@ -75,13 +75,11 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
     Scaffold(
         contentColor = Color.Black,
         bottomBar = { TabView(navController) },
-
-        //topBar = { BurgerMenuDrawer()}
-
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "Groups") }
             )
+            //BurgerMenuDrawer()
         }
 
     ) {
