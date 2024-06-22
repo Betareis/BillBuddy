@@ -1,6 +1,7 @@
 package com.example.myapplication.data.repository
 
 import android.util.Log
+import com.example.myapplication.data.model.Balance
 
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.google.firebase.firestore.FirebaseFirestore
@@ -103,6 +104,22 @@ class FirestoreRepository @Inject constructor() {
 
         return DataRequestWrapper(data = users)
     }
+
+    /*
+    suspend fun getUserBalances(groupId: String): MutableList<Balance> {
+        val result =
+            firestore.collection("groups").document(groupId).collection("balances").get()
+                .await()
+
+        val balances = result.documents.map { document ->
+            val id = document.id;
+            val amount = document.getDouble("balance") ?: 0.0
+            Balance( id = id, balance = amount)
+        }.toMutableList()
+
+        return DataRequestWrapper(balances, "", null)
+    }
+    */
 
 
     /*suspend fun getUsersOfGroups(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {

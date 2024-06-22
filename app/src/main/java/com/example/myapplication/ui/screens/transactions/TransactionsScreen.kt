@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.myapplication.data.model.Transaction
+import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
@@ -145,7 +147,7 @@ fun TransactionsScreen(
                         )
                     }, navController = navController, groupId = groupId)
 
-                    "Balances" -> DisplayBalancesContent()
+                    "Balances" -> DisplayBalancesContent(transactionsViewModel, groupId)
                 }
             }
         }
@@ -271,5 +273,34 @@ fun ShowTransactionsData(
 }
 
 @Composable
-fun DisplayBalancesContent() {
+fun DisplayBalancesContent(
+    transactionsViewModel: TransactionsViewModel = hiltViewModel(),
+    groupId: String
+) {
+    val usersOfGroup = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
+        initialValue = DataRequestWrapper(state = "loading")
+    ) {
+        value = transactionsViewModel.getUsersOfGroup(groupId)
+    }.value
+
+    if (usersOfGroup.state == "loading") {
+        CircularProgressIndicator()
+    } else if (usersOfGroup.data != null && usersOfGroup.data!!.isNotEmpty()) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            items(usersOfGroup.data!!) { user ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(ListElementBackgroundColor)
+                        .padding(16.dp)
+                ) {
+                    Text(text = user.firstname + " " + user.name, color = NewWhiteFontColor)
+                }
+            }
+        }
+    } else {
+        Text(text = "No users found")
+    }
 }
