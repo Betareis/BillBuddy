@@ -97,28 +97,28 @@ private fun NavGraphBuilder.mainNav(navController: NavHostController) {
     composable(
         route = AvailableScreens.GroupsScreen.name,
         enterTransition = {
-            scaleIn(tween(700))
+            fadeIn(tween(500))
         },
         exitTransition = {
-            scaleOut(tween(700))
+            fadeOut(tween(500))
         }
     ) { GroupsScreen(navController) }
     composable(
         route = AvailableScreens.ProfileScreen.name,
         enterTransition = {
-            scaleIn(tween(700))
+            fadeIn(tween(500))
         },
         exitTransition = {
-            scaleOut(tween(700))
+            fadeOut(tween(500))
         }
         ) { ProfileScreen(navController) }
     composable(
         route = AvailableScreens.MoreScreen.name,
         enterTransition = {
-            scaleIn(tween(700))
+            fadeIn(tween(500))
         },
         exitTransition = {
-            scaleOut(tween(700))
+            fadeOut(tween(500))
         }
     ) { MoreScreen(navController) }
 }
