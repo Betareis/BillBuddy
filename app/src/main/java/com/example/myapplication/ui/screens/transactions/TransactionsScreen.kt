@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.*
+import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +25,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -59,6 +64,12 @@ import com.example.myapplication.ui.theme.NewWhiteFontColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.content.Context
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+
 
 
 @Composable
@@ -174,9 +185,15 @@ fun TransactionsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsScreenBar(navController: NavController, groupName: String) {
+    var menuExpanded by remember { mutableStateOf(false) }
+    var showOverlay by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+            IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
                 navController.navigate(AvailableScreens.GroupsScreen.name)
             }) {
                 Icon(
@@ -185,8 +202,29 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
             }
         },
         title = { Text(groupName) },
+        actions = {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Outlined.Menu, contentDescription = "Menu"
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        val deepLink = "myapp://transactionscreen/${groupName}"
+                        clipboardManager.setText(AnnotatedString(deepLink))
+                        menuExpanded = false
+                    },
+                    text = { Text("Copy Deep Link") }
+                )
+            }
+        }
     )
 }
+
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
