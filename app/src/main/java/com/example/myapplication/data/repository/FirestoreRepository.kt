@@ -96,38 +96,7 @@ class FirestoreRepository @Inject constructor() {
                 return DataRequestWrapper(exception = Exception("Failed to get a group document"))
             }
         }
-
         return DataRequestWrapper(data = groups)
-
-
-        //val result = firestore.collection("groups").get().await()
-
-        //Log.d("SIZE", result.size().toString())
-
-        /*val groups = result.documents.map { document ->
-            val name = document.getString("name") ?: ""
-            val id = document.id;
-            // Access transactions subcollection (assuming it exists)
-
-            val transactionsRef = document.reference.collection("transactions")
-
-
-            // Fetch transactions using the subcollection reference
-            val transactions = try {
-                transactionsRef.get().await().toObjects(Transaction::class.java) ?: emptyList()
-            } catch (e: Exception) {
-                Log.d("TEST_C", "Error retrieving transactions: ${e.message}")
-                emptyList() // Return empty list on error
-            }
-
-            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
-
-            // Create Group object with retrieved transactions
-            Group(id, name, transactions)
-        }.toMutableList()*/
-
-
-        //return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
     suspend fun getUsersOfGroup(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
@@ -199,41 +168,6 @@ class FirestoreRepository @Inject constructor() {
     */
 
 
-    /*suspend fun getUsersOfGroups(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
-        val data = firestore.collection("groups").document(groupId).get().await()
-
-
-
-        val userList = data.data?.get("users") as List<*>
-
-        val users = ArrayList<User>()
-
-        for (userId in userList) {
-            val user =
-                getUser(userId.toString(), firestore) // Replace with your user retrieval logic
-            if (user != null) {
-                users.add(user)
-            }
-        }
-
-        if (users.isEmpty()) {
-            return DataRequestWrapper(exception = Exception("No users in group"))
-
-
-        }
-
-        return DataRequestWrapper(data = users.toMutableList())
-    }
-
-    private suspend fun getUser(userId: String, firestore: FirebaseFirestore): User? {
-        return try {
-            firestore.collection("users").document(userId).get().await().toObject<User>()
-        } catch (e: Error) {
-            null;
-        }
-    }*/
-
-
     /********************************************* MUTATIONS CREATE ****************************************************************************/
 
 //TODO: Implemented here or directly in the formComponent
@@ -279,12 +213,10 @@ class FirestoreRepository @Inject constructor() {
             //val auth = FirebaseAuth.getInstance()
             //val currentUser = auth.currentUser
 
-            val db = FirebaseFirestore.getInstance()
-
             //if (currentUser != null) {
             //val userId = currentUser.uid
 
-            val groupDocumentRef = db.collection("groups").document(groupId)
+            val groupDocumentRef = firestore.collection("groups").document(groupId)
 
             val transactionCollectionRef = groupDocumentRef.collection("transactions")
             val newTransactionDocumentRef = transactionCollectionRef.document()
@@ -296,13 +228,11 @@ class FirestoreRepository @Inject constructor() {
 
             val getTransactionObject = getTransaction.toObject<Transaction>()
 
-            //!Todo: Should be deleted in production
-            Log.d("test_transaction", getTransaction.toString())
-
             val transactionObject = Transaction(
                 getTransaction!!.id,
                 getTransactionObject!!.name,
                 getTransactionObject.payedBy,
+                getTransactionObject.date,
                 getTransactionObject.amount
             )
 
@@ -320,15 +250,13 @@ class FirestoreRepository @Inject constructor() {
     suspend fun setSingleAmounts(
         groupId: String, transactionId: String, singleAmountData: Map<String, Any>
     ) {
-        Log.d("boolean_check", singleAmountData.toString())
 
         //!Todo: Error message (handling)
         if (hasNonDoubleValues(singleAmountData)) return;
         try {
-            val groupDocumentRef = firestore.collection("groups").document(groupId)
-
             val transactionDocumentRef =
-                groupDocumentRef.collection("transactions").document(transactionId)
+                firestore.collection("groups").document(groupId).collection("transactions")
+                    .document(transactionId)
             val singleAmountCollectionRef = transactionDocumentRef.collection("singleAmount")
 
             val batch = firestore.batch() // Create a batch write operation
@@ -338,10 +266,10 @@ class FirestoreRepository @Inject constructor() {
                 val data = mapOf<String, Any>(
                     "amount" to value as Double   // Extract "amount" field as document value
                 )
+
                 batch.set(docRef, data) // Add data to the batch for each document
             }
-
-
+            batch.commit()
         } catch (e: Exception) {
             Log.d("Error Update Collection SingleAmount", e.stackTraceToString())
         }
