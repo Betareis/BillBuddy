@@ -19,7 +19,7 @@ class LoginScreenViewModel :ViewModel() {
 
     val state: MutableState<FetchingState> = mutableStateOf(FetchingState.IDLE)
 
-    fun logUserIn(email: String, password: String, onSuccess: () -> Unit) = viewModelScope.launch {
+    fun logUserIn(email: String, password: String, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
         state.value = FetchingState.LOADING.withMessage("Wait...")
         delay(500)
         try {
@@ -36,6 +36,7 @@ class LoginScreenViewModel :ViewModel() {
                     Log.d("LOGIN", "Can't log in TASK: ${task.exception?.stackTrace.toString()}")
                     val message = getMessageForFirebaseExceptionLogin(task.exception)
                     state.value = FetchingState.FAILED_INSTANCE.withMessage(message)
+                    onError()
                 }
             }
         } catch (e: Exception) {
