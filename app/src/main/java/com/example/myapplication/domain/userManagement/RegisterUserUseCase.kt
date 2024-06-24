@@ -36,7 +36,6 @@ class RegisterUserUseCase @Inject constructor() {
                     onSuccess()
                 } else {
                     Log.d("Register", task.exception.toString())
-
                 }
             }
         } catch (e: Exception) {
