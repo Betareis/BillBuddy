@@ -8,9 +8,9 @@
 ## UI Layer
 - [x] GroupScreen
 - [x] LoginScreen
-- [ ] NewEntryScreen
+- [x] NewEntryScreen
 - [ ] SignUpScreen
-- [ ] TransactionsScreen
+- [x] TransactionsScreen
 - [ ] BalanceScreen
 - [ ] EditTransactionScreen
 - [ ] ProfileScreen
@@ -23,7 +23,7 @@
 
 
 ### Transaction Management
-- [ ] AddTransactionUseCase
+- [x] AddTransactionUseCase
 - [ ] DeleteTransactionUseCase
 - [ ] EditTransactionUseCase
 

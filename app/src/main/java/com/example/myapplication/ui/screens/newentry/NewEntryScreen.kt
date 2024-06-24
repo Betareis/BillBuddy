@@ -63,6 +63,10 @@ import com.example.myapplication.ui.theme.MainButtonColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 fun isDouble(value: String): Boolean {
     return try {
@@ -100,6 +104,10 @@ fun NewEntryScreen(
         initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
     )
 
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+    }
+
     val exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
 
     Box(
@@ -135,9 +143,7 @@ fun NewEntryScreen(
 
             Button(onClick = { showDatePicker.value = true }) {
                 Text(text = "Select Date")
-            }/*val selectedDate = datePickerState.selectedDateMillis?.let {
-                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-            }*/
+            }
 
             if (showDatePicker.value) {
                 DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
@@ -165,9 +171,10 @@ fun NewEntryScreen(
 
             //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(modifier = Modifier
-                .then(Modifier.testTag("backArrow"))
-                .width(200.dp),
+            OutlinedButton(
+                modifier = Modifier
+                    .then(Modifier.testTag("backArrow"))
+                    .width(200.dp),
                 onClick = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
                 }) {
@@ -193,6 +200,7 @@ fun NewEntryScreen(
                 name,
                 amount,
                 selectedUserId,
+                selectedDate,
                 fieldValues,
                 exceptionMessage
             )
@@ -215,13 +223,14 @@ fun AddTransactionButtonView(
     name: String,
     amount: String,
     selectedUserId: MutableState<String>,
+    selectedDate: OffsetDateTime?,
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
 ) {
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 200.dp)
+        modifier = Modifier.padding(bottom = 10.dp)
     ) {
         IconButton(modifier = Modifier
             .padding(start = 15.dp, end = 15.dp)
@@ -233,7 +242,12 @@ fun AddTransactionButtonView(
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = newEntryViewModel.addTransactionForGroup(
                         groupId, mapOf(
-                            "name" to name, "amount" to amount, "payedBy" to selectedUserId.value
+                            "name" to name,
+                            "amount" to amount,
+                            "payedBy" to selectedUserId.value,
+                            "date" to if (selectedDate !== null) selectedDate.format(
+                                DateTimeFormatter.ISO_LOCAL_DATE
+                            ) else "",
                         ), fieldValues.toMap()
                     )
 
