@@ -9,7 +9,8 @@ import javax.inject.Inject
 fun convertMapValues(transactionData: Map<String, Any>): Map<String, Any> {
     return mapOf<String, Any>(
         "name" to transactionData["name"].toString(),
-        "amount" to transactionData["amount"].toString().toDouble()
+        "amount" to transactionData["amount"].toString().toDouble(),
+        "payedBy" to transactionData["payedBy"].toString()
     )
 }
 
@@ -17,7 +18,8 @@ fun convertMapValues(transactionData: Map<String, Any>): Map<String, Any> {
 class AddTransactionUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {
     suspend operator fun invoke(
         groupId: String,
-        transactionData: Map<String, Any>
+        transactionData: Map<String, Any>,
+        singleAmountData: Map<String, Any>,
     ): DataRequestWrapper<Unit, String, Exception> {
         if (groupId.isBlank()) {
             return DataRequestWrapper(null, null, Exception("Group cannot be found"))
@@ -35,9 +37,7 @@ class AddTransactionUseCase @Inject constructor(private val firestoreRepository:
         ) {
             //throw Exception("Please enter a transaction name")
             return DataRequestWrapper(
-                null,
-                null,
-                Exception("Please enter a valid transaction name")
+                null, null, Exception("Please enter a valid transaction name")
             )
         }
 
@@ -47,22 +47,34 @@ class AddTransactionUseCase @Inject constructor(private val firestoreRepository:
             val amountDouble = transactionData["amount"].toString().trim().toDoubleOrNull()
             if (transactionData["amount"].toString().isBlank() || amountDouble == null) {
                 return DataRequestWrapper(
-                    null,
-                    null,
-                    Exception("Please enter a valid transaction amount")
+                    null, null, Exception("Please enter a valid transaction amount")
                 )
             }
         } catch (e: Exception) {
             return DataRequestWrapper(
-                null,
-                null,
-                Exception("Please enter a valid transaction amount")
+                null, null, Exception("Please enter a valid transaction amount")
             )
         }
 
-        return firestoreRepository.createTransactionForGroup(
-            groupId,
-            convertMapValues(transactionData)
-        )
+        return try {
+            val transaction = firestoreRepository.createTransactionForGroup(
+                groupId, convertMapValues(transactionData)
+            ).data
+
+            val transactionId = transaction!!.id
+
+
+            if (transactionId!!.isEmpty()) {
+                throw Exception("Transaction Data is empty")
+            } else {
+                firestoreRepository.setSingleAmounts(
+                    groupId, transactionId = transactionId, singleAmountData
+                )
+            }
+            DataRequestWrapper(data = Unit)
+
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = e)
+        }
     }
 }

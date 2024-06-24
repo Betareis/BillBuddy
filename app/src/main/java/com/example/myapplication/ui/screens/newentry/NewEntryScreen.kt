@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +38,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
@@ -64,9 +63,6 @@ import com.example.myapplication.ui.theme.MainButtonColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 fun isDouble(value: String): Boolean {
     return try {
@@ -77,6 +73,7 @@ fun isDouble(value: String): Boolean {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewEntryScreen(
@@ -87,7 +84,23 @@ fun NewEntryScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
 
-    var exceptionMessage by rememberSaveable { mutableStateOf("") }
+    val selectedUserId by rememberSaveable {
+        mutableStateOf(
+            mutableStateOf("")
+        )
+    }
+
+    val fieldValues by rememberSaveable {
+        mutableStateOf(
+            mutableMapOf<String, Double>()
+        )
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
+    )
+
+    val exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
@@ -99,7 +112,7 @@ fun NewEntryScreen(
         Column(
             modifier = Modifier.padding(3.dp)
         ) {
-            Text(text = exceptionMessage, color = Color.White)
+            Text(text = exceptionMessage.value, color = Color.White)
             OutlinedTextField(
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 value = name,
@@ -117,25 +130,20 @@ fun NewEntryScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            val datePickerState = rememberDatePickerState(
-                initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
-            )
             val showDatePicker = remember { mutableStateOf(false) }
 
 
             Button(onClick = { showDatePicker.value = true }) {
                 Text(text = "Select Date")
-            }
-            val selectedDate = datePickerState.selectedDateMillis?.let {
+            }/*val selectedDate = datePickerState.selectedDateMillis?.let {
                 Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-            }
+            }*/
 
             if (showDatePicker.value) {
                 DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
                     confirmButton = {
                         TextButton(
-                            onClick = { showDatePicker.value = false },
-                            enabled = datePickerState.selectedDateMillis != null
+                            onClick = { showDatePicker.value = false }, enabled = true
                         ) {
                             Text(text = "Confirm")
                         }
@@ -147,18 +155,19 @@ fun NewEntryScreen(
                     }) {
                     DatePicker(state = datePickerState)
                 }
-            }
-
-            Text(
+            }/*Text(
                 color = Color.White,
                 text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
+            )*/
+            DropdownPayedByUser(
+                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
             )
-            Text(color = Color.White, text = name)
+
+            //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(
-                modifier = Modifier
-                    .then(Modifier.testTag("backArrow"))
-                    .width(200.dp),
+            OutlinedButton(modifier = Modifier
+                .then(Modifier.testTag("backArrow"))
+                .width(200.dp),
                 onClick = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
                 }) {
@@ -177,96 +186,112 @@ fun NewEntryScreen(
                     )
                 }
             }
+            AddTransactionButtonView(
+                navController,
+                newEntryViewModel,
+                groupId,
+                name,
+                amount,
+                selectedUserId,
+                fieldValues,
+                exceptionMessage
+            )
 
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = 200.dp)
-            ) {
-                IconButton(modifier = Modifier
-                    .padding(start = 15.dp, end = 15.dp)
-                    .fillMaxWidth()
-                    .width(300.dp)
-                    .size(50.dp) // Adjust size as needed
-                    .background(MainButtonColor),// Set background color to blue
-                    onClick = {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val result = newEntryViewModel.addTransactionForGroup(
-                                groupId, mapOf(
-                                    "name" to name, "amount" to amount
-                                )
-                            )
-                            if (result.exception != null) {
-                                exceptionMessage = result.exception!!.message.toString()
-                            } else navController.popBackStack()
-                        }
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add a Group" // Provide a description for accessibility
-                    )
-                }
-            }
             Spacer(modifier = Modifier.height(50.dp))
-            //DropdownPayedByUser(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) })
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(50.dp))
-            SingleAmountMembers(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount)
+            SingleAmountMembers(
+                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
+            )
         }
     }
 }
+
+@Composable
+fun AddTransactionButtonView(
+    navController: NavController,
+    newEntryViewModel: NewEntryScreenViewModel,
+    groupId: String,
+    name: String,
+    amount: String,
+    selectedUserId: MutableState<String>,
+    fieldValues: MutableMap<String, Double>,
+    exceptionMessage: MutableState<String>,
+) {
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(bottom = 200.dp)
+    ) {
+        IconButton(modifier = Modifier
+            .padding(start = 15.dp, end = 15.dp)
+            .fillMaxWidth()
+            .width(300.dp)
+            .size(50.dp) // Adjust size as needed
+            .background(MainButtonColor),// Set background color to blue
+            onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val result = newEntryViewModel.addTransactionForGroup(
+                        groupId, mapOf(
+                            "name" to name, "amount" to amount, "payedBy" to selectedUserId.value
+                        ), fieldValues.toMap()
+                    )
+
+                    if (result.exception != null) {
+                        exceptionMessage.value = result.exception!!.message.toString()
+                    } else navController.popBackStack()
+                }
+            }) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add a Group" // Provide a description for accessibility
+            )
+        }
+    }
+}
+
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SingleAmountMembers(
     loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>,
-    amount: String
+    amount: String,
+    fieldValues: MutableMap<String, Double>
 ) {
-    //val fieldValues by rememberSaveable { mutableStateOf(arrayOf("")) }
-    //var fieldValues by rememberSaveable { mutableStateOf(arrayOf<String>()) }
     val userListData = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
         initialValue = DataRequestWrapper(state = "loading")
     ) {
-        //val result = loadUsers()
-        /*if (result.data != null) {
-            fieldValues = Array(result.data!!.size) { "" }
-        }*/
-
-        //value = result
-
         value = loadUsers()
-
-        //value = loadUsers()
     }.value
 
-    // Manage the state for the TextField values
-    var fieldValues by rememberSaveable {
-        mutableStateOf(
-            mutableMapOf<Int, String>()
-        )
-    }
 
     if (userListData.state == "loading") {
         Text(text = "Users loading")
         CircularProgressIndicator()
     } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
         val numUsers = userListData.data!!.size
-        fieldValues.putAll((0 until numUsers).associateWith {
-            if (isDouble(amount) && amount.toDouble() > 0) String.format(
-                "%.2f", (amount.toDouble() / numUsers)
-            ) else "0"
-        })/*fieldValues.putAll(
-            mapOf(
-                0 to "Default 0", 1 to "Default 1", 2 to "Default 2"
-            )
-        )*/
+        val readOnlyList = userListData.data!!.toList()
+        val myMap: Map<String, Double> =
+            readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
+                {
+                    if (isDouble(amount) && amount.toDouble() > 0.0) {
+                        String.format("%.2f", amount.toDouble() / numUsers)
+                            .toDouble() // Format and convert to double
+                    } else {
+                        0.0  // Default value as double
+                    }
+                })
+        fieldValues.putAll(myMap)
+        //!Todo: should be deleted in production
+        //Log.d("test_map", myMap.toString())
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 70.dp)
         ) {
-            itemsIndexed(userListData.data!!) { index, user ->
+            for (user in userListData.data!!) item() {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         color = Color.White,
@@ -274,17 +299,13 @@ fun SingleAmountMembers(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
-                    TextField(value = fieldValues.getOrElse(index) { "" },
+                    TextField(
+                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString(),
                         onValueChange = { newValue ->
-                            fieldValues = fieldValues.toMutableMap().apply { put(index, newValue) }
+                            fieldValues.toMutableMap().apply { put(user.id, newValue.toDouble()) }
                         },
                         modifier = Modifier.weight(2f),
-                    )/*TextField(
-                        value = fieldValues.getOrNull(index) ?: "",
-                        onValueChange = { newValue ->
-                            fieldValues[index] = newValue
-                        }
-                    )*/
+                    )
                 }
             }
         }
@@ -293,7 +314,10 @@ fun SingleAmountMembers(
 
 
 @Composable
-fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>) {
+fun DropdownPayedByUser(
+    loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>,
+    selectedUserId: MutableState<String>
+) {
     var expanded by remember { mutableStateOf(false) }
 
     val userListData = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
@@ -307,10 +331,7 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
         CircularProgressIndicator()
     } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
         Log.d("user_list", userListData.data.toString())
-
-
-        /*val nameList = mutableListOf<String>()
-
+        val nameList = mutableListOf<String>()
         for (user in userListData.data!!) {
             // Add the user's name to the nameList
             nameList.add(user.getDisplayName())
@@ -319,9 +340,11 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
         val items = nameList.toList()
         val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
+
+        Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                //.fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
                 .height(20.dp)
         ) {
@@ -332,7 +355,7 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
                     .height(90.dp)
                     .clickable(onClick = { expanded = true })
                     .background(
-                        Color.Gray
+                        MainButtonColor
                     )
             )
             DropdownMenu(
@@ -341,17 +364,18 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        Color.Red
+                        MainButtonColor
                     )
             ) {
-                items.forEachIndexed { index, s ->
+                nameList.forEachIndexed { index, s ->
                     DropdownMenuItem(text = { Text(text = s) }, onClick = {
+                        selectedUserId.value = userListData.data!![index].id.toString()
                         selectedIndex = index
                         expanded = false
                     })
                 }
             }
-        }*/
+        }
     }
 }
 

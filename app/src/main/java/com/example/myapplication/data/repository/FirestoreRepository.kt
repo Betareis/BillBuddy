@@ -10,6 +10,7 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.toObject
 
 class FirestoreRepository @Inject constructor() {
     private val firestore = FirebaseFirestore.getInstance()
@@ -35,12 +36,10 @@ class FirestoreRepository @Inject constructor() {
         return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
     }
 
-    suspend fun getGroups(): DataRequestWrapper<MutableList<Group>, String, Exception> {
+    suspend fun getGroupsOfUser(): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
 
         val result = firestore.collection("groups").get().await()
-
-        //Log.d("SIZE", result.size().toString())
 
         val groups = result.documents.map { document ->
             val name = document.getString("name") ?: ""
@@ -66,6 +65,69 @@ class FirestoreRepository @Inject constructor() {
 
 
         return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
+    }
+
+
+    suspend fun getGroups(userId: String): DataRequestWrapper<MutableList<Group>, String, Exception> {
+
+        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"));
+
+
+        //!Todo: testing if the user is not defined
+        val user = firestore.collection("users").document(userId).get().await()
+
+        val groupListUser = user.get("groups") as List<*>
+
+        val groups = mutableListOf<Group>()
+
+        for (groupId in groupListUser) {
+            val documentSnapshot =
+                firestore.collection("groups").document(groupId.toString()).get().await()
+            if (documentSnapshot.exists()) {
+                val group = documentSnapshot.toObject<Group>()
+                if (group != null) {
+                    val name = documentSnapshot.get("name") as String
+                    groups.add(Group(documentSnapshot.id, name, emptyList()))
+                } else {
+                    return DataRequestWrapper(exception = Exception("document structure mismatch in a group document"))
+                    // Handle the case where parsing failed (e.g., document structure mismatch)
+                }
+            } else {
+                return DataRequestWrapper(exception = Exception("Failed to get a group document"))
+            }
+        }
+
+        return DataRequestWrapper(data = groups)
+
+
+        //val result = firestore.collection("groups").get().await()
+
+        //Log.d("SIZE", result.size().toString())
+
+        /*val groups = result.documents.map { document ->
+            val name = document.getString("name") ?: ""
+            val id = document.id;
+            // Access transactions subcollection (assuming it exists)
+
+            val transactionsRef = document.reference.collection("transactions")
+
+
+            // Fetch transactions using the subcollection reference
+            val transactions = try {
+                transactionsRef.get().await().toObjects(Transaction::class.java) ?: emptyList()
+            } catch (e: Exception) {
+                Log.d("TEST_C", "Error retrieving transactions: ${e.message}")
+                emptyList() // Return empty list on error
+            }
+
+            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
+
+            // Create Group object with retrieved transactions
+            Group(id, name, transactions)
+        }.toMutableList()*/
+
+
+        //return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
     }
 
     suspend fun getUsersOfGroup(groupId: String): DataRequestWrapper<MutableList<User>, String, Exception> {
@@ -212,7 +274,7 @@ class FirestoreRepository @Inject constructor() {
 
     suspend fun createTransactionForGroup(
         groupId: String, transactionData: Map<String, Any>
-    ): DataRequestWrapper<Unit, String, Exception> {
+    ): DataRequestWrapper<Transaction, String, Exception> {
         return try {
             //val auth = FirebaseAuth.getInstance()
             //val currentUser = auth.currentUser
@@ -230,14 +292,61 @@ class FirestoreRepository @Inject constructor() {
             //Todo: should be checked
             newTransactionDocumentRef.set(transactionData).await()
 
-            DataRequestWrapper(data = Unit)/*} else {
-                throw Exception("User ID is null.")
-            }*/
+            val getTransaction = newTransactionDocumentRef.get().await()
+
+            val getTransactionObject = getTransaction.toObject<Transaction>()
+
+            //!Todo: Should be deleted in production
+            Log.d("test_transaction", getTransaction.toString())
+
+            val transactionObject = Transaction(
+                getTransaction!!.id,
+                getTransactionObject!!.name,
+                getTransactionObject.payedBy,
+                getTransactionObject.amount
+            )
+
+            DataRequestWrapper(data = transactionObject)
         } catch (e: Exception) {
             Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
             DataRequestWrapper(exception = e)
         }
     }
+
+    private fun hasNonDoubleValues(map: Map<String, Any>): Boolean {
+        return map.any { (_, value) -> value !is Double }
+    }
+
+    suspend fun setSingleAmounts(
+        groupId: String, transactionId: String, singleAmountData: Map<String, Any>
+    ) {
+        Log.d("boolean_check", singleAmountData.toString())
+
+        //!Todo: Error message (handling)
+        if (hasNonDoubleValues(singleAmountData)) return;
+        try {
+            val groupDocumentRef = firestore.collection("groups").document(groupId)
+
+            val transactionDocumentRef =
+                groupDocumentRef.collection("transactions").document(transactionId)
+            val singleAmountCollectionRef = transactionDocumentRef.collection("singleAmount")
+
+            val batch = firestore.batch() // Create a batch write operation
+
+            singleAmountData.forEach { (key, value) ->
+                val docRef = singleAmountCollectionRef.document(key) // Reference to document
+                val data = mapOf<String, Any>(
+                    "amount" to value as Double   // Extract "amount" field as document value
+                )
+                batch.set(docRef, data) // Add data to the batch for each document
+            }
+
+
+        } catch (e: Exception) {
+            Log.d("Error Update Collection SingleAmount", e.stackTraceToString())
+        }
+    }
+
 
     suspend fun setBalanceForUserInGroup(
         userId: String, groupId: String, amount: Double
