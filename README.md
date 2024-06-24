@@ -10,7 +10,7 @@
 - [x] LoginScreen
 - [ ] NewEntryScreen
 - [ ] SignUpScreen
-- [ ] TransactionsScreen
+- [x] TransactionsScreen
 - [ ] BalanceScreen
 - [ ] EditTransactionScreen
 - [ ] ProfileScreen
@@ -23,7 +23,7 @@
 
 
 ### Transaction Management
-- [ ] AddTransactionUseCase
+- [x] AddTransactionUseCase
 - [ ] DeleteTransactionUseCase
 - [ ] EditTransactionUseCase
 
