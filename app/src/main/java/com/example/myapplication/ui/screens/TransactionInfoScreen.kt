@@ -61,7 +61,7 @@ fun NavigationBarTransactionInfoScreen(navController: NavController, transaction
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
-                //navController.navigate(AvailableScreens.GroupsScreen.name)
+                //navController.navigate(AvailableScreens.TransactionsScreen.name)
                 navController.navigateUp()
                 //navController.popBackStack()
             }) {
