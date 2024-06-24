@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.myapplication.ui.navigation.BurgerMenuDrawer
@@ -106,6 +108,7 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
 
     val currentPasswordVisible = remember { mutableStateOf(false) }
     val newPasswordVisible = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -175,11 +178,11 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                                                 }
                                                 onDismiss()
                                             } else {
-                                                //Log.d("PasswordChange", "Error password not updated")
+                                                Toast.makeText(context, "New password must be at least 6 characters long.", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                 } else {
-                                    //Log.d("PasswordChange", "Error re-authenticating")
+                                    Toast.makeText(context, "Current password is wrong.", Toast.LENGTH_SHORT).show()
                                 }
                             }
                     }

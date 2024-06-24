@@ -24,7 +24,12 @@ fun TransactionInfoScreen(
 
     CenterAlignedTopAppBar(
         navigationIcon = {
+
+            /*IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+                //navController.navigate(AvailableScreens.TransactionsScreen.name)*/
+
             IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
+
                 navController.navigateUp()
             }) {
                 Icon(
