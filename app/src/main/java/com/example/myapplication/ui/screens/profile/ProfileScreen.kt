@@ -41,6 +41,7 @@ import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
+import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 import com.example.myapplication.ui.navigation.TabView
 import com.example.myapplication.ui.screens.groups.GroupsViewModel
 import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
@@ -53,7 +54,11 @@ import kotlin.contracts.contract
 fun ProfileScreen(
     navController: NavController, profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
-    Scaffold(contentColor = Color.Black, bottomBar = { TabView(navController) }) {
+    Scaffold(
+        contentColor = Color.Black,
+        bottomBar = { TabView(navController) },
+        //topBar = { BurgerMenuDrawer() },
+    ) {
         Surface(
             modifier = Modifier
                 .padding(top = 60.dp)

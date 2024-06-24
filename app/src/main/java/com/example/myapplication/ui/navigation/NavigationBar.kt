@@ -3,11 +3,15 @@ package com.example.myapplication.ui.navigation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -39,12 +43,11 @@ data class TabBarItem(
 @Composable
 fun TabView(navController: NavController) {
     val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, null, AvailableScreens.GroupsScreen.name)
-    val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.Notifications, unselectedIcon = Icons.Outlined.Notifications, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
-    val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.List, unselectedIcon = Icons.Outlined.List, null, AvailableScreens.MoreScreen.name)
+    val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.AccountCircle, unselectedIcon = Icons.Outlined.AccountCircle, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
+    val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.Menu, unselectedIcon = Icons.Outlined.Menu, null, AvailableScreens.MoreScreen.name)
 
     val tabBarItems = listOf(groupsTab, profileTab, moreTab)
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
-    val coroutineScope = rememberCoroutineScope()
 
     NavigationBar {
         tabBarItems.forEachIndexed { index, tabBarItem ->
@@ -53,9 +56,6 @@ fun TabView(navController: NavController) {
                 onClick = {
                         selectedTabIndex = index
                         navController.navigate(tabBarItem.route) {
-                            /*popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }*/
                             launchSingleTop = true
                             restoreState = true
                     }

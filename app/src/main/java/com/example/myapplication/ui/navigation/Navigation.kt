@@ -1,6 +1,13 @@
 package com.example.myapplication.ui.navigation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -39,15 +46,81 @@ fun AppNavigation(innerPaddingValues: PaddingValues) {
 }
 
 private fun NavGraphBuilder.loginNav(navController: NavHostController) {
-    composable(AvailableScreens.LoginScreen.name) { LoginScreen(navController) }
-    composable(AvailableScreens.SignUpScreen.name) { SignUpScreen(navController) }
+    composable(
+        route = AvailableScreens.LoginScreen.name,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            )
+        }
+    ) { LoginScreen(navController) }
+    composable(
+        route = AvailableScreens.SignUpScreen.name,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) { SignUpScreen(navController) }
 }
 
 private fun NavGraphBuilder.mainNav(navController: NavHostController) {
-    composable(AvailableScreens.BalancesScreen.name) { BalancesScreen(navController) }
-    composable(AvailableScreens.GroupsScreen.name) { GroupsScreen(navController) }
-    composable(AvailableScreens.ProfileScreen.name) { ProfileScreen(navController) }
-    composable(AvailableScreens.MoreScreen.name) { MoreScreen(navController) }
+    composable(
+        route = AvailableScreens.BalancesScreen.name,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) { BalancesScreen(navController) }
+    composable(
+        route = AvailableScreens.GroupsScreen.name,
+        enterTransition = {
+            scaleIn(tween(700))
+        },
+        exitTransition = {
+            scaleOut(tween(700))
+        }
+    ) { GroupsScreen(navController) }
+    composable(
+        route = AvailableScreens.ProfileScreen.name,
+        enterTransition = {
+            scaleIn(tween(700))
+        },
+        exitTransition = {
+            scaleOut(tween(700))
+        }
+        ) { ProfileScreen(navController) }
+    composable(
+        route = AvailableScreens.MoreScreen.name,
+        enterTransition = {
+            scaleIn(tween(700))
+        },
+        exitTransition = {
+            scaleOut(tween(700))
+        }
+    ) { MoreScreen(navController) }
 }
 
 private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
@@ -70,7 +143,13 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     }
 
     composable(
-        "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}",
+        route = "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}",
+        enterTransition = {
+            fadeIn(tween(700))
+        },
+        exitTransition = {
+            fadeOut(tween(700))
+        },
         arguments = listOf(navArgument("groupId") { type = NavType.StringType })
     ) { backStackEntry ->
         val groupId = backStackEntry.arguments?.getString("groupId")
@@ -114,4 +193,3 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
         }
     }
 }
-

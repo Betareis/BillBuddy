@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,13 +36,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 
 
 @Composable
 fun MoreScreen(navController: NavController) {
     Scaffold(
         contentColor = Color.Black,
-        bottomBar = { TabView(navController) }
+        bottomBar = { TabView(navController) },
+        //topBar = { BurgerMenuDrawer() },
     ) {paddingValues->
         Surface(
             modifier = Modifier
@@ -81,6 +84,11 @@ fun ChangePasswordSection(navController: NavController) {
     ) {
         Text(text = "Change Password")
     }
+    /*AnimatedVisibility(showDialog) {
+        ChangePassword(navController) {
+            showDialog = false
+        }
+    }*/
 
     if (showDialog) {
         ChangePassword(navController) {
