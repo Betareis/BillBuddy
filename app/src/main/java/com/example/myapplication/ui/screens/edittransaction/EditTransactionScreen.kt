@@ -1,8 +1,6 @@
 package com.example.myapplication.ui.screens.edittransaction
 
 import android.annotation.SuppressLint
-import android.os.Debug
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.myapplication.ui.navigation.AvailableScreens
-import com.example.myapplication.ui.screens.NavigationBarTransactionInfoScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
