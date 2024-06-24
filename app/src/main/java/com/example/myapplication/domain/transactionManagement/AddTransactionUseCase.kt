@@ -9,14 +9,17 @@ import javax.inject.Inject
 fun convertMapValues(transactionData: Map<String, Any>): Map<String, Any> {
     return mapOf<String, Any>(
         "name" to transactionData["name"].toString(),
-        "amount" to transactionData["amount"].toString().toDouble()
+        "amount" to transactionData["amount"].toString().toDouble(),
+        "payedBy" to transactionData["payedBy"].toString()
     )
 }
 
 
 class AddTransactionUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {
     suspend operator fun invoke(
-        groupId: String, transactionData: Map<String, Any>, singleAmountData: Map<String, Any>
+        groupId: String,
+        transactionData: Map<String, Any>,
+        singleAmountData: Map<String, Any>,
     ): DataRequestWrapper<Unit, String, Exception> {
         if (groupId.isBlank()) {
             return DataRequestWrapper(null, null, Exception("Group cannot be found"))

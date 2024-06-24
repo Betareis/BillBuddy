@@ -294,8 +294,19 @@ class FirestoreRepository @Inject constructor() {
 
             val getTransaction = newTransactionDocumentRef.get().await()
 
+            val getTransactionObject = getTransaction.toObject<Transaction>()
+
+            //!Todo: Should be deleted in production
             Log.d("test_transaction", getTransaction.toString())
-            DataRequestWrapper(data = getTransaction.toObject<Transaction>())
+
+            val transactionObject = Transaction(
+                getTransaction!!.id,
+                getTransactionObject!!.name,
+                getTransactionObject.payedBy,
+                getTransactionObject.amount
+            )
+
+            DataRequestWrapper(data = transactionObject)
         } catch (e: Exception) {
             Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
             DataRequestWrapper(exception = e)
@@ -309,6 +320,9 @@ class FirestoreRepository @Inject constructor() {
     suspend fun setSingleAmounts(
         groupId: String, transactionId: String, singleAmountData: Map<String, Any>
     ) {
+        Log.d("boolean_check", singleAmountData.toString())
+
+        //!Todo: Error message (handling)
         if (hasNonDoubleValues(singleAmountData)) return;
         try {
             val groupDocumentRef = firestore.collection("groups").document(groupId)

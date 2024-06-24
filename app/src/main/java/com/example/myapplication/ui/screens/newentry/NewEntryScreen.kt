@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -64,9 +63,6 @@ import com.example.myapplication.ui.theme.MainButtonColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 fun isDouble(value: String): Boolean {
     return try {
@@ -88,13 +84,23 @@ fun NewEntryScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
 
-    var fieldValues by rememberSaveable {
+    val selectedUserId by rememberSaveable {
+        mutableStateOf(
+            mutableStateOf("")
+        )
+    }
+
+    val fieldValues by rememberSaveable {
         mutableStateOf(
             mutableMapOf<String, Double>()
         )
     }
 
-    var exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
+    val datePickerState = rememberDatePickerState(
+        initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
+    )
+
+    val exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
@@ -124,25 +130,20 @@ fun NewEntryScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            val datePickerState = rememberDatePickerState(
-                initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
-            )
             val showDatePicker = remember { mutableStateOf(false) }
 
 
             Button(onClick = { showDatePicker.value = true }) {
                 Text(text = "Select Date")
-            }
-            val selectedDate = datePickerState.selectedDateMillis?.let {
+            }/*val selectedDate = datePickerState.selectedDateMillis?.let {
                 Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-            }
+            }*/
 
             if (showDatePicker.value) {
                 DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
                     confirmButton = {
                         TextButton(
-                            onClick = { showDatePicker.value = false },
-                            enabled = datePickerState.selectedDateMillis != null
+                            onClick = { showDatePicker.value = false }, enabled = true
                         ) {
                             Text(text = "Confirm")
                         }
@@ -154,12 +155,13 @@ fun NewEntryScreen(
                     }) {
                     DatePicker(state = datePickerState)
                 }
-            }
-            /*Text(
+            }/*Text(
                 color = Color.White,
                 text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
             )*/
-            DropdownPayedByUser(loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) })
+            DropdownPayedByUser(
+                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
+            )
 
             //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
@@ -190,6 +192,7 @@ fun NewEntryScreen(
                 groupId,
                 name,
                 amount,
+                selectedUserId,
                 fieldValues,
                 exceptionMessage
             )
@@ -211,6 +214,7 @@ fun AddTransactionButtonView(
     groupId: String,
     name: String,
     amount: String,
+    selectedUserId: MutableState<String>,
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
 ) {
@@ -229,7 +233,7 @@ fun AddTransactionButtonView(
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = newEntryViewModel.addTransactionForGroup(
                         groupId, mapOf(
-                            "name" to name, "amount" to amount
+                            "name" to name, "amount" to amount, "payedBy" to selectedUserId.value
                         ), fieldValues.toMap()
                     )
 
@@ -266,7 +270,6 @@ fun SingleAmountMembers(
         CircularProgressIndicator()
     } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
         val numUsers = userListData.data!!.size
-
         val readOnlyList = userListData.data!!.toList()
         val myMap: Map<String, Double> =
             readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
@@ -278,7 +281,6 @@ fun SingleAmountMembers(
                         0.0  // Default value as double
                     }
                 })
-
         fieldValues.putAll(myMap)
         //!Todo: should be deleted in production
         //Log.d("test_map", myMap.toString())
@@ -312,7 +314,10 @@ fun SingleAmountMembers(
 
 
 @Composable
-fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>) {
+fun DropdownPayedByUser(
+    loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>,
+    selectedUserId: MutableState<String>
+) {
     var expanded by remember { mutableStateOf(false) }
 
     val userListData = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
@@ -326,10 +331,7 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
         CircularProgressIndicator()
     } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
         Log.d("user_list", userListData.data.toString())
-
-
         val nameList = mutableListOf<String>()
-
         for (user in userListData.data!!) {
             // Add the user's name to the nameList
             nameList.add(user.getDisplayName())
@@ -338,6 +340,8 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
         val items = nameList.toList()
         val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
+
+        Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
                 //.fillMaxSize()
@@ -363,8 +367,9 @@ fun DropdownPayedByUser(loadUsers: suspend () -> DataRequestWrapper<MutableList<
                         MainButtonColor
                     )
             ) {
-                items.forEachIndexed { index, s ->
+                nameList.forEachIndexed { index, s ->
                     DropdownMenuItem(text = { Text(text = s) }, onClick = {
+                        selectedUserId.value = userListData.data!![index].id.toString()
                         selectedIndex = index
                         expanded = false
                     })
