@@ -230,7 +230,7 @@ fun AddTransactionButtonView(
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 200.dp)
+        modifier = Modifier.padding(bottom = 10.dp)
     ) {
         IconButton(modifier = Modifier
             .padding(start = 15.dp, end = 15.dp)
