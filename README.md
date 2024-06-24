@@ -8,7 +8,7 @@
 ## UI Layer
 - [x] GroupScreen
 - [x] LoginScreen
-- [ ] NewEntryScreen
+- [x] NewEntryScreen
 - [ ] SignUpScreen
 - [x] TransactionsScreen
 - [ ] BalanceScreen
