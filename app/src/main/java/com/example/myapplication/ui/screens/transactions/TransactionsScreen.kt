@@ -66,6 +66,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -182,6 +183,8 @@ fun TransactionsScreen(
 }
 
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsScreenBar(navController: NavController, groupName: String) {
@@ -189,7 +192,7 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
     var showOverlay by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboardManager.current
 
     CenterAlignedTopAppBar(
         navigationIcon = {
@@ -215,15 +218,41 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
                 DropdownMenuItem(
                     onClick = {
                         val deepLink = "myapp://transactionscreen/${groupName}"
-                        clipboardManager.setText(AnnotatedString(deepLink))
+                        shareDeepLinkOnWhatsApp(context, deepLink, groupName)
                         menuExpanded = false
                     },
-                    text = { Text("Copy Deep Link") }
+                    text = { Text("Share Link on Whats App") }
+                )
+                DropdownMenuItem(
+                    onClick = {
+                        val deepLink = "myapp://transactionscreen/${groupName}"
+                        clipboard.setText(AnnotatedString(deepLink))
+                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+                        menuExpanded = false
+                    },
+                    text = { Text("Copy link") }
                 )
             }
         }
     )
 }
+
+private fun shareDeepLinkOnWhatsApp(context: Context, deepLink: String, groupName: String) {
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, "Hey there! Please join my group " + groupName + " on BillBuddy: \n$deepLink")
+        type = "text/plain"
+        setPackage("com.whatsapp")
+    }
+
+    try {
+        context.startActivity(sendIntent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
 
 
 
