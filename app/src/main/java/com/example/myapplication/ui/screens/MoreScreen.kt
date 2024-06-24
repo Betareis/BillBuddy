@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -83,6 +84,11 @@ fun ChangePasswordSection(navController: NavController) {
     ) {
         Text(text = "Change Password")
     }
+    /*AnimatedVisibility(showDialog) {
+        ChangePassword(navController) {
+            showDialog = false
+        }
+    }*/
 
     if (showDialog) {
         ChangePassword(navController) {
