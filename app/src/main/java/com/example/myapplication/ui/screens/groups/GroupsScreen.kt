@@ -58,6 +58,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.clip
 import androidx.lifecycle.liveData
+import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 
 import com.example.myapplication.ui.theme.MainButtonColor
 
@@ -78,7 +79,9 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
             CenterAlignedTopAppBar(
                 title = { Text(text = "Groups") }
             )
+            //BurgerMenuDrawer()
         }
+
     ) {
         Surface(
             modifier = Modifier
@@ -151,7 +154,8 @@ fun ShowData(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopStart
         ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.heightIn(max = 550.dp)
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier
+                .heightIn(max = 550.dp)
                 .fillMaxWidth()) {
                 for (data in groupData.data!!) {
                     item() {
