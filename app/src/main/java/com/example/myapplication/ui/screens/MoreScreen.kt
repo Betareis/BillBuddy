@@ -175,6 +175,7 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                                                 //Log.d("PasswordChange", "Password updated")
                                                 navController.navigate(AvailableScreens.LoginScreen.name) {
                                                     popUpTo(AvailableScreens.MoreScreen.name) { inclusive = true }
+                                                    Toast.makeText(context, "Password successfully changed.", Toast.LENGTH_SHORT).show()
                                                 }
                                                 onDismiss()
                                             } else {
