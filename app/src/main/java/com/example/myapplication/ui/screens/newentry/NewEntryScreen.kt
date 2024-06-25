@@ -178,9 +178,10 @@ fun NewEntryScreen(
 
             //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(modifier = Modifier
-                .then(Modifier.testTag("backArrow"))
-                .width(200.dp),
+            OutlinedButton(
+                modifier = Modifier
+                    .then(Modifier.testTag("backArrow"))
+                    .width(200.dp),
                 onClick = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
                 }) {
@@ -284,7 +285,6 @@ fun SingleAmountMembers(
         value = loadUsers()
     }.value
 
-
     if (userListData.state == "loading") {
         Text(text = "Users loading")
         CircularProgressIndicator()
@@ -319,12 +319,20 @@ fun SingleAmountMembers(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
+                    var fieldValue by remember {
+                        mutableStateOf(
+                            fieldValues[user.id.toString()]?.toString() ?: "0.0"
+                        )
+                    }
                     TextField(
-                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString(),
+                        value = fieldValue,
                         onValueChange = { newValue ->
-                            fieldValues.toMutableMap().apply { put(user.id, newValue.toDouble()) }
+                            fieldValue = newValue
+                            fieldValues[user.id.toString()] = newValue.toDoubleOrNull() ?: 0.0
+                            Log.d("field_values", fieldValues.toString())
                         },
                         modifier = Modifier.weight(2f),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
                 }
             }
@@ -358,13 +366,11 @@ fun DropdownPayedByUser(
         }
 
         val items = nameList.toList()
-        val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
 
         Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
-                //.fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
                 .height(20.dp)
         ) {

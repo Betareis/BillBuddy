@@ -5,6 +5,7 @@ import com.example.myapplication.data.model.User
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.domain.balanceManagement.CalculateBalancesUseCase
+import com.example.myapplication.domain.balanceManagement.ResetCalculateBalancesUseCase
 import com.example.myapplication.domain.transactionManagement.DeleteTransactionUseCase
 import com.example.myapplication.domain.transactionManagement.UpdateTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +16,18 @@ class EditTransactionScreenViewModel @Inject constructor(
     private val firestoreRepository: FirestoreRepository,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
+    private val resetCalculateBalancesUseCase: ResetCalculateBalancesUseCase,
     private val calculateBalancesUseCase: CalculateBalancesUseCase
 ) : ViewModel() {
     suspend fun deleteTransaction(
         groupId: String, transactionId: String
     ): DataRequestWrapper<Unit, String, Exception> {
-        return deleteTransactionUseCase(groupId, transactionId)
+        return try {
+            resetCalculateBalancesUseCase(groupId, transactionId)
+            deleteTransactionUseCase(groupId, transactionId)
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = e)
+        }
     }
 
     suspend fun updateSpecificTransactionGroup(
@@ -30,19 +37,29 @@ class EditTransactionScreenViewModel @Inject constructor(
         singleAmountData: Map<String, Any>
     ): DataRequestWrapper<Unit, String, Exception> {
         return try {
-            val process1 = updateTransactionUseCase.invoke(
-                groupId,
-                transactionId,
-                transactionData,
-                singleAmountData
+            val process1 = updateTransactionUseCase(
+                groupId, transactionId, transactionData, singleAmountData
             )
             if (process1.exception != null) throw Exception("Error update transaction $transactionId")
             if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
                 return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
             }
-            val process2 =
-                calculateBalancesUseCase(groupId, transactionId = process1.data!!.id.toString())
+
+            if (process1.exception != null) throw Exception("Error update transaction $transactionId")
+            if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
+                return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
+            }
+
+            val process2 = resetCalculateBalancesUseCase(
+                groupId, transactionId = transactionId
+            )
             if (process2.exception != null) throw Exception(process2.exception)
+
+            val process3 = calculateBalancesUseCase(groupId, transactionId)
+
+            if (process3.exception != null) throw Exception(process3.exception)
+
+
             DataRequestWrapper(data = Unit)
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)

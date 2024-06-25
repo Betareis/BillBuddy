@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,7 +88,6 @@ fun EditTransactionScreen(
     payedBy: String,
     editTransactionScreenViewModel: EditTransactionScreenViewModel = hiltViewModel()
 ) {
-
     Scaffold(contentColor = Color.Black, topBar = {
         NavigationBarEditTransactionScreen(
             navController,
@@ -104,20 +104,30 @@ fun EditTransactionScreen(
                 .padding(top = 60.dp)
                 .fillMaxSize(),
             color = Color.White,
-
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        ScreenBackgroundColor
+                    )
             ) {
-            EditTransactionScreenContent(
-                navController = navController,
-                groupId = groupId,
-                editTransactionScreenViewModel
-            )
-            /*DeleteTransaction(
-                navController = navController,
-                groupId = groupId,
-                transactionId = transactionId,
-                transactionName = transactionName,
-                editTransactionScreenViewModel = editTransactionScreenViewModel
-            )*/
+                EditTransactionScreenContent(
+                    navController = navController,
+                    transactionId = transactionId,
+                    groupId = groupId,
+                    editTransactionScreenViewModel
+                )
+                Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxHeight()) {
+                    DeleteTransaction(
+                        navController = navController,
+                        groupId = groupId,
+                        transactionId = transactionId,
+                        transactionName = transactionName,
+                        editTransactionScreenViewModel = editTransactionScreenViewModel
+                    )
+                }
+            }
         }
     }
 }
@@ -133,6 +143,8 @@ fun DeleteTransaction(
     Button(onClick = {
         //!Todo: Not checking if a transaction was actually deleted
         CoroutineScope(Dispatchers.Main).launch {
+
+
             editTransactionScreenViewModel.deleteTransaction(groupId, transactionId)
         }
         navController.popBackStack() // Pop once
@@ -154,31 +166,27 @@ fun NavigationBarEditTransactionScreen(
     transactionDate: String,
     payedBy: String
 ) {
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
-                navController.navigate(
-                    "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
-                )
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "ArrowBack"
-                )
-            }
-        },
-        title = { Text(transactionName) },
-        actions = {
-            IconButton(onClick = {
-                //navController.navigate("${AvailableScreens.EditTransactionScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}")
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.Check, contentDescription = "Edit"
-                )
-            }
-        })
+    CenterAlignedTopAppBar(navigationIcon = {
+        IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+            navController.navigate(
+                "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
+            )
+        }) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                contentDescription = "ArrowBack"
+            )
+        }
+    }, title = { Text(transactionName) }, actions = {
+        IconButton(onClick = {
+            //navController.navigate("${AvailableScreens.EditTransactionScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}")
+        }) {
+            Icon(
+                imageVector = Icons.Outlined.Check, contentDescription = "Edit"
+            )
+        }
+    })
 }
-
 
 fun isDouble(value: String): Boolean {
     return try {
@@ -194,6 +202,7 @@ fun isDouble(value: String): Boolean {
 @Composable
 fun EditTransactionScreenContent(
     navController: NavController,
+    transactionId: String,
     groupId: String,
     editTransactionScreenViewModel: EditTransactionScreenViewModel,
 ) {
@@ -224,7 +233,7 @@ fun EditTransactionScreenContent(
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
-            .fillMaxSize()
+            //.fillMaxSize()
             .background(
                 ScreenBackgroundColor
             )
@@ -249,10 +258,7 @@ fun EditTransactionScreenContent(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             )
             Spacer(modifier = Modifier.height(10.dp))
-
             val showDatePicker = remember { mutableStateOf(false) }
-
-
             Button(onClick = { showDatePicker.value = true }) {
                 Text(text = "Select Date")
             }
@@ -306,9 +312,10 @@ fun EditTransactionScreenContent(
                     )
                 }
             }
-            /*EditTransactionButtonView(
+            EditTransactionButtonView(
                 navController,
-                newEntryViewModel,
+                editTransactionScreenViewModel,
+                transactionId,
                 groupId,
                 name,
                 amount,
@@ -316,7 +323,7 @@ fun EditTransactionScreenContent(
                 selectedDate,
                 fieldValues,
                 exceptionMessage
-            )*/
+            )
 
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
@@ -326,6 +333,8 @@ fun EditTransactionScreenContent(
                 amount,
                 fieldValues
             )
+
+
         }
     }
 }
@@ -333,7 +342,8 @@ fun EditTransactionScreenContent(
 @Composable
 fun EditTransactionButtonView(
     navController: NavController,
-    newEntryViewModel: NewEntryScreenViewModel,
+    editTransactionScreenViewModel: EditTransactionScreenViewModel,
+    transactionId: String,
     groupId: String,
     name: String,
     amount: String,
@@ -355,8 +365,8 @@ fun EditTransactionButtonView(
             .background(MainButtonColor),// Set background color to blue
             onClick = {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val result = newEntryViewModel.addTransactionForGroup(
-                        groupId, mapOf(
+                    val result = editTransactionScreenViewModel.updateSpecificTransactionGroup(
+                        groupId, transactionId, mapOf(
                             "name" to name,
                             "amount" to amount,
                             "payedBy" to selectedUserId.value,
@@ -365,10 +375,12 @@ fun EditTransactionButtonView(
                             ) else "",
                         ), fieldValues.toMap()
                     )
-
                     if (result.exception != null) {
                         exceptionMessage.value = result.exception!!.message.toString()
-                    } else navController.popBackStack()
+                    } else {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                    }
                 }
             }) {
             Icon(
@@ -418,6 +430,7 @@ fun SingleAmountMembers(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(200.dp)
                 .padding(bottom = 70.dp)
         ) {
             for (user in userListData.data!!) item() {
