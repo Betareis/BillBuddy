@@ -149,8 +149,10 @@ fun NewEntryScreen(
 
                 val showDatePicker = remember { mutableStateOf(false) }
 
-                Button(onClick = { showDatePicker.value = true },
-                    colors = ButtonDefaults.buttonColors(MainButtonColor)) {
+                Button(
+                    onClick = { showDatePicker.value = true },
+                    colors = ButtonDefaults.buttonColors(MainButtonColor)
+                ) {
                     Text(text = "Select Date", color = Color.Black)
                 }
 
@@ -314,11 +316,17 @@ fun SingleAmountMembers(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
+                    var fieldValue by remember {
+                        mutableStateOf(
+                            fieldValues[user.id.toString()]?.toString() ?: "0.0"
+                        )
+                    }
                     TextField(
-                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString().replace(".", ","),
+                        value = fieldValue,
                         onValueChange = { newValue ->
-                            val formattedValue = newValue.replace(",", ".")
-                            fieldValues.toMutableMap().apply { put(user.id, formattedValue.toDouble()) }
+                            fieldValue = newValue
+                            fieldValues[user.id.toString()] = newValue.toDoubleOrNull() ?: 0.0
+                            Log.d("field_values", fieldValues.toString())
                         },
                         modifier = Modifier.weight(2f),
                     )

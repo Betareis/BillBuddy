@@ -20,8 +20,6 @@ class FirestoreRepository @Inject constructor() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     /*QUERIES*/
-
-
     suspend fun getUsername(userId: String): DataRequestWrapper<String, String, Exception> {
         return try {
             val result = firestore.collection("users").document(userId).get().await()
@@ -314,44 +312,6 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
-    suspend fun updateTransactionInGroup(
-        groupId: String, transactionId: String, transactionData: Map<String, Any>
-    ): DataRequestWrapper<Transaction, String, Exception> {
-        return try {
-            //val auth = FirebaseAuth.getInstance()
-            //val currentUser = auth.currentUser
-
-            //if (currentUser != null) {
-            //val userId = currentUser.uid
-
-            val groupDocumentRef = firestore.collection("groups").document(groupId)
-
-            val transactionCollectionRef = groupDocumentRef.collection("transactions")
-            val TransactionDocumentRef = transactionCollectionRef.document(transactionId)
-
-            //Todo: should be checked
-            TransactionDocumentRef.update(transactionData).await()
-
-            val getTransaction = TransactionDocumentRef.get().await()
-
-            val getTransactionObject = getTransaction.toObject<Transaction>()
-
-            val transactionObject = Transaction(
-                getTransaction!!.id,
-                getTransactionObject!!.name,
-                getTransactionObject.payedBy,
-                getTransactionObject.date,
-                getTransactionObject.amount
-            )
-
-            DataRequestWrapper(data = transactionObject)
-        } catch (e: Exception) {
-            Log.d("UPDATE_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
-            DataRequestWrapper(exception = e)
-        }
-    }
-
-
     private fun hasNonDoubleValues(map: Map<String, Any>): Boolean {
         return map.any { (_, value) -> value !is Double }
     }
@@ -408,6 +368,45 @@ class FirestoreRepository @Inject constructor() {
 
 
     /********************************************* MUTATIONS UPDATE ****************************************************************************/
+
+    suspend fun updateTransactionInGroup(
+        groupId: String, transactionId: String, transactionData: Map<String, Any>
+    ): DataRequestWrapper<Transaction, String, Exception> {
+        return try {
+            //val auth = FirebaseAuth.getInstance()
+            //val currentUser = auth.currentUser
+
+            //if (currentUser != null) {
+            //val userId = currentUser.uid
+
+            Log.d("test_test", "$transactionData, $transactionId, $groupId")
+
+            val groupDocumentRef = firestore.collection("groups").document(groupId)
+
+            val transactionCollectionRef = groupDocumentRef.collection("transactions")
+            val transactionDocumentRef = transactionCollectionRef.document(transactionId)
+
+            //Todo: should be checked
+            transactionDocumentRef.update(transactionData).await()
+
+            val getTransaction = transactionDocumentRef.get().await()
+
+            val getTransactionObject = getTransaction.toObject<Transaction>()
+
+            val transactionObject = Transaction(
+                getTransaction!!.id,
+                getTransactionObject!!.name,
+                getTransactionObject.payedBy,
+                getTransactionObject.date,
+                getTransactionObject.amount
+            )
+
+            DataRequestWrapper(data = transactionObject)
+        } catch (e: Exception) {
+            Log.d("UPDATE_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
+            DataRequestWrapper(exception = e)
+        }
+    }
 
 //Todo: Update debts for members of specific transaction
 
