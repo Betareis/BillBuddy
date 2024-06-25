@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import com.example.myapplication.data.model.Group
+import com.example.myapplication.data.model.SingleAmount
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -29,44 +30,36 @@ class FirestoreRepository @Inject constructor() {
             val name = document.getString("name") ?: ""
             val id = document.id;
             val amount = document.getDouble("amount") ?: 0.0
+            val payedBy = document.getString("payedBy") ?: ""
             // Access transactions subcollection (assuming it exists)
-            Transaction(name = name, id = id, amount = amount)
+            Transaction(name = name, id = id, amount = amount, payedBy = payedBy)
         }.toMutableList()
 
         return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
     }
 
-    suspend fun getGroupsOfUser(): DataRequestWrapper<MutableList<Group>, String, Exception> {
+    suspend fun getSingleTransaction(
+        transactionId: String, groupId: String
+    ): DataRequestWrapper<Transaction, String, Exception> {
+        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"));
 
-
-        val result = firestore.collection("groups").get().await()
-
-        val groups = result.documents.map { document ->
-            val name = document.getString("name") ?: ""
-            val id = document.id;
-            // Access transactions subcollection (assuming it exists)
-
-            val transactionsRef = document.reference.collection("transactions")
-
-
-            // Fetch transactions using the subcollection reference
-            val transactions = try {
-                transactionsRef.get().await().toObjects(Transaction::class.java) ?: emptyList()
-            } catch (e: Exception) {
-                Log.d("TEST_C", "Error retrieving transactions: ${e.message}")
-                emptyList() // Return empty list on error
-            }
-
-            Log.d("DATTA", "DATA: " + transactions.toMutableList().toString())
-
-            // Create Group object with retrieved transactions
-            Group(id, name, transactions)
-        }.toMutableList()
-
-
-        return DataRequestWrapper(groups, "", null) // Assuming DataRequestWrapper structure
+        return try {
+            val transaction =
+                firestore.collection("groups").document(groupId).collection("transactions")
+                    .document(transactionId).get().await()
+            val transactionObject = transaction.toObject<Transaction>()
+            val transactionObjectData = Transaction(
+                transaction.id,
+                transactionObject!!.name,
+                transactionObject.payedBy,
+                transactionObject.date,
+                transactionObject.amount,
+            )
+            DataRequestWrapper(data = transactionObjectData)
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = Exception("Cant get Transaction $transactionId"))
+        }
     }
-
 
     suspend fun getGroups(userId: String): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
@@ -144,6 +137,32 @@ class FirestoreRepository @Inject constructor() {
             } else {
                 DataRequestWrapper(exception = Exception("Document does not exist"))
             }
+        } catch (e: Exception) {
+            println("Fehler beim Abrufen der singleAmount: ${e.message}")
+            DataRequestWrapper(exception = e)
+        }
+    }
+
+    suspend fun getSingleAmounts(
+        groupId: String, transactionId: String
+    ): DataRequestWrapper<MutableList<SingleAmount>, String, Exception> {
+
+        return try {
+            val singleAmountsSnapshot =
+                firestore.collection("groups").document(groupId).collection("transactions")
+                    .document(transactionId).collection("singleAmount").get()
+                    .await()
+
+            if (singleAmountsSnapshot.isEmpty) {
+                return DataRequestWrapper(exception = Exception("Error get singleAmounts"))
+            }
+
+            val dataList = singleAmountsSnapshot.documents.map { document ->
+                SingleAmount(id = document.id, amount = document.getDouble("amount") ?: 0.0)
+            }.toMutableList()
+
+            DataRequestWrapper(data = dataList)
+
         } catch (e: Exception) {
             println("Fehler beim Abrufen der singleAmount: ${e.message}")
             DataRequestWrapper(exception = e)
@@ -284,8 +303,13 @@ class FirestoreRepository @Inject constructor() {
                 firestore.collection("groups").document(groupId).collection("balances")
                     .document(userId)
 
-            val oldAmount = groupDocumentRef.get().await().getDouble("balance")
-            groupDocumentRef.update("balance", oldAmount!! + amount).await()
+            if (groupDocumentRef.get().await().exists()) {
+                val oldAmount = groupDocumentRef.get().await().getDouble("balance")
+
+                groupDocumentRef.update("balance", (amount + oldAmount!!)).await()
+            } else {
+                groupDocumentRef.set(mapOf("balance" to amount)).await()
+            }
 
         } catch (e: Exception) {
             Log.d("Update_Balance_Failed", e.stackTraceToString())

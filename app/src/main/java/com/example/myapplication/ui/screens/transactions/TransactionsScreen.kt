@@ -61,6 +61,7 @@ import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.MainButtonColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,6 +87,8 @@ fun TransactionsScreen(
     Column(modifier = Modifier.padding(3.dp)) {
         Text(text = "TransactionsScreen", color = Color.Black)
     }
+
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -344,6 +347,7 @@ fun DisplayBalancesContent(
     transactionsViewModel: TransactionsViewModel = hiltViewModel(),
     groupId: String
 ) {
+    val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
     val usersOfGroup = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
         initialValue = DataRequestWrapper(state = "loading")
     ) {
@@ -363,7 +367,10 @@ fun DisplayBalancesContent(
                         .background(ListElementBackgroundColor)
                         .padding(16.dp)
                 ) {
-                    Text(text = user.firstname + " " + user.name, color = NewWhiteFontColor)
+                    Text(
+                        text = "${user.getDisplayName()} ${if (user.id.equals(currentUserId)) "(Me)" else ""}",
+                        color = NewWhiteFontColor
+                    )
                 }
             }
         }
