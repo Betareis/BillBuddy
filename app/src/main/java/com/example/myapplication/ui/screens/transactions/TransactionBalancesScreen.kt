@@ -106,36 +106,37 @@ fun DisplayBalancesContent(
                                         .background(ListElementBackgroundColor)
                                         .padding(16.dp)
                                 ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text(
-                                            text = "${debt.first.getDisplayName()} owes ${debt.second.getDisplayName()}",
-                                            color = NewWhiteFontColor
-                                        )
-                                        Text(
-                                            text = "${debt.third}",
-                                            color = NewWhiteFontColor,
-                                            textAlign = TextAlign.End
-                                        )
+                                    Column {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = "${debt.first.getDisplayName()} owes ${debt.second.getDisplayName()}",
+                                                color = NewWhiteFontColor
+                                            )
+                                            Text(
+                                                text = "${debt.third}",
+                                                color = NewWhiteFontColor,
+                                                textAlign = TextAlign.End
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Button(
+                                            onClick = {
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                                                context.startActivity(intent)
+                                            },
+                                            modifier = Modifier.align(Alignment.End)
+                                        ) {
+                                            Text("Pay with PayPal")
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-            Button(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Open PayPal")
             }
         }
     } else {
@@ -146,17 +147,6 @@ fun DisplayBalancesContent(
         ) {
             Text(text = "No users found")
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Open PayPal")
-            }
         }
     }
 }
