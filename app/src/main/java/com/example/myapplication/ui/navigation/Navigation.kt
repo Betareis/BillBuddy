@@ -93,7 +93,7 @@ private fun NavGraphBuilder.mainNav(navController: NavHostController) {
         exitTransition = {
             fadeOut(tween(500))
         }
-        ) { ProfileScreen(navController) }
+    ) { ProfileScreen(navController) }
     composable(
         route = AvailableScreens.MoreScreen.name,
         enterTransition = {
