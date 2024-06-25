@@ -246,9 +246,9 @@ class FirestoreRepository @Inject constructor() {
             //if (currentUser != null) {
             //val userId = currentUser.uid
 
-            val groupCollectionRef = db.collection("groups")
+            val groupDocumentRef = db.collection("groups")
 
-            val newGroupDocumentRef = groupCollectionRef.document()
+            val newGroupDocumentRef = groupDocumentRef.document()
 
             /*val dataWithTransactions = hashMapOf<String, Any>(
                 "transactions" to hashMapOf<String, Any>(),
@@ -267,7 +267,6 @@ class FirestoreRepository @Inject constructor() {
                 userDocumentRef.update("groups", FieldValue.arrayUnion(newGroupDocumentRef.id))
             }
 
-            newGroupDocumentRef.update("users", FieldValue.arrayUnion(userDocumentRef.id))
             DataRequestWrapper(data = Unit)/*} else {
                 throw Exception("User ID is null.")
             }*/
