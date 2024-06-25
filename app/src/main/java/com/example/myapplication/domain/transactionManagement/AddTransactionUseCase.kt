@@ -1,6 +1,7 @@
 package com.example.myapplication.domain.transactionManagement
 
 import androidx.core.text.isDigitsOnly
+import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.google.protobuf.Empty
@@ -26,7 +27,7 @@ class AddTransactionUseCase @Inject constructor(private val firestoreRepository:
         groupId: String,
         transactionData: Map<String, Any>,
         singleAmountData: Map<String, Any>,
-    ): DataRequestWrapper<Unit, String, Exception> {
+    ): DataRequestWrapper<Transaction, String, Exception> {
         validateTransactionData(transactionData)
 
         return try {
@@ -41,7 +42,7 @@ class AddTransactionUseCase @Inject constructor(private val firestoreRepository:
             firestoreRepository.setSingleAmounts(
                 groupId, transactionId = transaction!!.id!!, singleAmountData
             )
-            DataRequestWrapper(data = Unit)
+            DataRequestWrapper(data = transaction)
 
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)
