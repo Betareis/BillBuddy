@@ -284,7 +284,6 @@ fun SingleAmountMembers(
         value = loadUsers()
     }.value
 
-
     if (userListData.state == "loading") {
         Text(text = "Users loading")
         CircularProgressIndicator()
@@ -294,16 +293,15 @@ fun SingleAmountMembers(
         val myMap: Map<String, Double> =
             readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
                 {
-                    if (amount.isNotEmpty() && isDouble(amount) && amount.toDouble() > 0.0) {
-                        String.format("%.2f", amount.toDouble() / numUsers)
+                    val formattedAmount = amount.replace(",", ".")
+                    if (formattedAmount.isNotEmpty() && isDouble(formattedAmount) && formattedAmount.toDouble() > 0.0) {
+                        String.format("%.2f", formattedAmount.toDouble() / numUsers)
                             .toDouble() // Format and convert to double
                     } else {
                         0.0  // Default value as double
                     }
                 })
         fieldValues.putAll(myMap)
-        //!Todo: should be deleted in production
-        //Log.d("test_map", myMap.toString())
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -320,9 +318,10 @@ fun SingleAmountMembers(
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
                     TextField(
-                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString(),
+                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString().replace(".", ","),
                         onValueChange = { newValue ->
-                            fieldValues.toMutableMap().apply { put(user.id, newValue.toDouble()) }
+                            val formattedValue = newValue.replace(",", ".")
+                            fieldValues.toMutableMap().apply { put(user.id, formattedValue.toDouble()) }
                         },
                         modifier = Modifier.weight(2f),
                     )
@@ -331,7 +330,6 @@ fun SingleAmountMembers(
         }
     }
 }
-
 
 @Composable
 fun DropdownPayedByUser(
