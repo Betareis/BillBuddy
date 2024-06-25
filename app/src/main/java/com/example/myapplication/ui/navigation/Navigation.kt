@@ -1,13 +1,10 @@
 package com.example.myapplication.ui.navigation
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -111,7 +108,7 @@ private fun NavGraphBuilder.mainNav(navController: NavHostController) {
         exitTransition = {
             fadeOut(tween(500))
         }
-        ) { ProfileScreen(navController) }
+    ) { ProfileScreen(navController) }
     composable(
         route = AvailableScreens.MoreScreen.name,
         enterTransition = {
@@ -159,20 +156,11 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
         }
     }
 
-    composable(
-        "${AvailableScreens.TransactionsScreen.name}/?groupId={groupId}&groupName={groupName}",
-        arguments = listOf(
-            navArgument("groupId") { type = NavType.StringType },
-            navArgument("groupName") { type = NavType.StringType }
-        )
-    ) { backStackEntry ->
-        val groupId = backStackEntry.arguments?.getString("groupId")
-        val groupName = backStackEntry.arguments?.getString("groupName")
-        if (groupId != null && groupName != null) {
-            TransactionsScreen(navController, groupId, groupName)
-        } else {
-            LoginScreen(navController)
-        }
+    composable(AvailableScreens.GroupsScreen.name) { GroupsScreen(navController) }
+    composable("${AvailableScreens.TransactionsScreen.name}/?groupId={groupId}&groupName={groupName}") { backStackEntry ->
+        val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
+        val groupName = backStackEntry.arguments?.getString("groupName") ?: ""
+        TransactionsScreen(navController, groupId, groupName)
     }
 
     composable(
