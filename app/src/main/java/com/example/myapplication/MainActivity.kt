@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,13 +25,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val navController = rememberNavController()
-
-            // Handle Deep Link
-            val intent = intent
-            val deepLinkData = intent?.data
-            if (deepLinkData != null) {
-                handleDeepLink(navController, deepLinkData)
+            val navController = rememberNavController()// Handle Deep Link
+            val deepLinkUri = intent.data
+            LaunchedEffect(key1 = deepLinkUri) {
+                deepLinkUri?.let { uri ->
+                    handleDeepLink(navController, uri)
+                }
             }
 
             Surface(modifier = Modifier.fillMaxSize()) {
@@ -46,10 +46,9 @@ class MainActivity : ComponentActivity() {
 
     private fun handleDeepLink(navController: NavController, deepLinkData: Uri) {
         val pathSegments = deepLinkData.pathSegments
-        if (pathSegments.size == 2 && pathSegments[0] == "transactionscreen") {
+        if (pathSegments.size >= 2 && pathSegments[0] == "www.transactionscreen.com") {
             val groupName = pathSegments[1]
-            val groupId = ""
-            navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupId=${groupId}&groupName=${groupName}")
+            navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupId=&groupName=${groupName}")
         }
     }
 }
