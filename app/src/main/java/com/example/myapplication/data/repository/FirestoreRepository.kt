@@ -31,8 +31,9 @@ class FirestoreRepository @Inject constructor() {
             val id = document.id;
             val amount = document.getDouble("amount") ?: 0.0
             val payedBy = document.getString("payedBy") ?: ""
+            val date = document.getString("date") ?: ""
             // Access transactions subcollection (assuming it exists)
-            Transaction(name = name, id = id, amount = amount, payedBy = payedBy)
+            Transaction(name = name, id = id, amount = amount, payedBy = payedBy, date = date)
         }.toMutableList()
 
         return DataRequestWrapper(transactions, "", null) // Assuming DataRequestWrapper structure
@@ -150,8 +151,7 @@ class FirestoreRepository @Inject constructor() {
         return try {
             val singleAmountsSnapshot =
                 firestore.collection("groups").document(groupId).collection("transactions")
-                    .document(transactionId).collection("singleAmount").get()
-                    .await()
+                    .document(transactionId).collection("singleAmount").get().await()
 
             if (singleAmountsSnapshot.isEmpty) {
                 return DataRequestWrapper(exception = Exception("Error get singleAmounts"))
