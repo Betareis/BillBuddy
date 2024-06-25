@@ -65,6 +65,7 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.screens.newentry.NewEntryScreenViewModel
 import com.example.myapplication.ui.theme.MainButtonColor
+import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -352,7 +353,7 @@ fun EditTransactionButtonView(
             .fillMaxWidth()
             .width(300.dp)
             .size(50.dp) // Adjust size as needed
-            .background(MainButtonColor),// Set background color to blue
+            .background(NewWhiteFontColor),// Set background color to blue
             onClick = {
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = newEntryViewModel.addTransactionForGroup(
@@ -484,7 +485,7 @@ fun DropdownPayedByUser(
                     .height(90.dp)
                     .clickable(onClick = { expanded = true })
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             )
             DropdownMenu(
@@ -493,7 +494,7 @@ fun DropdownPayedByUser(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             ) {
                 nameList.forEachIndexed { index, s ->
