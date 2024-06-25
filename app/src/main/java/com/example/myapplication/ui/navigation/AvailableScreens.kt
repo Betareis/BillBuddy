@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.navigation
 
-import com.example.myapplication.ui.screens.BalancesScreen
-
 
 enum class AvailableScreens {
     //EntryLoadingScreen;
@@ -21,7 +19,6 @@ enum class AvailableScreens {
         fun fromRoute(route: String): AvailableScreens =
             when (route.substringBefore("/")) {
                 LoginScreen.name -> LoginScreen;
-                BalancesScreen.name -> BalancesScreen;
                 EditTransactionScreen.name -> EditTransactionScreen;
                 GroupsScreen.name -> GroupsScreen;
                 NewEntryScreen.name -> NewEntryScreen;

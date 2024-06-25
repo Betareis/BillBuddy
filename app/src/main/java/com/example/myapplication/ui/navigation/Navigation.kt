@@ -80,21 +80,6 @@ private fun NavGraphBuilder.loginNav(navController: NavHostController) {
 
 private fun NavGraphBuilder.mainNav(navController: NavHostController) {
     composable(
-        route = AvailableScreens.BalancesScreen.name,
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(700)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(700)
-            )
-        }
-    ) { BalancesScreen(navController) }
-    composable(
         route = AvailableScreens.GroupsScreen.name,
         enterTransition = {
             fadeIn(tween(500))

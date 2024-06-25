@@ -4,7 +4,6 @@ import androidx.core.text.isDigitsOnly
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.google.protobuf.Empty
 import javax.inject.Inject
 
 
@@ -21,22 +20,22 @@ private fun hasBlankValues(map: Map<String, Any>): Boolean {
     return map.values.any { it.toString().isBlank() }
 }
 
-class AddTransactionUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {
+class UpdateTransactionUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {
 
     suspend operator fun invoke(
         groupId: String,
+        transactionId: String,
         transactionData: Map<String, Any>,
         singleAmountData: Map<String, Any>,
     ): DataRequestWrapper<Transaction, String, Exception> {
         validateTransactionData(transactionData)
 
         return try {
-            val transaction = firestoreRepository.createTransactionForGroup(
-                groupId, convertMapValues(transactionData)
-            ).data
+
+            val transaction = firestoreRepository.updateTransactionInGroup(groupId, transactionId, convertMapValues(transactionData)).data
 
             if (transaction?.id.isNullOrEmpty()) {
-                throw Exception("Transaction creation failed")
+                throw Exception("Transaction update failed")
             }
 
             firestoreRepository.setSingleAmounts(

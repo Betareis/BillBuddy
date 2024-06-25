@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -145,22 +146,28 @@ fun NewEntryScreen(
                 Text(text = "Select Date")
             }
 
-            if (showDatePicker.value) {
-                DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
-                    confirmButton = {
-                        TextButton(
-                            onClick = { showDatePicker.value = false }, enabled = true
-                        ) {
-                            Text(text = "Confirm")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePicker.value = false }) {
-                            Text(text = "Dismiss")
-                        }
-                    }) {
-                    DatePicker(state = datePickerState)
+            Row(modifier = Modifier.fillMaxWidth()) {
+                if (showDatePicker.value) {
+                    DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
+                        confirmButton = {
+                            TextButton(
+                                onClick = { showDatePicker.value = false }, enabled = true
+                            ) {
+                                Text(text = "Confirm")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker.value = false }) {
+                                Text(text = "Dismiss")
+                            }
+                        }) {
+                        DatePicker(state = datePickerState)
+                    }
                 }
+                TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
+                    modifier = Modifier.width(150.dp),
+                    enabled = false,
+                    onValueChange = {})
             }/*Text(
                 color = Color.White,
                 text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
@@ -171,10 +178,9 @@ fun NewEntryScreen(
 
             //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(
-                modifier = Modifier
-                    .then(Modifier.testTag("backArrow"))
-                    .width(200.dp),
+            OutlinedButton(modifier = Modifier
+                .then(Modifier.testTag("backArrow"))
+                .width(200.dp),
                 onClick = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
                 }) {
