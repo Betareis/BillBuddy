@@ -149,9 +149,10 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                                 groupViewModel.addGroup(flatGroupData, userId = auth.uid!!)
 
                                 groupViewModel.getGroupsFirestore()
+
+                                textFieldValue = "";
                             }
                         }
-                        textFieldValue = "";
                         showTextFieldDialog = false;
 
                     })
