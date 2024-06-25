@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.screens.groups
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -18,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,15 +34,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.myapplication.data.model.Group
-import com.example.myapplication.data.model.User;
 import com.example.myapplication.ui.navigation.AvailableScreens
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-//import com.example.myapplication.ui.navigation.NavigationBar
 import com.example.myapplication.ui.navigation.TabView
-import com.example.myapplication.ui.theme.NewWhiteFontColor;
-import com.example.myapplication.ui.theme.ListElementBackgroundColor;
+import com.example.myapplication.ui.theme.NewWhiteFontColor
+import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,10 +49,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.ui.draw.clip
-import androidx.lifecycle.liveData
-import com.example.myapplication.ui.navigation.BurgerMenuDrawer
-
 import com.example.myapplication.ui.theme.MainButtonColor
 
 fun String.toUppercaseFirstLetter(): String {
@@ -158,10 +147,10 @@ fun ShowData(
                 .heightIn(max = 550.dp)
                 .fillMaxWidth()) {
                 for (data in groupData.data!!) {
-                    item() {
+                    item {
                         FilledTonalButton(
                             onClick = {
-                                navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupId=${data.id}&groupName=${data.name}")
+                                navController.navigate("${AvailableScreens.TransactionsBalancesLayout.name}/?groupId=${data.id}&groupName=${data.name}")
                             },
                             colors = ButtonColors(
                                 contentColor = NewWhiteFontColor,

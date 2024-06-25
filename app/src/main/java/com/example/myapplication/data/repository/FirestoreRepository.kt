@@ -20,6 +20,24 @@ class FirestoreRepository @Inject constructor() {
 
     /*QUERIES*/
 
+
+    suspend fun getUsername(userId: String): DataRequestWrapper<String, String, Exception> {
+        return try {
+            val result = firestore.collection("users").document(userId).get().await()
+
+            val userObject =
+                User(result.id, result.getString("firstname") ?: "", result.getString("name") ?: "")
+
+            if (result == null) DataRequestWrapper(data = "")
+            else DataRequestWrapper(data = userObject.getDisplayName())
+
+        } catch (e: Exception) {
+            DataRequestWrapper(data = "", exception = Exception("Error retrieve the username"))
+        }
+
+    }
+
+
     suspend fun getTransactionsGroup(groupId: String): DataRequestWrapper<MutableList<Transaction>, String, Exception> {
 
 

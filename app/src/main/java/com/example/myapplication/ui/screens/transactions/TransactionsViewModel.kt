@@ -28,6 +28,11 @@ class TransactionsViewModel @Inject constructor(
         return getBalancesGroupUseCase(groupId)
     }
 
+
+    suspend fun getUsernameById(userId: String): DataRequestWrapper<String, String, Exception> {
+        return firestoreRepository.getUsername(userId)
+    }
+
     /*suspend fun getUsersOfGroup(
         groupId: String
     ): DataRequestWrapper<MutableList<User>, String, Exception> {

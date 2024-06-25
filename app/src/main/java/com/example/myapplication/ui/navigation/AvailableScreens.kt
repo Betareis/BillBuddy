@@ -2,15 +2,13 @@ package com.example.myapplication.ui.navigation
 
 
 enum class AvailableScreens {
-    //EntryLoadingScreen;
     LoginScreen,
-    BalancesScreen,
     EditTransactionScreen,
     GroupsScreen,
     NewEntryScreen,
     ProfileScreen,
     SignUpScreen,
-    TransactionsScreen,
+    TransactionsBalancesLayout,
     TransactionInfoScreen,
     MoreScreen;
 
@@ -24,7 +22,7 @@ enum class AvailableScreens {
                 NewEntryScreen.name -> NewEntryScreen;
                 ProfileScreen.name -> ProfileScreen;
                 SignUpScreen.name -> SignUpScreen;
-                TransactionsScreen.name -> TransactionsScreen;
+                TransactionsBalancesLayout.name -> TransactionsBalancesLayout;
                 TransactionInfoScreen.name -> TransactionInfoScreen;
                 MoreScreen.name -> MoreScreen;
                 else -> throw Exception("Route companion object navigation error")

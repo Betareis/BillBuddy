@@ -4,7 +4,6 @@ import androidx.core.text.isDigitsOnly
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.google.protobuf.Empty
 import javax.inject.Inject
 
 

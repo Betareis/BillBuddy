@@ -1,13 +1,10 @@
 package com.example.myapplication.ui.navigation
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,12 +18,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.screens.edittransaction.EditTransactionScreen
-import com.example.myapplication.ui.screens.transactions.TransactionsScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.profile.ProfileScreen
 import com.example.myapplication.ui.screens.signup.SignUpScreen
+import com.example.myapplication.ui.screens.transactions.TransactionsBalancesLayout
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -151,7 +148,7 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     }
 
     composable(
-        "${AvailableScreens.TransactionsScreen.name}/?groupId={groupId}&groupName={groupName}",
+        "${AvailableScreens.TransactionsBalancesLayout.name}/?groupId={groupId}&groupName={groupName}",
         arguments = listOf(
             navArgument("groupId") { type = NavType.StringType },
             navArgument("groupName") { type = NavType.StringType }
@@ -160,7 +157,7 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
         val groupId = backStackEntry.arguments?.getString("groupId")
         val groupName = backStackEntry.arguments?.getString("groupName")
         if (groupId != null && groupName != null) {
-            TransactionsScreen(navController, groupId, groupName)
+            TransactionsBalancesLayout(navController, groupId, groupName)
         } else {
             LoginScreen(navController)
         }
