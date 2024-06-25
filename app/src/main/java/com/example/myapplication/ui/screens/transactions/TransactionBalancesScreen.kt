@@ -23,12 +23,10 @@ import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.google.firebase.auth.FirebaseAuth
 
-
 @Composable
 fun TransactionBalancesScreen(transactionsViewModel: TransactionsViewModel, groupId: String) {
     DisplayBalancesContent(transactionsViewModel, groupId)
 }
-
 
 @Composable
 fun DisplayBalancesContent(

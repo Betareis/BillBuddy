@@ -56,7 +56,7 @@ fun TransactionsBalancesLayout(
     groupName: String,
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ) {
-    var selectedChoice by remember {
+    val selectedChoice by remember {
         mutableStateOf(mutableStateOf("Transactions"))
     }
     Column(modifier = Modifier.padding(3.dp)) {
@@ -214,12 +214,12 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
         }
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             DropdownMenuItem(onClick = {
-                val deepLink = "myapp://transactionscreen/${groupName}"
+                val deepLink = "https://www.transactionscreen.com/${groupName}"
                 shareDeepLinkOnWhatsApp(context, deepLink, groupName)
                 menuExpanded = false
             }, text = { Text("Share Link on Whats App") })
             DropdownMenuItem(onClick = {
-                val deepLink = "myapp://transactionscreen/${groupName}"
+                val deepLink = "https://www.transactionscreen.com/${groupName}"
                 clipboard.setText(AnnotatedString(deepLink))
                 Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
                 menuExpanded = false

@@ -47,9 +47,20 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.example.myapplication.ui.theme.MainButtonColor
+import com.google.firebase.auth.FirebaseAuth
 
 fun String.toUppercaseFirstLetter(): String {
     if (isEmpty()) return ""
@@ -60,16 +71,18 @@ fun String.toUppercaseFirstLetter(): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel = hiltViewModel()) {
+    val groupsState = groupViewModel.groupsState.collectAsState(initial = emptyList())
+    var showTextFieldDialog by remember { mutableStateOf(false) }
+    var textFieldValue by rememberSaveable { mutableStateOf("") }
 
-    Scaffold(
-        contentColor = Color.Black,
-        bottomBar = { TabView(navController) },
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "Groups") }
-            )
-            //BurgerMenuDrawer()
-        }
+    LaunchedEffect(Unit) {
+        groupViewModel.getGroupsFirestore()
+    }
+
+    Scaffold(contentColor = Color.Black, bottomBar = { TabView(navController) }, topBar = {
+        CenterAlignedTopAppBar(title = { Text(text = "Groups") })
+        //BurgerMenuDrawer()
+    }
 
     ) {
         Surface(
@@ -77,39 +90,42 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                 .padding(top = 60.dp)
                 .fillMaxSize(),
             color = Color.White,
-
-            ) {
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 ShowData(
-                    loadGroups = { groupViewModel.getGroupsFirestore() },
+                    groupData = groupsState.value,
+                    //loadGroups = { groupViewModel.getGroupsFirestore() },
                     navController = navController
                 )
             }
+
             Column(
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(bottom = 200.dp)
             ) {
-                IconButton(
-                    modifier = Modifier
-                        .padding(start = 15.dp, end = 15.dp)
-                        .fillMaxWidth()
-                        .width(300.dp)
-                        .size(50.dp) // Adjust size as needed
-                        .background(MainButtonColor),// Set background color to blue
+                IconButton(modifier = Modifier
+                    .padding(start = 15.dp, end = 15.dp)
+                    .fillMaxWidth()
+                    .width(300.dp)
+                    .size(50.dp) // Adjust size as needed
+                    .background(MainButtonColor),// Set background color to blue
                     onClick = {
-                        CoroutineScope(Dispatchers.Main).launch {
+                        showTextFieldDialog = true/*CoroutineScope(Dispatchers.Main).launch {
                             val flatGroupData = mapOf(
                                 "name" to "Test",
                             )
                             //Todo: Not working right now
-                            groupViewModel.addGroup(flatGroupData)
-                        }
-                    }
-                ) {
+                            val auth = FirebaseAuth.getInstance()
+
+                            groupViewModel.addGroup(flatGroupData, userId = auth.uid!!)
+
+                            groupViewModel.getGroupsFirestore()
+                        }*/
+                    }) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Add a Group", // Provide a description for accessibility
@@ -117,7 +133,30 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                     )
                 }
             }
+            if (showTextFieldDialog) {
+                ShowTextFieldDialog(title = "Enter Text",
+                    initialValue = textFieldValue,
+                    onValueChange = { newText -> textFieldValue = newText },
+                    onDismissRequest = {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (textFieldValue.isNotBlank()) {
+                                val flatGroupData = mapOf(
+                                    "name" to textFieldValue,
+                                )
+                                //Todo: Not working right now
+                                val auth = FirebaseAuth.getInstance()
 
+                                groupViewModel.addGroup(flatGroupData, userId = auth.uid!!)
+
+                                groupViewModel.getGroupsFirestore()
+
+                                textFieldValue = "";
+                            }
+                        }
+                        showTextFieldDialog = false;
+
+                    })
+            }
         }
     }
 }
@@ -125,28 +164,23 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowData(
-    loadGroups: suspend () -> DataRequestWrapper<MutableList<Group>, String, Exception>,
-    navController: NavController
+    groupData: List<Group>, navController: NavController
 ) {
-    val groupData = produceState<DataRequestWrapper<MutableList<Group>, String, Exception>>(
-        initialValue = DataRequestWrapper(state = "loading")
-    ) {
-        value = loadGroups()
-    }.value
-
-    if (groupData.state == "loading") {
-        Text(text = "Group screen")
-        CircularProgressIndicator()
-    } else if (groupData.data != null && groupData.data!!.isNotEmpty()) {
+    if (groupData.isEmpty()) {
+        Text(text = "No Groups found")
+        //CircularProgressIndicator()
+    } else {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopStart
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier
-                .heightIn(max = 550.dp)
-                .fillMaxWidth()) {
-                for (data in groupData.data!!) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .heightIn(max = 550.dp)
+                    .fillMaxWidth()
+            ) {
+                for (data in groupData) {
                     item {
                         FilledTonalButton(
                             onClick = {
@@ -180,9 +214,23 @@ fun ShowData(
                 }
             }
         }
-
-
-    } else {
-        Text(text = "no groups found")
     }
+}
+
+@Composable
+fun ShowTextFieldDialog(
+    title: String,
+    onValueChange: (String) -> Unit,
+    onDismissRequest: () -> Unit,
+    initialValue: String = "",
+) {
+    AlertDialog(onDismissRequest = onDismissRequest, title = { Text(text = title) }, text = {
+        TextField(
+            value = initialValue, onValueChange = onValueChange, modifier = Modifier.fillMaxWidth()
+        )
+    }, confirmButton = {
+        Button(onClick = onDismissRequest) {
+            Text("Save") // Adjust button text as needed
+        }
+    })
 }
