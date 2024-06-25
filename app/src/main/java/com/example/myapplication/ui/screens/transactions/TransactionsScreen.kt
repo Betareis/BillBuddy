@@ -73,7 +73,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 
 
-
 @Composable
 fun TransactionsScreen(
     navController: NavController,
@@ -186,8 +185,6 @@ fun TransactionsScreen(
 }
 
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsScreenBar(navController: NavController, groupName: String) {
@@ -197,53 +194,43 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
 
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
-                navController.navigate(AvailableScreens.GroupsScreen.name)
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBack, contentDescription = "ArrowBack"
-                )
-            }
-        },
-        title = { Text(groupName) },
-        actions = {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(
-                    imageVector = Icons.Outlined.Menu, contentDescription = "Menu"
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        val deepLink = "myapp://transactionscreen/${groupName}"
-                        shareDeepLinkOnWhatsApp(context, deepLink, groupName)
-                        menuExpanded = false
-                    },
-                    text = { Text("Share Link on Whats App") }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        val deepLink = "myapp://transactionscreen/${groupName}"
-                        clipboard.setText(AnnotatedString(deepLink))
-                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
-                        menuExpanded = false
-                    },
-                    text = { Text("Copy link") }
-                )
-            }
+    CenterAlignedTopAppBar(navigationIcon = {
+        IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
+            navController.navigate(AvailableScreens.GroupsScreen.name)
+        }) {
+            Icon(
+                imageVector = Icons.Outlined.ArrowBack, contentDescription = "ArrowBack"
+            )
         }
-    )
+    }, title = { Text(groupName) }, actions = {
+        IconButton(onClick = { menuExpanded = true }) {
+            Icon(
+                imageVector = Icons.Outlined.Menu, contentDescription = "Menu"
+            )
+        }
+        DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+            DropdownMenuItem(onClick = {
+                val deepLink = "myapp://transactionscreen/${groupName}"
+                shareDeepLinkOnWhatsApp(context, deepLink, groupName)
+                menuExpanded = false
+            }, text = { Text("Share Link on Whats App") })
+            DropdownMenuItem(onClick = {
+                val deepLink = "myapp://transactionscreen/${groupName}"
+                clipboard.setText(AnnotatedString(deepLink))
+                Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+                menuExpanded = false
+            }, text = { Text("Copy link") })
+        }
+    })
 }
 
 private fun shareDeepLinkOnWhatsApp(context: Context, deepLink: String, groupName: String) {
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Hey there! Please join my group " + groupName + " on BillBuddy: \n$deepLink")
+        putExtra(
+            Intent.EXTRA_TEXT,
+            "Hey there! Please join my group " + groupName + " on BillBuddy: \n$deepLink"
+        )
         type = "text/plain"
         setPackage("com.whatsapp")
     }
@@ -254,9 +241,6 @@ private fun shareDeepLinkOnWhatsApp(context: Context, deepLink: String, groupNam
         e.printStackTrace()
     }
 }
-
-
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -344,21 +328,44 @@ fun ShowTransactionsData(
 
 @Composable
 fun DisplayBalancesContent(
-    transactionsViewModel: TransactionsViewModel = hiltViewModel(),
-    groupId: String
+    transactionsViewModel: TransactionsViewModel = hiltViewModel(), groupId: String
 ) {
     val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
-    val usersOfGroup = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
+    val usersOfGroup = produceState<DataRequestWrapper<Map<User, Double>, String, Exception>>(
         initialValue = DataRequestWrapper(state = "loading")
     ) {
-        value = transactionsViewModel.getUsersOfGroup(groupId)
+        value = transactionsViewModel.getBalancesGroup(groupId)
     }.value
 
     if (usersOfGroup.state == "loading") {
         CircularProgressIndicator()
     } else if (usersOfGroup.data != null && usersOfGroup.data!!.isNotEmpty()) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            items(usersOfGroup.data!!) { user ->
+            for (entry in usersOfGroup.data!!) {
+                item() {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(ListElementBackgroundColor)
+                            .padding(16.dp)
+                    ) {
+                        Row {
+                            Text(
+                                text = "${entry.key.getDisplayName()} ${if (entry.key.id.equals(currentUserId)) "(Me)" else ""}",
+                                color = NewWhiteFontColor
+                            )
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                                text = "${entry.value}", color = NewWhiteFontColor
+                            )
+                        }
+                    }
+                }
+            }
+            /*items(usersOfGroup.data!!.entries) { data ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -368,11 +375,15 @@ fun DisplayBalancesContent(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "${user.getDisplayName()} ${if (user.id.equals(currentUserId)) "(Me)" else ""}",
+                        text = "${data.key.getDisplayName()} ${if (user.id.equals(currentUserId)) "(Me)" else ""}",
                         color = NewWhiteFontColor
                     )
+                    Text(
+                        text = "${data.value}", color = NewWhiteFontColor
+                    )
+
                 }
-            }
+            }*/
         }
     } else {
         Text(text = "No users found")
