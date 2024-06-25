@@ -211,6 +211,7 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
 @Composable
 fun LogoutButton(navController: NavController) {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val context = LocalContext.current
 
     Button(
         colors = ButtonDefaults.buttonColors(
@@ -224,6 +225,7 @@ fun LogoutButton(navController: NavController) {
                 auth.signOut()
                 navController.navigate(AvailableScreens.LoginScreen.name) {
                     popUpTo(AvailableScreens.MoreScreen.name) { inclusive =true }
+                Toast.makeText(context, "Successfully logged out.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 //Log.d("Critical", "Logout failed")

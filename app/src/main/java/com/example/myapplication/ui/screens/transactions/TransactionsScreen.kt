@@ -286,7 +286,7 @@ fun ShowTransactionsData(
                                 //${Uri.encode(data.id)
                                 //navController.navigate(AvailableScreens.ProfileScreen.name)
                                 //navController.navigate(AvailableScreens.TransactionsScreen.name)
-                                navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${data.id}&transactionName=${data.name}")
+                                navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${data.id}&transactionName=${data.name}&transactionAmount=${data.amount}&transactionDate=${data.date}&payedBy=${data.payedBy}")
                             },
                             colors = ButtonColors(
                                 contentColor = NewWhiteFontColor,

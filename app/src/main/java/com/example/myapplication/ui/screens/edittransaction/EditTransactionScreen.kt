@@ -36,12 +36,15 @@ fun EditTransactionScreen(
     groupId: String,
     transactionId: String,
     transactionName: String,
+    transactionAmount: Double,
+    transactionDate: String,
+    payedBy: String,
     editTransactionScreenViewModel: EditTransactionScreenViewModel = hiltViewModel()
 ) {
 
     Scaffold(contentColor = Color.Black, topBar = {
         NavigationBarEditTransactionScreen(
-            navController, transactionName, groupId, transactionId
+            navController, transactionName, groupId, transactionId, transactionAmount, transactionDate, payedBy
         )
     }) {
         Surface(
@@ -109,13 +112,24 @@ fun DeleteTransaction(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBarEditTransactionScreen(
-    navController: NavController, transactionName: String, groupId: String, transactionId: String
+    navController: NavController,
+    groupId: String,
+    transactionId: String,
+    transactionName: String,
+    transactionAmount: Double,
+    transactionDate: String,
+    payedBy: String
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
-                navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}")
-            }) {
+            IconButton(
+                modifier = Modifier.then(Modifier.testTag("backArrow")),
+                onClick = {
+                    navController.navigate(
+                        "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
+                    )
+                }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = "ArrowBack"
