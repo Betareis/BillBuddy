@@ -26,7 +26,6 @@ import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.google.firebase.auth.FirebaseAuth
 
-
 @Composable
 fun TransactionBalancesScreen(transactionsViewModel: TransactionsViewModel, groupId: String) {
     DisplayBalancesContent(transactionsViewModel, groupId)
@@ -85,8 +84,48 @@ fun DisplayBalancesContent(
                         }
                     }
                 }
+
+                item {
+                    if (debts.isNotEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = "Debts Summary",
+                                color = NewWhiteFontColor,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                            debts.forEach { debt ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(ListElementBackgroundColor)
+                                        .padding(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "${debt.first.getDisplayName()} owes ${debt.second.getDisplayName()}",
+                                            color = NewWhiteFontColor
+                                        )
+                                        Text(
+                                            text = "${debt.third}",
+                                            color = NewWhiteFontColor,
+                                            textAlign = TextAlign.End
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            Text(text = "$debts")
             Button(
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
@@ -122,7 +161,6 @@ fun DisplayBalancesContent(
     }
 }
 
-
 fun calculateDebts(balances: Map<User, Double>): List<Triple<User, User, Double>> {
     val positiveBalances = balances.filter { it.value > 0 }.toList().toMutableList()
     val negativeBalances = balances.filter { it.value < 0 }.toList().toMutableList()
@@ -146,4 +184,3 @@ fun calculateDebts(balances: Map<User, Double>): List<Triple<User, User, Double>
 
     return debts
 }
-
