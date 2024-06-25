@@ -84,14 +84,8 @@ fun ChangePasswordSection(navController: NavController) {
         modifier = Modifier.background(Color.LightGray),
         onClick = { showDialog = true },
     ) {
-        Text(text = "Change Password")
+        Text(text = "Change password")
     }
-    /*AnimatedVisibility(showDialog) {
-        ChangePassword(navController) {
-            showDialog = false
-        }
-    }*/
-
     if (showDialog) {
         ChangePassword(navController) {
             showDialog = false

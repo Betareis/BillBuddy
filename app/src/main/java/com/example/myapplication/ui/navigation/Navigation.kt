@@ -48,13 +48,13 @@ private fun NavGraphBuilder.loginNav(navController: NavController) {
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         }
     ) { LoginScreen(navController) }
@@ -63,13 +63,13 @@ private fun NavGraphBuilder.loginNav(navController: NavController) {
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         }
     ) { SignUpScreen(navController) }
@@ -79,19 +79,31 @@ private fun NavGraphBuilder.mainNav(navController: NavController) {
     composable(
         route = AvailableScreens.GroupsScreen.name,
         enterTransition = {
-            fadeIn(tween(500))
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(500)
+            )
         },
         exitTransition = {
-            fadeOut(tween(500))
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
         }
     ) { GroupsScreen(navController) }
     composable(
         route = AvailableScreens.ProfileScreen.name,
         enterTransition = {
-            fadeIn(tween(500))
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
         },
         exitTransition = {
-            fadeOut(tween(500))
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(500)
+            )
         }
     ) { ProfileScreen(navController) }
     composable(
@@ -174,10 +186,10 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     composable(
         route = "${AvailableScreens.NewEntryScreen.name}/?groupId={groupId}",
         enterTransition = {
-            fadeIn(tween(700))
+            fadeIn(tween(500))
         },
         exitTransition = {
-            fadeOut(tween(700))
+            fadeOut(tween(500))
         },
         arguments = listOf(navArgument("groupId") { type = NavType.StringType })
     ) { backStackEntry ->

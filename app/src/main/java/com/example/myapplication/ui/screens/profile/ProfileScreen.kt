@@ -2,23 +2,34 @@ package com.example.myapplication.ui.screens.profile
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,6 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,10 +56,15 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 import com.example.myapplication.ui.navigation.TabView
+import com.example.myapplication.ui.screens.ChangePassword
+import com.example.myapplication.ui.screens.ChangePasswordSection
+import com.example.myapplication.ui.screens.LogoutButton
 import com.example.myapplication.ui.screens.groups.GroupsViewModel
 import com.example.myapplication.ui.screens.groups.toUppercaseFirstLetter
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.contracts.contract
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -66,17 +84,18 @@ fun ProfileScreen(
             color = Color.White,
 
             ) {
-            /*Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Profile Screen")
-            }*/
-
             ShowData(
                 loadUserData = { profileScreenViewModel.getUserProfile() },
                 navController = navController
             )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                ChangePasswordSection(navController)
+                Spacer(modifier = Modifier.height(40.dp))
+                LogoutButton(navController)
+            }
         }
     }
 }
