@@ -1,19 +1,20 @@
 package com.example.myapplication.ui.screens.transactions
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,41 +40,79 @@ fun DisplayBalancesContent(
         value = transactionsViewModel.getBalancesGroup(groupId)
     }.value
 
+    val context = LocalContext.current
+
     if (usersOfGroup.state == "loading") {
         CircularProgressIndicator()
     } else if (usersOfGroup.data != null && usersOfGroup.data!!.isNotEmpty()) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            for (entry in usersOfGroup.data!!) {
-                item() {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(ListElementBackgroundColor)
-                            .padding(16.dp)
-                    ) {
-                        Row {
-                            Text(
-                                text = "${entry.key.getDisplayName()} ${
-                                    if (entry.key.id.equals(
-                                            currentUserId
-                                        )
-                                    ) "(Me)" else ""
-                                }", color = NewWhiteFontColor
-                            )
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End,
-                                text = "${entry.value}",
-                                color = NewWhiteFontColor
-                            )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                for (entry in usersOfGroup.data!!) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(ListElementBackgroundColor)
+                                .padding(16.dp)
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "${entry.key.getDisplayName()} ${
+                                        if (entry.key.id == currentUserId) "(Me)" else ""
+                                    }", color = NewWhiteFontColor
+                                )
+                                Text(
+                                    textAlign = TextAlign.End,
+                                    text = "${entry.value}",
+                                    color = NewWhiteFontColor
+                                )
+                            }
                         }
                     }
                 }
             }
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Open PayPal")
+            }
         }
     } else {
-        Text(text = "No users found")
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "No users found")
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Open PayPal")
+            }
+        }
     }
 }

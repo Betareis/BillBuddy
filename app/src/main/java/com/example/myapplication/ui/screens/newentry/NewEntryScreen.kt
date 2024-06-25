@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screens.newentry
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +22,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -50,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -61,6 +65,7 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import com.example.myapplication.ui.theme.MainButtonColor
+import com.example.myapplication.ui.theme.NewWhiteFontColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,110 +119,98 @@ fun NewEntryScreen(
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()
-            .background(
-                ScreenBackgroundColor
-            )
+            .background(ScreenBackgroundColor)
     ) {
-        Column(
-            modifier = Modifier.padding(3.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Text(text = exceptionMessage.value, color = Color.White)
-            OutlinedTextField(
-                textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = amount,
-                onValueChange = { amount = it },
-                label = { Text("Amount") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier.padding(3.dp)
+            ) {
+                Text(text = exceptionMessage.value, color = Color.White)
+                OutlinedTextField(
+                    textStyle = LocalTextStyle.current.copy(color = Color.White),
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    textStyle = LocalTextStyle.current.copy(color = Color.White),
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text("Amount") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
 
-            val showDatePicker = remember { mutableStateOf(false) }
+                val showDatePicker = remember { mutableStateOf(false) }
 
+                Button(
+                    onClick = { showDatePicker.value = true },
+                    colors = ButtonDefaults.buttonColors(MainButtonColor)
+                ) {
+                    Text(text = "Select Date", color = Color.Black)
+                }
 
-            Button(onClick = { showDatePicker.value = true }) {
-                Text(text = "Select Date")
-            }
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                if (showDatePicker.value) {
-                    DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
-                        confirmButton = {
-                            TextButton(
-                                onClick = { showDatePicker.value = false }, enabled = true
-                            ) {
-                                Text(text = "Confirm")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showDatePicker.value = false }) {
-                                Text(text = "Dismiss")
-                            }
-                        }) {
-                        DatePicker(state = datePickerState)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    if (showDatePicker.value) {
+                        DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = { showDatePicker.value = false }, enabled = true
+                                ) {
+                                    Text(text = "Confirm")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDatePicker.value = false }) {
+                                    Text(text = "Dismiss")
+                                }
+                            }) {
+                            DatePicker(state = datePickerState)
+                        }
                     }
+                    TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
+                        modifier = Modifier.width(150.dp),
+                        enabled = false,
+                        onValueChange = {})
                 }
-                TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
-                    modifier = Modifier.width(150.dp),
-                    enabled = false,
-                    onValueChange = {})
-            }/*Text(
-                color = Color.White,
-                text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
-            )*/
-            DropdownPayedByUser(
-                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
-            )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Payed by:", color = Color.White, fontSize = 20.sp)
+                DropdownPayedByUser(
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
+                )
 
-            //Text(color = Color.White, text = name)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(
-                modifier = Modifier
-                    .then(Modifier.testTag("backArrow"))
-                    .width(200.dp),
-                onClick = {
-                    navController.navigate(AvailableScreens.GroupsScreen.name)
-                }) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.Add,
-                        contentDescription = "AddImage",
-                        tint = Color.LightGray
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        color = Color.LightGray,
-                        text = "File upload",
-                        modifier = Modifier.width(400.dp),
-                        fontSize = 20.sp
-                    )
-                }
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(text = "For: ", color = Color.White, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(20.dp))
+                SingleAmountMembers(
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
+                )
+                Spacer(modifier = Modifier.height(50.dp))
             }
-            AddTransactionButtonView(
-                navController,
-                newEntryViewModel,
-                groupId,
-                name,
-                amount,
-                selectedUserId,
-                selectedDate,
-                fieldValues,
-                exceptionMessage
-            )
-
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(text = "For: ", color = Color.White, fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(50.dp))
-            SingleAmountMembers(
-                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
-            )
+            Box(
+                modifier = Modifier
+                    //.fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                AddTransactionButtonView(
+                    navController,
+                    newEntryViewModel,
+                    groupId,
+                    name,
+                    amount,
+                    selectedUserId,
+                    selectedDate,
+                    fieldValues,
+                    exceptionMessage
+                )
+            }
         }
     }
 }
@@ -234,17 +227,14 @@ fun AddTransactionButtonView(
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
 ) {
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 10.dp)
+    val context = LocalContext.current
+    Box(
+        contentAlignment = Alignment.TopEnd,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        IconButton(modifier = Modifier
-            .padding(start = 15.dp, end = 15.dp)
-            .fillMaxWidth()
-            .width(300.dp)
-            .size(50.dp) // Adjust size as needed
-            .background(MainButtonColor),// Set background color to blue
+        IconButton(
             onClick = {
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = newEntryViewModel.addTransactionForGroup(
@@ -252,20 +242,28 @@ fun AddTransactionButtonView(
                             "name" to name,
                             "amount" to amount,
                             "payedBy" to selectedUserId.value,
-                            "date" to if (selectedDate !== null) selectedDate.format(
+                            "date" to if (selectedDate != null) selectedDate.format(
                                 DateTimeFormatter.ISO_LOCAL_DATE
                             ) else "",
                         ), fieldValues.toMap()
                     )
 
                     if (result.exception != null) {
-                        exceptionMessage.value = result.exception!!.message.toString()
-                    } else navController.popBackStack()
+                        val entryfailed = result.exception!!.message.toString()
+                        Toast.makeText(context, entryfailed, Toast.LENGTH_SHORT).show()
+                    } else {
+                        navController.popBackStack()
+                    }
                 }
-            }) {
+            },
+            modifier = Modifier
+                .size(50.dp)
+                .padding(start = 30.dp)
+                .background(MainButtonColor)
+        ) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add a Group" // Provide a description for accessibility
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Add a transaction",
             )
         }
     }
@@ -294,16 +292,15 @@ fun SingleAmountMembers(
         val myMap: Map<String, Double> =
             readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
                 {
-                    if (amount.isNotEmpty() && isDouble(amount) && amount.toDouble() > 0.0) {
-                        String.format("%.2f", amount.toDouble() / numUsers)
+                    val formattedAmount = amount.replace(",", ".")
+                    if (formattedAmount.isNotEmpty() && isDouble(formattedAmount) && formattedAmount.toDouble() > 0.0) {
+                        String.format("%.2f", formattedAmount.toDouble() / numUsers)
                             .toDouble() // Format and convert to double
                     } else {
                         0.0  // Default value as double
                     }
                 })
         fieldValues.putAll(myMap)
-        //!Todo: should be deleted in production
-        //Log.d("test_map", myMap.toString())
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -332,14 +329,12 @@ fun SingleAmountMembers(
                             Log.d("field_values", fieldValues.toString())
                         },
                         modifier = Modifier.weight(2f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun DropdownPayedByUser(
@@ -368,20 +363,25 @@ fun DropdownPayedByUser(
         val items = nameList.toList()
         var selectedIndex by remember { mutableIntStateOf(0) }
 
-        Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
                 .wrapContentSize(Alignment.TopStart)
                 .height(20.dp)
         ) {
             Text(
-                items[selectedIndex],
+                if (selectedUserId.value.isNotEmpty()) {
+                    // Display the selected user's name instead of ID
+                    userListData.data!!.find { it.id == selectedUserId.value }?.getDisplayName()
+                        ?: "Select a user"
+                } else {
+                    "Select a user"
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(90.dp)
                     .clickable(onClick = { expanded = true })
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             )
             DropdownMenu(
@@ -390,11 +390,11 @@ fun DropdownPayedByUser(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             ) {
-                nameList.forEachIndexed { index, s ->
-                    DropdownMenuItem(text = { Text(text = s) }, onClick = {
+                nameList.forEachIndexed { index, displayName ->
+                    DropdownMenuItem(text = { Text(text = displayName) }, onClick = {
                         selectedUserId.value = userListData.data!![index].id.toString()
                         selectedIndex = index
                         expanded = false
@@ -404,5 +404,3 @@ fun DropdownPayedByUser(
         }
     }
 }
-
-

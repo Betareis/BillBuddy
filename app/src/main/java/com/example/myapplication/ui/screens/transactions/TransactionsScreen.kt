@@ -173,8 +173,8 @@ fun ShowTransactionsData(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start
                             ) {
-                                Text("Icon!!", color = NewWhiteFontColor)
-                                Spacer(modifier = Modifier.weight(0.25f))
+                                //Text("Icon!!", color = NewWhiteFontColor)
+                                //Spacer(modifier = Modifier.weight(0.25f))
                                 Text(
                                     (data.name).toUppercaseFirstLetter(),
                                     modifier = Modifier.weight(0.5f),
