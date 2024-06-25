@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -118,105 +119,93 @@ fun NewEntryScreen(
                 ScreenBackgroundColor
             )
     ) {
-        Column(
-            modifier = Modifier.padding(3.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Text(text = exceptionMessage.value, color = Color.White)
-            OutlinedTextField(
-                textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = amount,
-                onValueChange = { amount = it },
-                label = { Text("Amount") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier.padding(3.dp)
+            ) {
+                Text(text = exceptionMessage.value, color = Color.White)
+                OutlinedTextField(
+                    textStyle = LocalTextStyle.current.copy(color = Color.White),
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    textStyle = LocalTextStyle.current.copy(color = Color.White),
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text("Amount") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
 
-            val showDatePicker = remember { mutableStateOf(false) }
+                val showDatePicker = remember { mutableStateOf(false) }
 
+                Button(onClick = { showDatePicker.value = true }) {
+                    Text(text = "Select Date")
+                }
 
-            Button(onClick = { showDatePicker.value = true }) {
-                Text(text = "Select Date")
-            }
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                if (showDatePicker.value) {
-                    DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
-                        confirmButton = {
-                            TextButton(
-                                onClick = { showDatePicker.value = false }, enabled = true
-                            ) {
-                                Text(text = "Confirm")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showDatePicker.value = false }) {
-                                Text(text = "Dismiss")
-                            }
-                        }) {
-                        DatePicker(state = datePickerState)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    if (showDatePicker.value) {
+                        DatePickerDialog(onDismissRequest = { showDatePicker.value = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = { showDatePicker.value = false }, enabled = true
+                                ) {
+                                    Text(text = "Confirm")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDatePicker.value = false }) {
+                                    Text(text = "Dismiss")
+                                }
+                            }) {
+                            DatePicker(state = datePickerState)
+                        }
                     }
+                    TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
+                        modifier = Modifier.width(150.dp),
+                        enabled = false,
+                        onValueChange = {})
                 }
-                TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
-                    modifier = Modifier.width(150.dp),
-                    enabled = false,
-                    onValueChange = {})
-            }/*Text(
-                color = Color.White,
-                text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
-            )*/
-            DropdownPayedByUser(
-                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
-            )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Payed by:", color = Color.White, fontSize = 20.sp)
+                DropdownPayedByUser(
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
+                )
 
-            //Text(color = Color.White, text = name)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(modifier = Modifier
-                .then(Modifier.testTag("backArrow"))
-                .width(200.dp),
-                onClick = {
-                    navController.navigate(AvailableScreens.GroupsScreen.name)
-                }) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.Add,
-                        contentDescription = "AddImage",
-                        tint = Color.LightGray
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        color = Color.LightGray,
-                        text = "File upload",
-                        modifier = Modifier.width(400.dp),
-                        fontSize = 20.sp
-                    )
-                }
+                Spacer(modifier = Modifier.height(50.dp))
+                Text(text = "For: ", color = Color.White, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(20.dp))
+                SingleAmountMembers(
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
+                )
+                Spacer(modifier = Modifier.height(50.dp))
             }
-            AddTransactionButtonView(
-                navController,
-                newEntryViewModel,
-                groupId,
-                name,
-                amount,
-                selectedUserId,
-                selectedDate,
-                fieldValues,
-                exceptionMessage
-            )
-
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(text = "For: ", color = Color.White, fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(50.dp))
-            SingleAmountMembers(
-                loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
-            )
+            Box(
+                modifier = Modifier
+                    //.fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                AddTransactionButtonView(
+                    navController,
+                    newEntryViewModel,
+                    groupId,
+                    name,
+                    amount,
+                    selectedUserId,
+                    selectedDate,
+                    fieldValues,
+                    exceptionMessage
+                )
+            }
         }
     }
 }
@@ -233,17 +222,13 @@ fun AddTransactionButtonView(
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
 ) {
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 10.dp)
+    Box(
+        contentAlignment = Alignment.TopEnd,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        IconButton(modifier = Modifier
-            .padding(start = 15.dp, end = 15.dp)
-            .fillMaxWidth()
-            .width(300.dp)
-            .size(50.dp) // Adjust size as needed
-            .background(MainButtonColor),// Set background color to blue
+        IconButton(
             onClick = {
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = newEntryViewModel.addTransactionForGroup(
@@ -251,7 +236,7 @@ fun AddTransactionButtonView(
                             "name" to name,
                             "amount" to amount,
                             "payedBy" to selectedUserId.value,
-                            "date" to if (selectedDate !== null) selectedDate.format(
+                            "date" to if (selectedDate != null) selectedDate.format(
                                 DateTimeFormatter.ISO_LOCAL_DATE
                             ) else "",
                         ), fieldValues.toMap()
@@ -259,12 +244,19 @@ fun AddTransactionButtonView(
 
                     if (result.exception != null) {
                         exceptionMessage.value = result.exception!!.message.toString()
-                    } else navController.popBackStack()
+                    } else {
+                        navController.popBackStack()
+                    }
                 }
-            }) {
+            },
+            modifier = Modifier
+                .size(50.dp)
+                .padding(start = 30.dp)
+                .background(MainButtonColor)
+        ) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add a Group" // Provide a description for accessibility
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Add a transaction",
             )
         }
     }
