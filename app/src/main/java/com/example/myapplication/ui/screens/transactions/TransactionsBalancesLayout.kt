@@ -56,7 +56,7 @@ fun TransactionsBalancesLayout(
     groupName: String,
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ) {
-    var selectedChoice by remember {
+    val selectedChoice by remember {
         mutableStateOf(mutableStateOf("Transactions"))
     }
     Column(modifier = Modifier.padding(3.dp)) {
