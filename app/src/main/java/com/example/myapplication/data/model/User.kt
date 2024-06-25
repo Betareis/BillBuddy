@@ -19,4 +19,8 @@ data class User(
     fun getDisplayName(): String {
         return "$firstname $name"
     }
+
+    fun getPayPalName(): String? {
+        return null
+    }
 }

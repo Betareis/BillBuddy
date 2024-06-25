@@ -3,6 +3,7 @@ package com.example.myapplication.ui.screens.transactions
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -126,8 +127,17 @@ fun DisplayBalancesContent(
                                         if (debt.first.id == currentUserId) {
                                             Button(
                                                 onClick = {
-                                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
-                                                    context.startActivity(intent)
+                                                    if(debt.second.getPayPalName() != null) {
+                                                        val paypalMeLink =
+                                                            "https://www.paypal.me/${debt.second.getPayPalName()}/${debt.third}"
+                                                        val intent = Intent(
+                                                            Intent.ACTION_VIEW,
+                                                            Uri.parse(paypalMeLink)
+                                                        )
+                                                        context.startActivity(intent)
+                                                    }else{
+                                                        Toast.makeText(context, "${debt.second.name} has no PayPal Username", Toast.LENGTH_SHORT).show()
+                                                    }
                                                 },
                                                 modifier = Modifier.align(Alignment.End)
                                             ) {
