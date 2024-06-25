@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.screens.signup
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,9 +81,9 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             EmailInputField(Modifier, formData.username)
-            SimpleTextInputField(Modifier, formData.firstname, "Enter firstname")
-            SimpleTextInputField(Modifier, formData.name, "Enter name")
-            PassInputField(Modifier, formData.password, "password", false, isPasswordVisible)
+            SimpleTextInputField(Modifier, formData.firstname, "Enter firstname*")
+            SimpleTextInputField(Modifier, formData.name, "Enter name*")
+            PassInputField(Modifier, formData.password, "Enter password*", false, isPasswordVisible)
             Spacer(modifier = Modifier.height(80.dp))
         }
         OnSubmitFormButtonSignUp(navController, signUpViewModel, formData)
@@ -93,6 +96,7 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
 fun OnSubmitFormButtonSignUp(
     navController: NavController, signUpViewModel: SignUpViewModel, formData: UserRegisterFormData
 ) {
+    val context = LocalContext.current
     Button(colors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
         contentColor = NewWhiteFontColor,
@@ -104,7 +108,8 @@ fun OnSubmitFormButtonSignUp(
                 "firstname" to formData.firstname.value,
                 "name" to formData.name.value,
                 "password" to formData.password.value
-            ), onSuccess = {
+            ),
+            onSuccess = {
                 navController.navigate(AvailableScreens.LoginScreen.name)
             })
         }
@@ -129,7 +134,7 @@ fun SwitchTOLoginButtonSignUp(navController: NavController) {
                 shape = RoundedCornerShape(8.dp) // Example: Rounded corners
             ),
         onClick = { navController.navigate(AvailableScreens.LoginScreen.name) }) {
-        Text(color = Color.White, text = "Login")
+        Text(color = Color.White, text = "Back To Login")
     }
 }
 

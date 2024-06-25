@@ -1,5 +1,9 @@
 package com.example.myapplication.ui.screens.login
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,6 +90,7 @@ fun OnSubmitFormButton(
     loginScreenViewModel: LoginScreenViewModel,
     formData: UserLoginFormData
 ) {
+    val context = LocalContext.current
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -96,7 +102,9 @@ fun OnSubmitFormButton(
             loginScreenViewModel.logUserIn(formData.username.value.trim(), formData.password.value.trim(),
                 onSuccess = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
-
+                },
+                onError = {
+                    Toast.makeText(context, "e-mail and/or password not matching", Toast.LENGTH_SHORT).show()
                 }
             )
         }) {

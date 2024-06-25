@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.*
+import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +25,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -60,6 +65,13 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+
 
 
 @Composable
@@ -174,12 +186,20 @@ fun TransactionsScreen(
 }
 
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsScreenBar(navController: NavController, groupName: String) {
+    var menuExpanded by remember { mutableStateOf(false) }
+    var showOverlay by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val clipboard = LocalClipboardManager.current
+
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+            IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
                 navController.navigate(AvailableScreens.GroupsScreen.name)
             }) {
                 Icon(
@@ -188,8 +208,55 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
             }
         },
         title = { Text(groupName) },
+        actions = {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Outlined.Menu, contentDescription = "Menu"
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        val deepLink = "myapp://transactionscreen/${groupName}"
+                        shareDeepLinkOnWhatsApp(context, deepLink, groupName)
+                        menuExpanded = false
+                    },
+                    text = { Text("Share Link on Whats App") }
+                )
+                DropdownMenuItem(
+                    onClick = {
+                        val deepLink = "myapp://transactionscreen/${groupName}"
+                        clipboard.setText(AnnotatedString(deepLink))
+                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+                        menuExpanded = false
+                    },
+                    text = { Text("Copy link") }
+                )
+            }
+        }
     )
 }
+
+private fun shareDeepLinkOnWhatsApp(context: Context, deepLink: String, groupName: String) {
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, "Hey there! Please join my group " + groupName + " on BillBuddy: \n$deepLink")
+        type = "text/plain"
+        setPackage("com.whatsapp")
+    }
+
+    try {
+        context.startActivity(sendIntent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
+
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

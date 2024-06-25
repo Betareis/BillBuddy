@@ -46,7 +46,7 @@ fun EmailInputField(
 
 ) {
     TextField(
-        label = { Text("Enter username") },
+        label = { Text("Enter e-mail*") },
         value = emailState.value,
         onValueChange = { emailState.value = it },
         textStyle = TextStyle(fontSize = 15.sp, color = Color.Black),
@@ -99,7 +99,7 @@ fun PassInputField(
     val visualTransformation =
         if (!isPasswordVisible.value) PasswordVisualTransformation() else VisualTransformation.None
     TextField(
-        label = { Text("Enter password") },
+        label = { Text("Enter password*") },
         value = valueState.value,
         onValueChange = { valueState.value = it },
         textStyle = TextStyle(fontSize = 15.sp, color = Color.Black),
