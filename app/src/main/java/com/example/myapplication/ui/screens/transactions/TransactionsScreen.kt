@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -97,12 +98,43 @@ fun ShowTransactionsData(
             value = loadTransactions()
         }.value
 
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
+    var currentUsername by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(currentUserId) {
+        currentUserId?.let { userId ->
+            currentUsername = currentUserId
+        }
+    }
+
     if (transactionsData.state == "loading") {
         Text(text = "Transactions screen")
         CircularProgressIndicator()
     } else if (transactionsData.data != null && transactionsData.data!!.isNotEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
-        Box(
+        Log.d("User", currentUsername.toString())
+        val totalSpent = transactionsData.data!!.sumOf { it.amount }
+        val userSpent = transactionsData.data!!.filter { it.payedBy == currentUsername }
+            .sumOf { it.amount }
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(
+                    content = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = "My cost: ${userSpent}€", color = Color.White)
+                            Text(text = "Total expenses: ${totalSpent}€", color = Color.White)
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            }
+        ) {Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -156,11 +188,12 @@ fun ShowTransactionsData(
                 }
             }
         }
-
+        }
 
     } else {
         Text(text = "no transactions found")
     }
+
 }
 
 
