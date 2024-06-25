@@ -75,7 +75,6 @@ fun ProfileScreen(
     Scaffold(
         contentColor = Color.Black,
         bottomBar = { TabView(navController) },
-        //topBar = { BurgerMenuDrawer() },
     ) {
         Surface(
             modifier = Modifier
@@ -93,6 +92,8 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 ChangePasswordSection(navController)
+                Spacer(modifier = Modifier.height(40.dp))
+                PayPalAddressSection(profileScreenViewModel)
                 Spacer(modifier = Modifier.height(40.dp))
                 LogoutButton(navController)
             }
@@ -124,5 +125,36 @@ fun ShowData(
         }
     } else {
         Text(text = "no groups found")
+    }
+}
+
+@Composable
+fun PayPalAddressSection(profileScreenViewModel: ProfileScreenViewModel) {
+    var paypalAddress by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        OutlinedTextField(
+            value = paypalAddress,
+            onValueChange = { paypalAddress = it },
+            label = { Text("PayPal Address") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                profileScreenViewModel.savePayPalAddress(paypalAddress)
+                Toast.makeText(context, "PayPal address saved", Toast.LENGTH_SHORT).show()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Save PayPal Address")
+        }
     }
 }

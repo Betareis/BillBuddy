@@ -458,4 +458,15 @@ class FirestoreRepository @Inject constructor() {
             DataRequestWrapper(exception = e)
         }
     }
+
+    suspend fun savePayPalAddress(userId: String, paypalAddress: String): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            firestore.collection("users").document(userId)
+                .update("paypalAddress", paypalAddress)
+                .await()
+            DataRequestWrapper(data = Unit)
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = e)
+        }
+    }
 }
