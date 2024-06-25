@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         val pathSegments = deepLinkData.pathSegments
         if (pathSegments.size >= 2 && pathSegments[0] == "www.transactionscreen.com") {
             val groupName = pathSegments[1]
-            navController.navigate("${AvailableScreens.TransactionsScreen.name}/?groupId=&groupName=${groupName}")
+            navController.navigate("${AvailableScreens.TransactionsBalancesLayout.name}/?groupId=&groupName=${groupName}")
         }
     }
 }
