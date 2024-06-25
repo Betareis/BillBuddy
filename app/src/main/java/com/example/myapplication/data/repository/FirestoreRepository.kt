@@ -267,7 +267,7 @@ class FirestoreRepository @Inject constructor() {
                 userDocumentRef.update("groups", FieldValue.arrayUnion(newGroupDocumentRef.id))
             }
 
-            newGroupDocumentRef.update("users", FieldValue.arrayUnion(newGroupDocumentRef.id))
+            newGroupDocumentRef.update("users", FieldValue.arrayUnion(userDocumentRef.id))
             DataRequestWrapper(data = Unit)/*} else {
                 throw Exception("User ID is null.")
             }*/
