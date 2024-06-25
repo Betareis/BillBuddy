@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -23,36 +21,34 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val navController = rememberNavController()
-            HandleDeepLink(navController)
+            val navController = rememberNavController()// Handle Deep Link
+            val deepLinkUri = intent.data
+            LaunchedEffect(key1 = deepLinkUri) {
+                deepLinkUri?.let { uri ->
+                    handleDeepLink(navController, uri)
+                }
+            }
+
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AppNavigation(PaddingValues(0.dp), navController)
+                    AppNavigation(PaddingValues(0.dp))
                 }
             }
         }
     }
 
-    @Composable
-    private fun HandleDeepLink(navController: NavController) {
-        val context = LocalContext.current
-        LaunchedEffect(Unit) {
-            val intent = (context as MainActivity).intent
-            val data: Uri? = intent.data
-            if (data != null) {
-                val groupId = data.lastPathSegment
-                if (groupId != null) {
-                    navController.navigate("${AvailableScreens.TransactionsBalancesLayout.name}/?groupId=$groupId&groupName=$groupId")
-                }
-            }
+    private fun handleDeepLink(navController: NavController, deepLinkData: Uri) {
+        val pathSegments = deepLinkData.pathSegments
+        if (pathSegments.size >= 2 && pathSegments[0] == "www.transactionscreen.com") {
+            val groupName = pathSegments[1]
+            navController.navigate("${AvailableScreens.TransactionsBalancesLayout.name}/?groupId=&groupName=${groupName}")
         }
     }
 }
