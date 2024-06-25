@@ -25,6 +25,7 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.math.min
 
 @Composable
 fun TransactionBalancesScreen(transactionsViewModel: TransactionsViewModel, groupId: String) {
@@ -122,14 +123,16 @@ fun DisplayBalancesContent(
                                             )
                                         }
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        Button(
-                                            onClick = {
-                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
-                                                context.startActivity(intent)
-                                            },
-                                            modifier = Modifier.align(Alignment.End)
-                                        ) {
-                                            Text("Pay with PayPal")
+                                        if (debt.first.id == currentUserId) {
+                                            Button(
+                                                onClick = {
+                                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                                                    context.startActivity(intent)
+                                                },
+                                                modifier = Modifier.align(Alignment.End)
+                                            ) {
+                                                Text("Pay with PayPal")
+                                            }
                                         }
                                     }
                                 }
@@ -161,7 +164,7 @@ fun calculateDebts(balances: Map<User, Double>): List<Triple<User, User, Double>
         val positive = positiveBalances.removeAt(0)
         val negative = negativeBalances.removeAt(0)
 
-        val amount = minOf(positive.second, -negative.second)
+        val amount = min(positive.second, -negative.second)
         debts.add(Triple(negative.first, positive.first, amount))
 
         if (positive.second > amount) {
