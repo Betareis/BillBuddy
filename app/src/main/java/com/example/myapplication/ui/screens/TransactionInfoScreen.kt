@@ -2,12 +2,16 @@ package com.example.myapplication.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
@@ -17,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -70,80 +75,56 @@ fun TransactionInfoScreen(
         },
         content = {
             Box(
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(ScreenBackgroundColor)
+                    .padding(top = 70.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    OutlinedTextField(
-                        value = transactionName,
-                        onValueChange = {},
-                        label = { Text("Name") },
-                        readOnly = true,
-                        textStyle = LocalTextStyle.current.copy(color = Color.White),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Gray,
-                            unfocusedBorderColor = Color.Gray,
-                            //textcolor = Color.White,
-                            disabledTextColor = Color.White,
-                            disabledBorderColor = Color.Gray
-                        )
-                    )
+                    InfoBox(label = "Name", value = transactionName)
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = transactionAmount.toString(),
-                        onValueChange = {},
-                        label = { Text("Amount") },
-                        readOnly = true,
-                        textStyle = LocalTextStyle.current.copy(color = Color.White),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Gray,
-                            unfocusedBorderColor = Color.Gray,
-                            //textColor = Color.White,
-                            disabledTextColor = Color.White,
-                            disabledBorderColor = Color.Gray
-                        )
-                    )
+                    InfoBox(label = "Amount", value = "${transactionAmount}€")
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = transactionDate,
-                        onValueChange = {},
-                        label = { Text("Date") },
-                        readOnly = true,
-                        textStyle = LocalTextStyle.current.copy(color = Color.White),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Gray,
-                            unfocusedBorderColor = Color.Gray,
-                            //textColor = Color.White,
-                            disabledTextColor = Color.White,
-                            disabledBorderColor = Color.Gray
-                        )
-                    )
+                    InfoBox(label = "Date", value = transactionDate)
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = payedBy,
-                        onValueChange = {},
-                        label = { Text("Paid By") },
-                        readOnly = true,
-                        textStyle = LocalTextStyle.current.copy(color = Color.White),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Gray,
-                            unfocusedBorderColor = Color.Gray,
-                            //textColor = Color.White,
-                            disabledTextColor = Color.White,
-                            disabledBorderColor = Color.Gray
-                        )
-                    )
+                    InfoBox(label = "Paid By", value = payedBy)
                 }
             }
         }
     )
+}
+
+@Composable
+fun InfoBox(label: String, value: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
+            )
+        }
+    }
 }
