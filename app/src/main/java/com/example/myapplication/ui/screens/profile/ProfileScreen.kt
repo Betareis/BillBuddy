@@ -143,18 +143,18 @@ fun PayPalAddressSection(profileScreenViewModel: ProfileScreenViewModel) {
         OutlinedTextField(
             value = paypalAddress,
             onValueChange = { paypalAddress = it },
-            label = { Text("PayPal Address") },
+            label = { Text("PayPal Username") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 profileScreenViewModel.savePayPalAddress(paypalAddress)
-                Toast.makeText(context, "PayPal address saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "PayPal username saved", Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Save PayPal Address")
+            Text(text = "Save PayPal Username")
         }
     }
 }

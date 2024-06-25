@@ -84,14 +84,15 @@ fun DisplayBalancesContent(
             }
             Button(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                    val paypalUri = Uri.parse("https://www.paypal.com/paypalme/") //insert username after /
+                    val intent = Intent(Intent.ACTION_VIEW, paypalUri)
                     context.startActivity(intent)
                 },
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                Text("Open PayPal")
+                Text("Pay with PayPal")
             }
         }
     } else {
@@ -104,14 +105,15 @@ fun DisplayBalancesContent(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("paypal://"))
+                    val paypalUri = Uri.parse("https://www.paypal.com/paypalme/") //insert username after /
+                    val intent = Intent(Intent.ACTION_VIEW, paypalUri)
                     context.startActivity(intent)
                 },
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                Text("Open PayPal")
+                Text("Pay with PayPal")
             }
         }
     }
