@@ -122,18 +122,24 @@ private fun NavGraphBuilder.mainNav(navController: NavHostController) {
 
 private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     composable(
-        "${AvailableScreens.EditTransactionScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}",
+        "${AvailableScreens.EditTransactionScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}&transactionAmount={transactionAmount}&transactionDate={transactionDate}&payedBy={payedBy}",
         arguments = listOf(
             navArgument("groupId") { type = NavType.StringType },
             navArgument("transactionId") { type = NavType.StringType },
-            navArgument("transactionName") { type = NavType.StringType }
+            navArgument("transactionName") { type = NavType.StringType },
+            navArgument("transactionAmount") { type = NavType.FloatType },
+            navArgument("transactionDate") { type = NavType.StringType },
+            navArgument("payedBy") { type = NavType.StringType }
         )
     ) { backStackEntry ->
         val groupId = backStackEntry.arguments?.getString("groupId")
         val transactionId = backStackEntry.arguments?.getString("transactionId")
         val transactionName = backStackEntry.arguments?.getString("transactionName")
+        val transactionAmount = backStackEntry.arguments?.getFloat("transactionAmount")?.toDouble() ?: 0.0
+        val transactionDate = backStackEntry.arguments?.getString("transactionDate") ?: ""
+        val payedBy = backStackEntry.arguments?.getString("payedBy") ?: ""
         if (groupId != null && transactionId != null && transactionName != null) {
-            EditTransactionScreen(navController, groupId, transactionId, transactionName)
+            EditTransactionScreen(navController, groupId, transactionId, transactionName, transactionAmount, transactionDate, payedBy)
         } else {
             LoginScreen(navController)
         }
@@ -164,18 +170,25 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     }
 
     composable(
-        "${AvailableScreens.TransactionInfoScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}",
+        "${AvailableScreens.TransactionInfoScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}&transactionAmount={transactionAmount}&transactionDate={transactionDate}&payedBy={payedBy}",
         arguments = listOf(
             navArgument("groupId") { type = NavType.StringType },
             navArgument("transactionId") { type = NavType.StringType },
-            navArgument("transactionName") { type = NavType.StringType }
+            navArgument("transactionName") { type = NavType.StringType },
+            navArgument("transactionAmount") { type = NavType.FloatType },
+            navArgument("transactionDate") { type = NavType.StringType },
+            navArgument("payedBy") { type = NavType.StringType }
         )
     ) { backStackEntry ->
         val groupId = backStackEntry.arguments?.getString("groupId")
         val transactionId = backStackEntry.arguments?.getString("transactionId")
         val transactionName = backStackEntry.arguments?.getString("transactionName")
+        val transactionAmount = backStackEntry.arguments?.getFloat("transactionAmount")?.toDouble() ?: 0.0
+        val transactionDate = backStackEntry.arguments?.getString("transactionDate") ?: ""
+        val payedBy = backStackEntry.arguments?.getString("payedBy") ?: ""
+
         if (groupId != null && transactionId != null && transactionName != null) {
-            TransactionInfoScreen(navController, groupId, transactionId, transactionName)
+            TransactionInfoScreen(navController, groupId, transactionId, transactionName, transactionAmount, transactionDate, payedBy)
         } else {
             LoginScreen(navController)
         }
