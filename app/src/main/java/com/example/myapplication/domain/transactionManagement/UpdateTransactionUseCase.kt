@@ -1,5 +1,6 @@
 package com.example.myapplication.domain.transactionManagement
 
+import android.util.Log
 import androidx.core.text.isDigitsOnly
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.repository.FirestoreRepository
