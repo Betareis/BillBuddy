@@ -29,7 +29,6 @@ fun TransactionBalancesScreen(transactionsViewModel: TransactionsViewModel, grou
     DisplayBalancesContent(transactionsViewModel, groupId)
 }
 
-
 @Composable
 fun DisplayBalancesContent(
     transactionsViewModel: TransactionsViewModel = hiltViewModel(), groupId: String
