@@ -44,7 +44,13 @@ fun EditTransactionScreen(
 
     Scaffold(contentColor = Color.Black, topBar = {
         NavigationBarEditTransactionScreen(
-            navController, transactionName, groupId, transactionId, transactionAmount, transactionDate, payedBy
+            navController,
+            transactionName,
+            groupId,
+            transactionId,
+            transactionAmount,
+            transactionDate,
+            payedBy
         )
     }) {
         Surface(
@@ -122,14 +128,11 @@ fun NavigationBarEditTransactionScreen(
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(
-                modifier = Modifier.then(Modifier.testTag("backArrow")),
-                onClick = {
-                    navController.navigate(
-                        "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
-                    )
-                }
-            ) {
+            IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
+                navController.navigate(
+                    "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
+                )
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = "ArrowBack"
