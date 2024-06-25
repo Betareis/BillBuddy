@@ -108,92 +108,120 @@ fun ShowTransactionsData(
         }
     }
 
-    if (transactionsData.state == "loading") {
-        Text(text = "Transactions screen")
-        CircularProgressIndicator()
-    } else if (transactionsData.data != null && transactionsData.data!!.isNotEmpty()) {
-        Log.d("DONE", "LOADING DATA DONE")
-        Log.d("User", currentUsername.toString())
-        val totalSpent = transactionsData.data!!.sumOf { it.amount }
-        val userSpent = transactionsData.data!!.filter { it.payedBy == currentUsername }
-            .sumOf { it.amount }
-        Scaffold(
-            bottomBar = {
-                BottomAppBar(
-                    content = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "My cost: ${userSpent}€", color = Color.White)
-                            Text(text = "Total expenses: ${totalSpent}€", color = Color.White)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            }
-        ) {Box(
+    val totalSpent = transactionsData.data?.sumOf { it.amount } ?: 0.0
+    val userSpent = transactionsData.data?.filter { it.payedBy == currentUsername }
+        ?.sumOf { it.amount } ?: 0.0
+
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.primary,
+                content = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "My cost: ${userSpent}€", color = Color.White)
+                        Text(text = "Total expenses: ${totalSpent}€", color = Color.White)
+                    }
+                }
+            )
+        }
+    ) {
+        Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                for (data in transactionsData.data!!) {
-                    item() {
-                        FilledTonalButton(
-                            onClick = {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    val username =
-                                        transactionsViewModel.getUsernameById(data.payedBy)
+            when (transactionsData.state) {
+                "loading" -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Transactions loading...", color = Color.White)
+                        CircularProgressIndicator()
+                    }
+                }
+                "success" -> {
+                    if (transactionsData.data.isNullOrEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "No transactions found", color = Color.White)
+                        }
+                    } else {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            transactionsData.data!!.forEach { data ->
+                                item {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            CoroutineScope(Dispatchers.Main).launch {
+                                                val username =
+                                                    transactionsViewModel.getUsernameById(data.payedBy)
 
-                                    if (username!!.data!!.isNotEmpty()) {
-                                        navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${data.id}&transactionName=${data.name}&transactionAmount=${data.amount}&transactionDate=${data.date}&payedBy=${username.data}")
+                                                if (username!!.data!!.isNotEmpty()) {
+                                                    navController.navigate("${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${data.id}&transactionName=${data.name}&transactionAmount=${data.amount}&transactionDate=${data.date}&payedBy=${username.data}")
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            contentColor = NewWhiteFontColor,
+                                            containerColor = ListElementBackgroundColor,
+                                            disabledContentColor = Color.LightGray,
+                                            disabledContainerColor = Color.LightGray
+                                        ),
+                                        modifier = Modifier
+                                            .padding(start = 15.dp, end = 15.dp)
+                                            .fillMaxWidth()
+                                            .align(alignment = Alignment.Center)
+                                            .requiredHeight(height = 60.dp)
+                                            .testTag("groupButton${data.name}"),
+                                        border = BorderStroke(1.dp, Color.Black),
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = 10.dp
+                                        ),
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.Start
+                                        ) {
+                                            Text(
+                                                text = data.name.capitalize(),
+                                                modifier = Modifier.weight(0.5f),
+                                                color = NewWhiteFontColor
+                                            )
+                                            Spacer(modifier = Modifier.weight(0.5f))
+                                            Text("${data.amount}€", color = NewWhiteFontColor)
+                                        }
                                     }
                                 }
-                            },
-                            colors = ButtonColors(
-                                contentColor = NewWhiteFontColor,
-                                containerColor = ListElementBackgroundColor,
-                                disabledContentColor = Color.LightGray,
-                                disabledContainerColor = Color.LightGray
-                            ),
-                            modifier = Modifier
-                                .padding(start = 15.dp, end = 15.dp)
-                                .fillMaxWidth()
-                                .align(alignment = Alignment.Center)
-                                .requiredHeight(height = 60.dp)
-                                .testTag("groupButton${data.name}"),
-                            border = BorderStroke(1.dp, Color.Black),
-                            elevation = ButtonDefaults.buttonElevation(
-                                defaultElevation = 10.dp
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                //Text("Icon!!", color = NewWhiteFontColor)
-                                //Spacer(modifier = Modifier.weight(0.25f))
-                                Text(
-                                    (data.name).toUppercaseFirstLetter(),
-                                    modifier = Modifier.weight(0.5f),
-                                    color = NewWhiteFontColor
-                                )
-                                Spacer(modifier = Modifier.weight(0.5f))
-                                Text(data.amount.toString() + "€", color = NewWhiteFontColor)
                             }
                         }
                     }
                 }
+                else -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "An error occurred while loading transactions", color = Color.White)
+                    }
+                }
             }
         }
-        }
-
-    } else {
-        Text(text = "no transactions found")
     }
-
 }
 
 
