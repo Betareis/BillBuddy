@@ -96,24 +96,26 @@ fun TransactionsBalancesLayout(
                 }
             }
         }
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(bottom = 100.dp)
-                .fillMaxSize()
-        ) {
-            IconButton(modifier = Modifier
-                .size(50.dp) // Adjust size as needed
-                .background(MainButtonColor)// Set background color to blue
-                .clip(RoundedCornerShape(80))
-                .padding(8.dp), onClick = {
-                navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add a Transaction" // Provide a description for accessibility
-                )
+        if (selectedChoice.value == "Transactions") {
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(bottom = 55.dp)
+                    .fillMaxSize()
+            ) {
+                IconButton(modifier = Modifier
+                    .size(50.dp) // Adjust size as needed
+                    .background(MainButtonColor)// Set background color to blue
+                    .clip(RoundedCornerShape(80))
+                    .padding(8.dp), onClick = {
+                    navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add a Transaction" // Provide a description for accessibility
+                    )
+                }
             }
         }
     }
