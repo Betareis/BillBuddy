@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screens.newentry
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -51,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -62,6 +65,7 @@ import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import com.example.myapplication.ui.theme.MainButtonColor
+import com.example.myapplication.ui.theme.NewWhiteFontColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -115,9 +119,7 @@ fun NewEntryScreen(
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()
-            .background(
-                ScreenBackgroundColor
-            )
+            .background(ScreenBackgroundColor)
     ) {
         Box(
             modifier = Modifier
@@ -147,8 +149,9 @@ fun NewEntryScreen(
 
                 val showDatePicker = remember { mutableStateOf(false) }
 
-                Button(onClick = { showDatePicker.value = true }) {
-                    Text(text = "Select Date")
+                Button(onClick = { showDatePicker.value = true },
+                    colors = ButtonDefaults.buttonColors(MainButtonColor)) {
+                    Text(text = "Select Date", color = Color.Black)
                 }
 
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -180,7 +183,7 @@ fun NewEntryScreen(
                     loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, selectedUserId
                 )
 
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 Text(text = "For: ", color = Color.White, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 SingleAmountMembers(
@@ -222,6 +225,7 @@ fun AddTransactionButtonView(
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
 ) {
+    val context = LocalContext.current
     Box(
         contentAlignment = Alignment.TopEnd,
         modifier = Modifier
@@ -243,7 +247,8 @@ fun AddTransactionButtonView(
                     )
 
                     if (result.exception != null) {
-                        exceptionMessage.value = result.exception!!.message.toString()
+                        val entryfailed = result.exception!!.message.toString()
+                        Toast.makeText(context, entryfailed, Toast.LENGTH_SHORT).show()
                     } else {
                         navController.popBackStack()
                     }
@@ -365,7 +370,7 @@ fun DropdownPayedByUser(
                     .height(90.dp)
                     .clickable(onClick = { expanded = true })
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             )
             DropdownMenu(
@@ -374,7 +379,7 @@ fun DropdownPayedByUser(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        MainButtonColor
+                        NewWhiteFontColor
                     )
             ) {
                 nameList.forEachIndexed { index, s ->
