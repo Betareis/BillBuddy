@@ -102,7 +102,27 @@ fun ShowTransactionsData(
         CircularProgressIndicator()
     } else if (transactionsData.data != null && transactionsData.data!!.isNotEmpty()) {
         Log.d("DONE", "LOADING DATA DONE")
-        Box(
+        val totalSpent = transactionsData.data!!.sumOf { it.amount }
+        /*val userSpent = transactionsData.data!!.filter { it.payedBy == transactionsViewModel.currentUserId() }
+            .sumOf { it.amount }*/
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(
+                    content = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            //Text(text = "My cost: ${userSpent}€", color = Color.White)
+                            Text(text = "Total expenses: ${totalSpent}€", color = Color.White)
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            }
+        ) {Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -156,11 +176,12 @@ fun ShowTransactionsData(
                 }
             }
         }
-
+        }
 
     } else {
         Text(text = "no transactions found")
     }
+
 }
 
 
