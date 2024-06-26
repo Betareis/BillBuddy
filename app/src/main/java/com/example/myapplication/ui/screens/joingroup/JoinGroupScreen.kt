@@ -58,14 +58,6 @@ fun JoinGroupScreen(
                 } catch (e: Exception) {
                     exceptionMessage = e.message.toString()
                 }
-                /*val process = joinGroupViewModel.addUserToGroup(uid, groupId)
-
-                if (process.exception != null) {
-                    exceptionMessage = process.exception!!.message.toString()
-
-                } else {
-                    navController.navigate(AvailableScreens.GroupsScreen.name)
-                }*/
             }
         }) {
             Text(text = "Join Group")
