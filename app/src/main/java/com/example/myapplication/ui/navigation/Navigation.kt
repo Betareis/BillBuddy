@@ -8,10 +8,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,13 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.myapplication.data.repository.FirestoreRepository
-import com.example.myapplication.ui.screens.joingroup.JoinGroupScreen
+import com.example.myapplication.ui.screens.JoinGroupScreen
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.screens.edittransaction.EditTransactionScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
-import com.example.myapplication.ui.screens.joingroup.JoinGroupViewModel
-import com.example.myapplication.ui.screens.joingroup.JoinGroupViewModel_Factory
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.profile.ProfileScreen
