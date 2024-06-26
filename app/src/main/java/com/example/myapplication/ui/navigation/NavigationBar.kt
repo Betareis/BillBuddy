@@ -43,7 +43,7 @@ data class TabBarItem(
 @Composable
 fun TabView(navController: NavController) {
     val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, null, AvailableScreens.GroupsScreen.name)
-    val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.AccountCircle, unselectedIcon = Icons.Outlined.AccountCircle, badgeAmount = 7, AvailableScreens.ProfileScreen.name)
+    val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.AccountCircle, unselectedIcon = Icons.Outlined.AccountCircle, null, AvailableScreens.ProfileScreen.name)
     //val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.Menu, unselectedIcon = Icons.Outlined.Menu, null, AvailableScreens.MoreScreen.name)
 
     val tabBarItems = listOf(groupsTab, profileTab)
