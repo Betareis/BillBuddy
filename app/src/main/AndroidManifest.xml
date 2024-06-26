@@ -33,7 +33,6 @@
                 <data
                     android:host="www.billbuddy.com"
                     android:scheme="https" />
-
             </intent-filter>
 
             <intent-filter>

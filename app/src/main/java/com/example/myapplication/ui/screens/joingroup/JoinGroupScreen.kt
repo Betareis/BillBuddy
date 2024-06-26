@@ -52,7 +52,7 @@ fun JoinGroupScreen(
                             .exists()
                     ) {
                         userDocumentRef.update("groups", FieldValue.arrayUnion(groupId))
-                        groupDocumentRef.update("users", FieldValue.arrayUnion(groupId))
+                        groupDocumentRef.update("users", FieldValue.arrayUnion(uid))
                     } else throw Exception("Failed to get the data |join Group|")
 
                 } catch (e: Exception) {
