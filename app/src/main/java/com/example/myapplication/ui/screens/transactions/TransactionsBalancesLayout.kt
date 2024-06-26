@@ -73,7 +73,7 @@ fun TransactionsBalancesLayout(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TransactionsScreenBar(navController, groupName)
+            TransactionsScreenBar(navController, groupName, groupId)
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -193,7 +193,7 @@ fun SelectChoiceBalances(selectedChoice: MutableState<String>, modifier: Modifie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionsScreenBar(navController: NavController, groupName: String) {
+fun TransactionsScreenBar(navController: NavController, groupName: String, groupId: String) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showOverlay by remember { mutableStateOf(false) }
 
@@ -216,12 +216,12 @@ fun TransactionsScreenBar(navController: NavController, groupName: String) {
         }
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             DropdownMenuItem(onClick = {
-                val deepLink = "https://www.transactionscreen.com/${groupName}"
+                val deepLink = "https://www.billbuddy.com/joingroup/?groupId=${groupId}"
                 shareDeepLinkOnWhatsApp(context, deepLink, groupName)
                 menuExpanded = false
             }, text = { Text("Share Link on Whats App") })
             DropdownMenuItem(onClick = {
-                val deepLink = "https://www.transactionscreen.com/${groupName}"
+                val deepLink = "https://www.billbuddy.com/joingroup/?groupId=${groupId}"
                 clipboard.setText(AnnotatedString(deepLink))
                 Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
                 menuExpanded = false
