@@ -79,9 +79,9 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
-                ChangePasswordSection(navController)
-                Spacer(modifier = Modifier.height(40.dp))
                 PayPalUsernameSection(profileScreenViewModel)
+                Spacer(modifier = Modifier.height(40.dp))
+                ChangePasswordSection(navController)
                 Spacer(modifier = Modifier.height(40.dp))
                 LogoutButton(navController)
             }
@@ -165,7 +165,7 @@ fun PayPalUsernameSection(profileScreenViewModel: ProfileScreenViewModel) {
         modifier = Modifier.background(Color.LightGray),
         onClick = { showDialog = true },
     ) {
-        Text(text = "Enter PayPal Username")
+        Text(text = "Change PayPal Username")
     }
     if (showDialog) {
         PayPalUsernameDialog(profileScreenViewModel) {
