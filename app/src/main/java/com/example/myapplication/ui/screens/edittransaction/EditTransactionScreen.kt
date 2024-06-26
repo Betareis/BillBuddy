@@ -291,10 +291,9 @@ fun EditTransactionScreenContent(
 
             //Text(color = Color.White, text = name)
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(
-                modifier = Modifier
-                    .then(Modifier.testTag("backArrow"))
-                    .width(200.dp),
+            OutlinedButton(modifier = Modifier
+                .then(Modifier.testTag("backArrow"))
+                .width(200.dp),
                 onClick = {
                     navController.navigate(AvailableScreens.GroupsScreen.name)
                 }) {
@@ -325,7 +324,6 @@ fun EditTransactionScreenContent(
                 fieldValues,
                 exceptionMessage
             )
-
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(50.dp))
@@ -334,8 +332,6 @@ fun EditTransactionScreenContent(
                 amount,
                 fieldValues
             )
-
-
         }
     }
 }
@@ -391,7 +387,6 @@ fun EditTransactionButtonView(
         }
     }
 }
-
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -454,7 +449,6 @@ fun SingleAmountMembers(
         }
     }
 }
-
 
 @Composable
 fun DropdownPayedByUser(

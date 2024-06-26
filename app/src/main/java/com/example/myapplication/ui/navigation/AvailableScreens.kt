@@ -10,7 +10,8 @@ enum class AvailableScreens {
     SignUpScreen,
     TransactionsBalancesLayout,
     TransactionInfoScreen,
-    MoreScreen;
+    MoreScreen,
+    JoinGroupScreen;
 
     companion object {
 
@@ -25,6 +26,7 @@ enum class AvailableScreens {
                 TransactionsBalancesLayout.name -> TransactionsBalancesLayout;
                 TransactionInfoScreen.name -> TransactionInfoScreen;
                 MoreScreen.name -> MoreScreen;
+                JoinGroupScreen.name -> JoinGroupScreen;
                 else -> throw Exception("Route companion object navigation error")
             }
 

@@ -368,6 +368,35 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
+    suspend fun savePayPalAddress(
+        userId: String,
+        paypalAddress: String
+    ): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            firestore.collection("users").document(userId)
+                .update("paypalAddress", paypalAddress)
+                .await()
+            DataRequestWrapper(data = Unit)
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = e)
+        }
+    }
+
+    suspend fun getPayPalAddress(userId: String): DataRequestWrapper<String, String, Exception> {
+        return try {
+            val result = firestore.collection("users").document(userId).get().await()
+            val paypalAddress = result.getString("paypalAddress")
+            if (paypalAddress != null) {
+                DataRequestWrapper(data = paypalAddress)
+            } else {
+                DataRequestWrapper(data = "", exception = Exception("PayPal address not found"))
+            }
+        } catch (e: Exception) {
+            Log.d("GET_PAYPAL_ADDRESS", e.stackTraceToString())
+            DataRequestWrapper(data = "", exception = e)
+        }
+    }
+
 
     /********************************************* MUTATIONS UPDATE ****************************************************************************/
 
@@ -410,6 +439,27 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
+
+    suspend fun joinGroup(
+        userId: String,
+        groupId: String
+    ): DataRequestWrapper<Unit, String, Exception> {
+        return try {
+            val userDocumentRef = firestore.collection("users").document(userId)
+            val groupDocumentRef = firestore.collection("groups").document(groupId)
+
+            if (groupDocumentRef.get().await().exists() && userDocumentRef.get().await().exists()) {
+                userDocumentRef.update("groups", FieldValue.arrayUnion(groupId))
+                groupDocumentRef.update("users", FieldValue.arrayUnion(groupId))
+            } else throw Exception("Failed to get the data |join Group|")
+
+            DataRequestWrapper(data = Unit)
+        } catch (e: Exception) {
+            DataRequestWrapper(exception = Exception("Failed to join the group $groupId"))
+        }
+    }
+
+
     /********************************************* MUTATIONS DELETE ****************************************************************************/
 
     suspend fun deleteTransactionGroup(
@@ -428,32 +478,6 @@ class FirestoreRepository @Inject constructor() {
         } catch (e: Exception) {
             Log.d("DELETE_RESPONSE", e.stackTraceToString())
             DataRequestWrapper(exception = e)
-        }
-    }
-
-    suspend fun savePayPalAddress(userId: String, paypalAddress: String): DataRequestWrapper<Unit, String, Exception> {
-        return try {
-            firestore.collection("users").document(userId)
-                .update("paypalAddress", paypalAddress)
-                .await()
-            DataRequestWrapper(data = Unit)
-        } catch (e: Exception) {
-            DataRequestWrapper(exception = e)
-        }
-    }
-
-    suspend fun getPayPalAddress(userId: String): DataRequestWrapper<String, String, Exception> {
-        return try {
-            val result = firestore.collection("users").document(userId).get().await()
-            val paypalAddress = result.getString("paypalAddress")
-            if (paypalAddress != null) {
-                DataRequestWrapper(data = paypalAddress)
-            } else {
-                DataRequestWrapper(data = "", exception = Exception("PayPal address not found"))
-            }
-        } catch (e: Exception) {
-            Log.d("GET_PAYPAL_ADDRESS", e.stackTraceToString())
-            DataRequestWrapper(data = "", exception = e)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,16 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            val navController = rememberNavController()// Handle Deep Link
-            val deepLinkUri = intent.data
-            LaunchedEffect(key1 = deepLinkUri) {
-                deepLinkUri?.let { uri ->
-                    handleDeepLink(navController, uri)
-                }
-            }
-
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -41,14 +33,6 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(PaddingValues(0.dp))
                 }
             }
-        }
-    }
-
-    private fun handleDeepLink(navController: NavController, deepLinkData: Uri) {
-        val pathSegments = deepLinkData.pathSegments
-        if (pathSegments.size >= 2 && pathSegments[0] == "www.transactionscreen.com") {
-            val groupName = pathSegments[1]
-            navController.navigate("${AvailableScreens.TransactionsBalancesLayout.name}/?groupId=&groupName=${groupName}")
         }
     }
 }

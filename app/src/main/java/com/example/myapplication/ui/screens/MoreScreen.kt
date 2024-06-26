@@ -47,7 +47,7 @@ fun MoreScreen(navController: NavController) {
         contentColor = Color.Black,
         bottomBar = { TabView(navController) },
         //topBar = { BurgerMenuDrawer() },
-    ) {paddingValues->
+    ) { paddingValues ->
         Surface(
             modifier = Modifier
                 .padding(paddingValues)
@@ -121,7 +121,9 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                         .padding(8.dp),
                     visualTransformation = if (currentPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        IconButton(onClick = { currentPasswordVisible.value = !currentPasswordVisible.value }) {
+                        IconButton(onClick = {
+                            currentPasswordVisible.value = !currentPasswordVisible.value
+                        }) {
                             Icon(
                                 imageVector = if (currentPasswordVisible.value) Icons.Filled.Lock else Icons.Filled.Lock,
                                 contentDescription = if (currentPasswordVisible.value) "Hide password" else "Show password"
@@ -138,7 +140,9 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                         .padding(8.dp),
                     visualTransformation = if (newPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        IconButton(onClick = { newPasswordVisible.value = !newPasswordVisible.value }) {
+                        IconButton(onClick = {
+                            newPasswordVisible.value = !newPasswordVisible.value
+                        }) {
                             Icon(
                                 imageVector = if (newPasswordVisible.value) Icons.Filled.Lock else Icons.Filled.Lock,
                                 contentDescription = if (newPasswordVisible.value) "Hide password" else "Show password"
@@ -168,16 +172,30 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                                             if (updateTask.isSuccessful) {
                                                 //Log.d("PasswordChange", "Password updated")
                                                 navController.navigate(AvailableScreens.LoginScreen.name) {
-                                                    popUpTo(AvailableScreens.MoreScreen.name) { inclusive = true }
-                                                    Toast.makeText(context, "Password successfully changed.", Toast.LENGTH_SHORT).show()
+                                                    popUpTo(AvailableScreens.MoreScreen.name) {
+                                                        inclusive = true
+                                                    }
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Password successfully changed.",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
                                                 onDismiss()
                                             } else {
-                                                Toast.makeText(context, "New password must be at least 6 characters long.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "New password must be at least 6 characters long.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         }
                                 } else {
-                                    Toast.makeText(context, "Current password is wrong.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Current password is wrong.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                     }
@@ -218,10 +236,11 @@ fun LogoutButton(navController: NavController) {
             try {
                 auth.signOut()
                 navController.navigate(AvailableScreens.LoginScreen.name) {
-                    popUpTo(AvailableScreens.MoreScreen.name) { inclusive =true }
-                Toast.makeText(context, "Successfully logged out.", Toast.LENGTH_SHORT).show()
+                    popUpTo(AvailableScreens.MoreScreen.name) { inclusive = true }
+                    Toast.makeText(context, "Successfully logged out.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
+                //Todo: missing
                 //Log.d("Critical", "Logout failed")
             }
         }) {
