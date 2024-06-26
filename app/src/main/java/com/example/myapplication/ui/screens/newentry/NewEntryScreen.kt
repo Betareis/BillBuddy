@@ -76,8 +76,11 @@ import java.time.format.DateTimeFormatter
 
 fun isDouble(value: String): Boolean {
     return try {
-        value.toDouble()
-        true
+        if (value.isEmpty()) false
+        else {
+            value.toDouble()
+            true
+        }
     } catch (e: NumberFormatException) {
         false
     }
@@ -145,7 +148,8 @@ fun NewEntryScreen(
                             val numUsers = fieldValues.value.size
                             val newAmount = newValue.toDouble()
                             val newFieldValues = fieldValues.value.mapValues {
-                                String.format("%.2f", newAmount / numUsers).toDouble()
+
+                                Math.round((newAmount / numUsers) * 100.0) / 100.0
                             }.toMutableMap()
                             fieldValues.value = newFieldValues
                         }
@@ -197,7 +201,9 @@ fun NewEntryScreen(
                 Text(text = "For: ", color = Color.White, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 SingleAmountMembers(
-                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues.value
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) },
+                    amount,
+                    fieldValues.value
                 )
                 Spacer(modifier = Modifier.height(50.dp))
             }
@@ -319,17 +325,11 @@ fun SingleAmountMembers(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
-                    var fieldValue by remember {
-                        mutableStateOf(
-                            fieldValues[user.id]?.toString() ?: "0.0"
-                        )
-                    }
                     TextField(
-                        value = fieldValue,
+                        readOnly = true,
+                        value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString(),
                         onValueChange = { newValue ->
-                            fieldValue = newValue
-                            fieldValues[user.id.toString()] = newValue.toDoubleOrNull() ?: 0.0
-                            Log.d("field_values", fieldValues.toString())
+                            fieldValues.toMutableMap().apply { put(user.id, newValue.toDouble()) }
                         },
                         modifier = Modifier.weight(2f),
                     )
@@ -363,7 +363,6 @@ fun DropdownPayedByUser(
             nameList.add(user.getDisplayName())
         }
 
-        val items = nameList.toList()
         var selectedIndex by remember { mutableIntStateOf(0) }
 
         Box(

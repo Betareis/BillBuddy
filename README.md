@@ -2,9 +2,6 @@
 - [x] The user can login
 - [ ] The user can register
 
-
-
-
 ## UI Layer
 - [x] GroupScreen
 - [x] LoginScreen
