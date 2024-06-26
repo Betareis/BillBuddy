@@ -8,8 +8,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,10 +20,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.ui.screens.joingroup.JoinGroupScreen
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.screens.edittransaction.EditTransactionScreen
 import com.example.myapplication.ui.screens.groups.GroupsScreen
+import com.example.myapplication.ui.screens.joingroup.JoinGroupViewModel
+import com.example.myapplication.ui.screens.joingroup.JoinGroupViewModel_Factory
 import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.profile.ProfileScreen
@@ -196,7 +201,7 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
 
 private fun NavGraphBuilder.deepLinksNav(navController: NavHostController) {
     composable(
-        "joinGroup",//"${AvailableScreens.JoinGroupScreen.name}?userId={userId}",
+        "addToGroup",//"${AvailableScreens.JoinGroupScreen.name}?userId={userId}",
         deepLinks = listOf(navDeepLink {
             uriPattern = "https://www.billbuddy.com/joingroup/?groupId={groupId}"
             action = Intent.ACTION_VIEW
@@ -204,20 +209,13 @@ private fun NavGraphBuilder.deepLinksNav(navController: NavHostController) {
         arguments = listOf(
             navArgument("groupId") {
                 type = NavType.StringType
-                //defaultValue = 1
             },
-            //navArgument("userId") { type = NavType.StringType },
         )
     ) { backStackEntry ->
         val groupId = backStackEntry.arguments?.getString("groupId");
 
         val auth = FirebaseAuth.getInstance().currentUser
 
-        //Text(text = userId.toString(), color = Color.Black)
-
-        /*JoinGroupScreen(
-            navController, "100", "200"
-        )*/
         if (groupId != null && auth != null) {
             JoinGroupScreen(
                 navController, groupId, auth.uid
