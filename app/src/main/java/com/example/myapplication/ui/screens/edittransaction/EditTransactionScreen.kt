@@ -310,6 +310,7 @@ fun EditTransactionScreenContent(
             OutlinedTextField(
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 value = amount.value,
+                readOnly = true,
                 onValueChange = { amount.value = it },
                 label = { Text("Amount") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

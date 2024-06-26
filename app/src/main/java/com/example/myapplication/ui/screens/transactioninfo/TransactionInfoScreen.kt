@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screens
+package com.example.myapplication.ui.screens.transactioninfo
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -13,29 +13,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.myapplication.ui.navigation.AvailableScreens
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +49,8 @@ fun TransactionInfoScreen(
     transactionName: String,
     transactionAmount: Double,
     transactionDate: String,
-    payedBy: String
+    payedBy: String,
+    transactionInfoScreenViewModel: TransactionInfoScreenViewModel = hiltViewModel()
 ) {
 
     Scaffold(
@@ -63,15 +66,6 @@ fun TransactionInfoScreen(
                     }
                 },
                 title = { Text(text = transactionName) },
-                actions = {
-                    IconButton(onClick = {
-                        navController.navigate("${AvailableScreens.EditTransactionScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}")
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Edit, contentDescription = "Edit"
-                        )
-                    }
-                }
             )
         },
         content = {
@@ -99,6 +93,21 @@ fun TransactionInfoScreen(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     InfoBox(label = "Paid By", value = payedBy)
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        DeleteTransaction(
+                            navController = navController,
+                            groupId = groupId,
+                            transactionId = transactionId,
+                            transactionName = transactionName,
+                            transactionInfoScreenViewModel = transactionInfoScreenViewModel
+                        )
+                    }
                 }
             }
         }
@@ -127,5 +136,25 @@ fun InfoBox(label: String, value: String) {
                 color = Color.White
             )
         }
+    }
+}
+
+@Composable
+fun DeleteTransaction(
+    navController: NavController,
+    groupId: String,
+    transactionId: String,
+    transactionName: String,
+    transactionInfoScreenViewModel: TransactionInfoScreenViewModel
+) {
+    Button(onClick = {
+        CoroutineScope(Dispatchers.Main).launch {
+            transactionInfoScreenViewModel.deleteTransaction(groupId, transactionId)
+        }
+        navController.popBackStack()
+    },
+        colors = ButtonDefaults.buttonColors(Color.Red)
+    ) {
+        Text(text = "Delete Transaction: $transactionName")
     }
 }

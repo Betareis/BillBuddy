@@ -28,6 +28,7 @@ import com.example.myapplication.ui.screens.login.LoginScreen
 import com.example.myapplication.ui.screens.newentry.NewEntryScreen
 import com.example.myapplication.ui.screens.profile.ProfileScreen
 import com.example.myapplication.ui.screens.signup.SignUpScreen
+import com.example.myapplication.ui.screens.transactioninfo.TransactionInfoScreen
 import com.example.myapplication.ui.screens.transactions.TransactionsBalancesLayout
 import com.google.firebase.auth.FirebaseAuth
 

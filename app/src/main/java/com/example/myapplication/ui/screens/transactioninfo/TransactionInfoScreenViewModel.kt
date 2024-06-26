@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screens.edittransaction
+package com.example.myapplication.ui.screens.transactioninfo
 
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.model.User
@@ -15,7 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class EditTransactionScreenViewModel @Inject constructor(
+class TransactionInfoScreenViewModel @Inject constructor(
     private val firestoreRepository: FirestoreRepository,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
