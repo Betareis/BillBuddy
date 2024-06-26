@@ -53,6 +53,7 @@ fun JoinGroupScreen(
                     ) {
                         userDocumentRef.update("groups", FieldValue.arrayUnion(groupId))
                         groupDocumentRef.update("users", FieldValue.arrayUnion(uid))
+                        navController.navigate(AvailableScreens.GroupsScreen.name)
                     } else throw Exception("Failed to get the data |join Group|")
 
                 } catch (e: Exception) {
