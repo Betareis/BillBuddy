@@ -50,7 +50,7 @@ fun DisplayBalancesContent(
         CircularProgressIndicator()
     } else if (usersOfGroup.data != null && usersOfGroup.data!!.isNotEmpty()) {
         val debts = calculateDebts(usersOfGroup.data!!)
-        Log.d("Debts Calculation", "Debts: $debts") // Log the debts for debugging
+        Log.d("Debts Calculation", "Debts: $debts")
 
         Column(
             modifier = Modifier.fillMaxSize(),

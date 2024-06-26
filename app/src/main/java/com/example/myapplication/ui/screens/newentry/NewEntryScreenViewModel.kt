@@ -21,7 +21,6 @@ class NewEntryScreenViewModel @Inject constructor(
         return try {
             val process1 = addTransactionUseCase(groupId, transactionData, singleAmountData)
             if (process1.exception != null) throw Exception("Error add a transaction")
-            //!Todo: Missing exception callback
             if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
                 return DataRequestWrapper(exception = Exception("Error in process 1 addTransaction"))
             }
@@ -31,7 +30,6 @@ class NewEntryScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)
         }
-        //return addTransactionUseCase(groupId, transactionData, singleAmountData)
     }
     suspend fun getUsersOfGroup(
         groupId: String
@@ -39,11 +37,3 @@ class NewEntryScreenViewModel @Inject constructor(
         return firestoreRepository.getUsersOfGroup(groupId)
     }
 }
-
-//Todo: Should be deleted in production
-/*suspend fun addTransactionForGroup(
-    groupId: String,
-    transactionData: Map<String, Any>
-): DataRequestWrapper<Unit, String, Exception> {
-    return firestoreRepository.createTransactionForGroup(groupId, transactionData)
-}*/

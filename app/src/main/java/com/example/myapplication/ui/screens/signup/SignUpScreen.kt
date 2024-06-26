@@ -96,7 +96,6 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
 fun OnSubmitFormButtonSignUp(
     navController: NavController, signUpViewModel: SignUpViewModel, formData: UserRegisterFormData
 ) {
-    val context = LocalContext.current
     Button(colors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
         contentColor = NewWhiteFontColor,
@@ -128,10 +127,10 @@ fun SwitchTOLoginButtonSignUp(navController: NavController) {
     ),
         modifier = Modifier
             .background(Color(0f, 0f, 0f, alpha = 0f))
-            .border( // Add border with desired properties
+            .border(
                 width = 2.dp,
                 color = NewWhiteFontColor,
-                shape = RoundedCornerShape(8.dp) // Example: Rounded corners
+                shape = RoundedCornerShape(8.dp)
             ),
         onClick = { navController.navigate(AvailableScreens.LoginScreen.name) }) {
         Text(color = Color.White, text = "Back To Login")

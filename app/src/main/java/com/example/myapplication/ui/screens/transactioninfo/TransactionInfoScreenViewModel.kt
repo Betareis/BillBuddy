@@ -16,9 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionInfoScreenViewModel @Inject constructor(
-    private val firestoreRepository: FirestoreRepository,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
-    private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val resetCalculateBalancesUseCase: ResetCalculateBalancesUseCase,
 ) : ViewModel() {
     suspend fun deleteTransaction(
@@ -30,38 +28,5 @@ class TransactionInfoScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)
         }
-    }
-
-    suspend fun updateSpecificTransactionGroup(
-        groupId: String,
-        transactionId: String,
-        transactionData: Map<String, Any>,
-        singleAmountData: Map<String, Any>
-    ): DataRequestWrapper<Unit, String, Exception> {
-        return try {
-            val process1 = updateTransactionUseCase(
-                groupId, transactionId, transactionData, singleAmountData
-            )
-            if (process1.exception != null) throw Exception("Error update transaction $transactionId")
-            if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
-                return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
-            }
-            val firebase = FirebaseFirestore.getInstance()
-            val process2 = resetCalculateBalancesUseCase(
-                groupId, transactionId = transactionId
-            )
-
-            if (process2.exception != null) throw Exception("Error reset resetCalculateBalancesUseCase")
-
-            DataRequestWrapper(data = Unit)
-        } catch (e: Exception) {
-            DataRequestWrapper(exception = e)
-        }
-    }
-
-    suspend fun getUsersOfGroup(
-        groupId: String
-    ): DataRequestWrapper<MutableList<User>, String, Exception> {
-        return firestoreRepository.getUsersOfGroup(groupId)
     }
 }

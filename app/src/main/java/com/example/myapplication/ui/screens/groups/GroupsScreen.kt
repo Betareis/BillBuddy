@@ -81,7 +81,6 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
 
     Scaffold(contentColor = Color.Black, bottomBar = { TabView(navController) }, topBar = {
         CenterAlignedTopAppBar(title = { Text(text = "Groups") })
-        //BurgerMenuDrawer()
     }
 
     ) {
@@ -97,7 +96,6 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
             ) {
                 ShowData(
                     groupData = groupsState.value,
-                    //loadGroups = { groupViewModel.getGroupsFirestore() },
                     navController = navController
                 )
             }
@@ -111,24 +109,14 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                     .padding(start = 15.dp, end = 15.dp)
                     .fillMaxWidth()
                     .width(300.dp)
-                    .size(50.dp) // Adjust size as needed
-                    .background(MainButtonColor),// Set background color to blue
+                    .size(50.dp)
+                    .background(MainButtonColor),
                     onClick = {
-                        showTextFieldDialog = true/*CoroutineScope(Dispatchers.Main).launch {
-                            val flatGroupData = mapOf(
-                                "name" to "Test",
-                            )
-                            //Todo: Not working right now
-                            val auth = FirebaseAuth.getInstance()
-
-                            groupViewModel.addGroup(flatGroupData, userId = auth.uid!!)
-
-                            groupViewModel.getGroupsFirestore()
-                        }*/
+                        showTextFieldDialog = true
                     }) {
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        contentDescription = "Add a Group", // Provide a description for accessibility
+                        contentDescription = "Add a Group",
                         tint = Color.Black
                     )
                 }
@@ -143,7 +131,6 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
                                 val flatGroupData = mapOf(
                                     "name" to textFieldValue,
                                 )
-                                //Todo: Not working right now
                                 val auth = FirebaseAuth.getInstance()
 
                                 groupViewModel.addGroup(flatGroupData, userId = auth.uid!!)
@@ -168,7 +155,6 @@ fun ShowData(
 ) {
     if (groupData.isEmpty()) {
         Text(text = "No Groups found")
-        //CircularProgressIndicator()
     } else {
         Log.d("DONE", "LOADING DATA DONE")
         Box(
@@ -230,7 +216,7 @@ fun ShowTextFieldDialog(
         )
     }, confirmButton = {
         Button(onClick = onDismissRequest) {
-            Text("Save") // Adjust button text as needed
+            Text("Save")
         }
     })
 }

@@ -54,9 +54,6 @@ fun EmailInputField(
             .padding(8.dp)
             .fillMaxWidth()
             .background(Color.Transparent),
-        //.heightIn(min = 80.dp),
-        //.background(color = backgroundColor),
-        //keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardActions = onAction,
     )
 }
@@ -107,11 +104,8 @@ fun PassInputField(
             .padding(8.dp)
             .fillMaxWidth()
             .background(Color.Transparent),
-        //.heightIn(min = 80.dp),
         visualTransformation = visualTransformation,
         trailingIcon = { isPasswordVisibleIcon(isPasswordVisible = isPasswordVisible) },
-        //.background(color = backgroundColor),
-        //keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = imeAction

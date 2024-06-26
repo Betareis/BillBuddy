@@ -67,22 +67,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Composable
-fun TransactionsScreen(
-    navController: NavController, groupId: String, transactionsViewModel: TransactionsViewModel
-) {
-    ShowTransactionsData(
-        loadTransactions = {
-            transactionsViewModel.getGroupTransactionsFirestore(
-                groupId
-            )
-        },
-        navController = navController,
-        groupId = groupId,
-        transactionsViewModel = transactionsViewModel
-    )
-}
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShowTransactionsData(
@@ -173,8 +157,6 @@ fun ShowTransactionsData(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start
                             ) {
-                                //Text("Icon!!", color = NewWhiteFontColor)
-                                //Spacer(modifier = Modifier.weight(0.25f))
                                 Text(
                                     (data.name).toUppercaseFirstLetter(),
                                     modifier = Modifier.weight(0.5f),
@@ -195,5 +177,3 @@ fun ShowTransactionsData(
     }
 
 }
-
-

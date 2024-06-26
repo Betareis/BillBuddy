@@ -111,11 +111,3 @@ fun TabBarBadgeView(count: Int? = null) {
         }
     }
 }
-
-@Composable
-fun MoreView() {
-    Column {
-        Text("Settings")
-        Text("Logout")
-    }
-}

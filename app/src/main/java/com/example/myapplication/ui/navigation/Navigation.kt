@@ -160,7 +160,8 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
     }
 
     composable(
-        "${AvailableScreens.TransactionInfoScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}&transactionAmount={transactionAmount}&transactionDate={transactionDate}&payedBy={payedBy}",
+        "${AvailableScreens.TransactionInfoScreen.name}/?groupId={groupId}&transactionId={transactionId}&transactionName={transactionName}&" +
+                "transactionAmount={transactionAmount}&transactionDate={transactionDate}&payedBy={payedBy}",
         arguments = listOf(navArgument("groupId") { type = NavType.StringType },
             navArgument("transactionId") { type = NavType.StringType },
             navArgument("transactionName") { type = NavType.StringType },
@@ -194,7 +195,7 @@ private fun NavGraphBuilder.transactionNav(navController: NavHostController) {
 
 private fun NavGraphBuilder.deepLinksNav(navController: NavHostController) {
     composable(
-        "addToGroup",//"${AvailableScreens.JoinGroupScreen.name}?userId={userId}",
+        "addToGroup",
         deepLinks = listOf(navDeepLink {
             uriPattern = "https://www.billbuddy.com/joingroup/?groupId={groupId}"
             action = Intent.ACTION_VIEW

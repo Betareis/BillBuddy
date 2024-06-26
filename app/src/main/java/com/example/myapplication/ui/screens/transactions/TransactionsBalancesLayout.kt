@@ -105,15 +105,15 @@ fun TransactionsBalancesLayout(
                     .fillMaxSize()
             ) {
                 IconButton(modifier = Modifier
-                    .size(50.dp) // Adjust size as needed
-                    .background(MainButtonColor)// Set background color to blue
+                    .size(50.dp)
+                    .background(MainButtonColor)
                     .clip(RoundedCornerShape(80))
                     .padding(8.dp), onClick = {
                     navController.navigate("${AvailableScreens.NewEntryScreen.name}/?groupId=${groupId}")
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        contentDescription = "Add a Transaction" // Provide a description for accessibility
+                        contentDescription = "Add a Transaction"
                     )
                 }
             }

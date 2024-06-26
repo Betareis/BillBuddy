@@ -359,7 +359,6 @@ fun DropdownPayedByUser(
         Log.d("user_list", userListData.data.toString())
         val nameList = mutableListOf<String>()
         for (user in userListData.data!!) {
-            // Add the user's name to the nameList
             nameList.add(user.getDisplayName())
         }
 
@@ -372,7 +371,6 @@ fun DropdownPayedByUser(
         ) {
             Text(
                 if (selectedUserId.value.isNotEmpty()) {
-                    // Display the selected user's name instead of ID
                     userListData.data!!.find { it.id == selectedUserId.value }?.getDisplayName()
                         ?: "Select a user"
                 } else {

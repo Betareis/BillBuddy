@@ -20,14 +20,12 @@ class RegisterUserUseCase @Inject constructor() {
         ) {
             return
         }
-        //!Log.d("test", userData.toString())
         try {
             auth.createUserWithEmailAndPassword(
                 userData["email"].toString(), userData["password"].toString()
 
             ).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    //val displayName = task.result.user?.email?.split('@')?.get(0)
 
                     val firstname = userData["firstname"].toString()
                     val name = userData["name"].toString()
@@ -50,8 +48,6 @@ fun createUserInDifferentCollection(firstname: String, name: String, auth: Fireb
 
     if (userId != null) {
         val usersCollection = FirebaseFirestore.getInstance().collection("users")
-
-        // We add the user with same document id as user id
         usersCollection.document(userId).set(user.toMap())
     }
 }

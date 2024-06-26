@@ -194,7 +194,6 @@ fun DeleteTransaction(
     editTransactionScreenViewModel: EditTransactionScreenViewModel
 ) {
     Button(onClick = {
-        //!Todo: Not checking if a transaction was actually deleted
         CoroutineScope(Dispatchers.Main).launch {
             editTransactionScreenViewModel.deleteTransaction(groupId, transactionId)
         }
@@ -290,7 +289,6 @@ fun EditTransactionScreenContent(
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
-            //.fillMaxSize()
             .background(
                 ScreenBackgroundColor
             )
@@ -382,18 +380,16 @@ fun SingleAmountMembers(
         val numUsers = userListData.data!!.size
         val readOnlyList = userListData.data!!.toList()
         val myMap: Map<String, Double> =
-            readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
+            readOnlyList.associateBy({ it.id as String },
                 {
 
                     if (isDouble(amount.value) && amount.value.toDouble() > 0.0) {
                         Math.round((amount.value.toDouble() / numUsers) * 100.0) / 100.0
                     } else {
-                        0.0  // Default value as double
+                        0.0
                     }
                 })
         fieldValues.putAll(myMap)
-        //!Todo: should be deleted in production
-        //Log.d("test_map", myMap.toString())
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -444,12 +440,9 @@ fun DropdownPayedByUser(
         Log.d("user_list", userListData.data.toString())
         val nameList = mutableListOf<String>()
         for (user in userListData.data!!) {
-            // Add the user's name to the nameList
             nameList.add(user.getDisplayName())
         }
 
-        val items = nameList.toList()
-        val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
 
         Box(
@@ -459,7 +452,6 @@ fun DropdownPayedByUser(
         ) {
             Text(
                 if (selectedUserId.value.isNotEmpty()) {
-                    // Display the selected user's name instead of ID
                     userListData.data!!.find { it.id == selectedUserId.value }?.getDisplayName()
                         ?: "Select a user"
                 } else {
@@ -493,8 +485,3 @@ fun DropdownPayedByUser(
         }
     }
 }
-
-
-
-
-

@@ -15,9 +15,6 @@ enum class FetchingState(var message: String) {
     }
 
     companion object {
-        val IDLE_INSTANCE = IDLE
         val FAILED_INSTANCE = FAILED
-        val LOADING_INSTANCE = LOADING
-        val SUCCESS_INSTANCE = SUCCESS
     }
 }

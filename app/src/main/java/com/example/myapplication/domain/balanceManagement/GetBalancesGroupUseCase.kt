@@ -17,16 +17,15 @@ class GetBalancesGroupUseCase @Inject constructor(private val firestoreRepositor
 
             val userBalanceMap = mutableMapOf<User, Double>()
 
-            // Loop through balances and find corresponding user in the other list
             for (balance in process2.data!!) {
-                val userId = balance.id ?: continue  // Skip if balance has no ID
+                val userId = balance.id ?: continue
                 val user = process1.data!!.find { it.id == userId }
-                    ?: continue  // Skip if no user with matching ID
+                    ?: continue
 
-                userBalanceMap[user] = balance.balance  // Add user and balance to the map
+                userBalanceMap[user] = balance.balance
             }
 
-            DataRequestWrapper(data = userBalanceMap.toMap()) // Create an immutable map from the mutable map
+            DataRequestWrapper(data = userBalanceMap.toMap())
 
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)

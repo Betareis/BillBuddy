@@ -1,6 +1,6 @@
 package com.example.myapplication.ui.screens.groups
 
-import android.util.Log
+
 import com.example.myapplication.data.repository.FirestoreRepository
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.model.Group

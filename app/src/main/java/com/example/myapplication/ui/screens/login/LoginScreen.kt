@@ -121,10 +121,10 @@ fun SwitchTOSignUpButton(navController: NavController) {
     ),
         modifier = Modifier
             .background(Color(0f, 0f, 0f, alpha = 0f))
-            .border( // Add border with desired properties
+            .border(
                 width = 2.dp,
                 color = NewWhiteFontColor,
-                shape = RoundedCornerShape(8.dp) // Example: Rounded corners
+                shape = RoundedCornerShape(8.dp)
             ),
         onClick = { navController.navigate(AvailableScreens.SignUpScreen.name) }) {
         Text(color = Color.White, text = "Register")

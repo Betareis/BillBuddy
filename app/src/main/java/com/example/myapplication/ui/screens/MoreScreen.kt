@@ -1,7 +1,7 @@
 package com.example.myapplication.ui.screens
 
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +38,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.myapplication.ui.navigation.BurgerMenuDrawer
 
 
 @Composable
@@ -46,7 +45,6 @@ fun MoreScreen(navController: NavController) {
     Scaffold(
         contentColor = Color.Black,
         bottomBar = { TabView(navController) },
-        //topBar = { BurgerMenuDrawer() },
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -54,7 +52,6 @@ fun MoreScreen(navController: NavController) {
                 .padding(top = 60.dp)
                 .fillMaxSize(),
             color = Color.White,
-
             ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,7 +63,6 @@ fun MoreScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(40.dp))
                 LogoutButton(navController)
             }
-
         }
     }
 }
@@ -74,7 +70,6 @@ fun MoreScreen(navController: NavController) {
 @Composable
 fun ChangePasswordSection(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
-
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -240,8 +235,7 @@ fun LogoutButton(navController: NavController) {
                     Toast.makeText(context, "Successfully logged out.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                //Todo: missing
-                //Log.d("Critical", "Logout failed")
+                Log.d("Critical", "Logout failed")
             }
         }) {
         Text(text = "LogOut", Modifier.background(Color.Transparent))

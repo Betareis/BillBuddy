@@ -28,9 +28,6 @@ class ProfileScreenViewModel @Inject constructor(
             val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
             val result = firestoreRepository.savePayPalAddress(userId, paypalAddress)
             if (result.exception != null) {
-                // Handle the exception (e.g., show an error message)
-            } else {
-                // Handle successful save if needed
             }
         }
     }
