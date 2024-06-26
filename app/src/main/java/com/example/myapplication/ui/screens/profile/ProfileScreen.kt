@@ -67,7 +67,6 @@ fun ProfileScreen(
     ) {
         Surface(
             modifier = Modifier
-                .padding(top = 60.dp)
                 .fillMaxSize(),
             color = Color.White,
 
@@ -79,9 +78,10 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                ChangePasswordSection(navController)
                 Spacer(modifier = Modifier.height(40.dp))
                 PayPalUsernameSection(profileScreenViewModel)
+                Spacer(modifier = Modifier.height(40.dp))
+                ChangePasswordSection(navController)
                 Spacer(modifier = Modifier.height(40.dp))
                 LogoutButton(navController)
             }
@@ -120,7 +120,6 @@ fun ShowData(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 InfoBox(label = "Name", value = userData.data!!.getDisplayName())
-                Spacer(modifier = Modifier.height(10.dp))
                 InfoBox(label = "PayPal Username", value = userData.data!!.retrievePayPalName())
             }
         }
@@ -135,13 +134,12 @@ fun InfoBox(label: String, value: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 2.dp)
-            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
             .padding(16.dp)
     ) {
         Column {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -167,7 +165,7 @@ fun PayPalUsernameSection(profileScreenViewModel: ProfileScreenViewModel) {
         modifier = Modifier.background(Color.LightGray),
         onClick = { showDialog = true },
     ) {
-        Text(text = "Enter PayPal Username")
+        Text(text = "Change PayPal Username")
     }
     if (showDialog) {
         PayPalUsernameDialog(profileScreenViewModel) {
