@@ -100,10 +100,8 @@ fun NewEntryScreen(
         )
     }
 
-    val fieldValues by rememberSaveable {
-        mutableStateOf(
-            mutableMapOf<String, Double>()
-        )
+    val fieldValues = remember {
+        mutableStateOf(mutableMapOf<String, Double>())
     }
 
     val datePickerState = rememberDatePickerState(
@@ -141,7 +139,17 @@ fun NewEntryScreen(
                 OutlinedTextField(
                     textStyle = LocalTextStyle.current.copy(color = Color.White),
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = { newValue ->
+                        amount = newValue
+                        if (isDouble(newValue)) {
+                            val numUsers = fieldValues.value.size
+                            val newAmount = newValue.toDouble()
+                            val newFieldValues = fieldValues.value.mapValues {
+                                String.format("%.2f", newAmount / numUsers).toDouble()
+                            }.toMutableMap()
+                            fieldValues.value = newFieldValues
+                        }
+                    },
                     label = { Text("Amount") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 )
@@ -189,7 +197,7 @@ fun NewEntryScreen(
                 Text(text = "For: ", color = Color.White, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 SingleAmountMembers(
-                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues
+                    loadUsers = { newEntryViewModel.getUsersOfGroup(groupId) }, amount, fieldValues.value
                 )
                 Spacer(modifier = Modifier.height(50.dp))
             }
@@ -207,7 +215,7 @@ fun NewEntryScreen(
                     amount,
                     selectedUserId,
                     selectedDate,
-                    fieldValues,
+                    fieldValues.value,
                     exceptionMessage
                 )
             }
@@ -288,19 +296,14 @@ fun SingleAmountMembers(
         CircularProgressIndicator()
     } else if (userListData.data != null && userListData.data!!.isNotEmpty()) {
         val numUsers = userListData.data!!.size
-        val readOnlyList = userListData.data!!.toList()
-        val myMap: Map<String, Double> =
-            readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
-                {
-                    val formattedAmount = amount.replace(",", ".")
-                    if (formattedAmount.isNotEmpty() && isDouble(formattedAmount) && formattedAmount.toDouble() > 0.0) {
-                        String.format("%.2f", formattedAmount.toDouble() / numUsers)
-                            .toDouble() // Format and convert to double
-                    } else {
-                        0.0  // Default value as double
-                    }
-                })
-        fieldValues.putAll(myMap)
+        if (isDouble(amount) && amount.toDouble() > 0.0) {
+            val newFieldValues = userListData.data!!.associateBy({ it.id.toString() }, {
+                Math.round((amount.toDouble() / numUsers) * 100.0) / 100.0
+            }).toMutableMap()
+            fieldValues.clear()
+            fieldValues.putAll(newFieldValues)
+            Log.d("TestFieldValues", fieldValues.toString())
+        }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -318,7 +321,7 @@ fun SingleAmountMembers(
                     Spacer(modifier = Modifier.weight(0.2f))
                     var fieldValue by remember {
                         mutableStateOf(
-                            fieldValues[user.id.toString()]?.toString() ?: "0.0"
+                            fieldValues[user.id]?.toString() ?: "0.0"
                         )
                     }
                     TextField(

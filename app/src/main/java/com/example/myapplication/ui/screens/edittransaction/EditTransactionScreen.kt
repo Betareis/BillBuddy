@@ -411,9 +411,9 @@ fun SingleAmountMembers(
         val myMap: Map<String, Double> =
             readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
                 {
+
                     if (isDouble(amount) && amount.toDouble() > 0.0) {
-                        String.format("%.2f", amount.toDouble() / numUsers)
-                            .toDouble() // Format and convert to double
+                        Math.round((amount.toDouble() / numUsers) * 100.0) / 100.0
                     } else {
                         0.0  // Default value as double
                     }
