@@ -157,9 +157,9 @@ fun ChangePassword(navController: NavController, onDismiss: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = Color.Black,
-                    disabledContentColor = Color.Gray
+                    disabledContentColor = MainButtonColor
                 ),
-                modifier = Modifier.background(Color.LightGray),
+                modifier = Modifier.background(MainButtonColor),
                 onClick = {
                     val user = auth.currentUser
                     if (user != null && email.isNotEmpty() && currentPassword.isNotEmpty() && newPassword.isNotEmpty()) {
