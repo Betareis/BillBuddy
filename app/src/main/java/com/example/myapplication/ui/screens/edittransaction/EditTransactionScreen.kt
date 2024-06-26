@@ -14,14 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Button
@@ -29,6 +27,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,8 +63,6 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
-import com.example.myapplication.ui.screens.newentry.NewEntryScreenViewModel
-import com.example.myapplication.ui.theme.MainButtonColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import kotlinx.coroutines.CoroutineScope
@@ -76,7 +73,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTransactionScreen(
@@ -89,17 +86,49 @@ fun EditTransactionScreen(
     payedBy: String,
     editTransactionScreenViewModel: EditTransactionScreenViewModel = hiltViewModel()
 ) {
+
+    val name by rememberSaveable { mutableStateOf(mutableStateOf("")) }
+    val amount by rememberSaveable { mutableStateOf(mutableStateOf("")) }
+
+    val selectedUserId by rememberSaveable {
+        mutableStateOf(
+            mutableStateOf("")
+        )
+    }
+
+    val fieldValues by rememberSaveable {
+        mutableStateOf(
+            mutableMapOf<String, Double>()
+        )
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
+    )
+
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+    }
+
+    val exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
+
+
     Scaffold(contentColor = Color.Black, topBar = {
         NavigationBarEditTransactionScreen(
             navController,
-            transactionName,
             groupId,
             transactionId,
-            transactionAmount,
-            transactionDate,
-            payedBy
+            transactionName,
+            editTransactionScreenViewModel,
+            name,
+            amount,
+            selectedUserId,
+            selectedDate,
+            fieldValues,
+            exceptionMessage
         )
-    }) {
+    })
+    {
         Surface(
             modifier = Modifier
                 .padding(top = 60.dp)
@@ -117,7 +146,14 @@ fun EditTransactionScreen(
                     navController = navController,
                     transactionId = transactionId,
                     groupId = groupId,
-                    editTransactionScreenViewModel
+                    editTransactionScreenViewModel,
+                    name,
+                    amount,
+                    selectedUserId,
+                    selectedDate,
+                    fieldValues,
+                    exceptionMessage,
+                    datePickerState
                 )
                 Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxHeight()) {
                     DeleteTransaction(
@@ -144,8 +180,6 @@ fun DeleteTransaction(
     Button(onClick = {
         //!Todo: Not checking if a transaction was actually deleted
         CoroutineScope(Dispatchers.Main).launch {
-
-
             editTransactionScreenViewModel.deleteTransaction(groupId, transactionId)
         }
         navController.popBackStack() // Pop once
@@ -163,15 +197,17 @@ fun NavigationBarEditTransactionScreen(
     groupId: String,
     transactionId: String,
     transactionName: String,
-    transactionAmount: Double,
-    transactionDate: String,
-    payedBy: String
+    editTransactionScreenViewModel: EditTransactionScreenViewModel,
+    name: MutableState<String>,
+    amount: MutableState<String>,
+    selectedUserId: MutableState<String>,
+    selectedDate: OffsetDateTime?,
+    fieldValues: MutableMap<String, Double>,
+    exceptionMessage: MutableState<String>,
 ) {
     CenterAlignedTopAppBar(navigationIcon = {
         IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
-            navController.navigate(
-                "${AvailableScreens.TransactionInfoScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}&transactionAmount=${transactionAmount}&transactionDate=${transactionDate}&payedBy=${payedBy}"
-            )
+            navController.popBackStack()
         }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
@@ -180,7 +216,26 @@ fun NavigationBarEditTransactionScreen(
         }
     }, title = { Text(transactionName) }, actions = {
         IconButton(onClick = {
-            //navController.navigate("${AvailableScreens.EditTransactionScreen.name}/?groupId=${groupId}&transactionId=${transactionId}&transactionName=${transactionName}")
+            CoroutineScope(Dispatchers.Main).launch {
+                val result = editTransactionScreenViewModel.updateSpecificTransactionGroup(
+                    groupId, transactionId, mapOf(
+                        "name" to name.value,
+                        "amount" to amount.value,
+                        "payedBy" to selectedUserId.value,
+                        "date" to if (selectedDate !== null) selectedDate.format(
+                            DateTimeFormatter.ISO_LOCAL_DATE
+                        ) else "",
+                    ), fieldValues.toMap()
+                )
+                if (result.exception != null) {
+                    exceptionMessage.value = result.exception!!.message.toString()
+                } else {
+                    navController.popBackStack()
+                    navController.popBackStack()
+                }
+            }
+            //navController.popBackStack()
+            //navController.popBackStack()
         }) {
             Icon(
                 imageVector = Icons.Outlined.Check, contentDescription = "Edit"
@@ -206,31 +261,15 @@ fun EditTransactionScreenContent(
     transactionId: String,
     groupId: String,
     editTransactionScreenViewModel: EditTransactionScreenViewModel,
+    name: MutableState<String>,
+    amount: MutableState<String>,
+    selectedUserId: MutableState<String>,
+    selectedDate: OffsetDateTime?,
+    fieldValues: MutableMap<String, Double>,
+    exceptionMessage: MutableState<String>,
+    datePickerState: DatePickerState,
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var amount by rememberSaveable { mutableStateOf("") }
 
-    val selectedUserId by rememberSaveable {
-        mutableStateOf(
-            mutableStateOf("")
-        )
-    }
-
-    val fieldValues by rememberSaveable {
-        mutableStateOf(
-            mutableMapOf<String, Double>()
-        )
-    }
-
-    val datePickerState = rememberDatePickerState(
-        initialDisplayedMonthMillis = System.currentTimeMillis(), yearRange = 2000..2024
-    )
-
-    val selectedDate = datePickerState.selectedDateMillis?.let {
-        Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-    }
-
-    val exceptionMessage by rememberSaveable { mutableStateOf(mutableStateOf("")) }
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
@@ -245,16 +284,16 @@ fun EditTransactionScreenContent(
             Text(text = exceptionMessage.value, color = Color.White)
             OutlinedTextField(
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = name,
-                onValueChange = { name = it },
+                value = name.value,
+                onValueChange = { name.value = it },
                 label = { Text("Name") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
-                value = amount,
-                onValueChange = { amount = it },
+                value = amount.value,
+                onValueChange = { amount.value = it },
                 label = { Text("Amount") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             )
@@ -312,7 +351,7 @@ fun EditTransactionScreenContent(
                     )
                 }
             }
-            EditTransactionButtonView(
+            /*EditTransactionButtonView(
                 navController,
                 editTransactionScreenViewModel,
                 transactionId,
@@ -323,7 +362,7 @@ fun EditTransactionScreenContent(
                 selectedDate,
                 fieldValues,
                 exceptionMessage
-            )
+            )*/
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(50.dp))
@@ -336,14 +375,14 @@ fun EditTransactionScreenContent(
     }
 }
 
-@Composable
+/*@Composable
 fun EditTransactionButtonView(
     navController: NavController,
     editTransactionScreenViewModel: EditTransactionScreenViewModel,
     transactionId: String,
     groupId: String,
-    name: String,
-    amount: String,
+    name: MutableState<String>,
+    amount: MutableState<String>,
     selectedUserId: MutableState<String>,
     selectedDate: OffsetDateTime?,
     fieldValues: MutableMap<String, Double>,
@@ -386,13 +425,13 @@ fun EditTransactionButtonView(
             )
         }
     }
-}
+}*/
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SingleAmountMembers(
     loadUsers: suspend () -> DataRequestWrapper<MutableList<User>, String, Exception>,
-    amount: String,
+    amount: MutableState<String>,
     fieldValues: MutableMap<String, Double>
 ) {
     val userListData = produceState<DataRequestWrapper<MutableList<User>, String, Exception>>(
@@ -412,8 +451,8 @@ fun SingleAmountMembers(
             readOnlyList.associateBy({ it.id as String }, // Key extractor: extracts user ID as string
                 {
 
-                    if (isDouble(amount) && amount.toDouble() > 0.0) {
-                        Math.round((amount.toDouble() / numUsers) * 100.0) / 100.0
+                    if (isDouble(amount.value) && amount.value.toDouble() > 0.0) {
+                        Math.round((amount.value.toDouble() / numUsers) * 100.0) / 100.0
                     } else {
                         0.0  // Default value as double
                     }
@@ -438,6 +477,7 @@ fun SingleAmountMembers(
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
                     TextField(
+                        readOnly = true,
                         value = fieldValues.getOrElse(user.id as String) { 0.0 }.toString(),
                         onValueChange = { newValue ->
                             fieldValues.toMutableMap().apply { put(user.id, newValue.toDouble()) }

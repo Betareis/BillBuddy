@@ -55,7 +55,7 @@ fun TransactionInfoScreen(
             CenterAlignedTopAppBar(
                 navigationIcon = {
                     IconButton(modifier = Modifier.testTag("backArrow"), onClick = {
-                        navController.navigateUp()
+                        navController.popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowBack, contentDescription = "ArrowBack"
