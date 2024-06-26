@@ -222,6 +222,11 @@ fun TransactionsScreenBar(navController: NavController, groupName: String, group
             }, text = { Text("Share Link on Whats App") })
             DropdownMenuItem(onClick = {
                 val deepLink = "https://www.billbuddy.com/joingroup/?groupId=${groupId}"
+                shareDeepLinkOnDiscord(context, deepLink, groupName)
+                menuExpanded = false
+            }, text = { Text("Share Link on Discord") })
+            DropdownMenuItem(onClick = {
+                val deepLink = "https://www.billbuddy.com/joingroup/?groupId=${groupId}"
                 clipboard.setText(AnnotatedString(deepLink))
                 Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
                 menuExpanded = false
@@ -239,6 +244,24 @@ private fun shareDeepLinkOnWhatsApp(context: Context, deepLink: String, groupNam
         )
         type = "text/plain"
         setPackage("com.whatsapp")
+    }
+
+    try {
+        context.startActivity(sendIntent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+private fun shareDeepLinkOnDiscord(context: Context, deepLink: String, groupName: String) {
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(
+            Intent.EXTRA_TEXT,
+            "Hey there! Please join my group " + groupName + " on BillBuddy: \n$deepLink"
+        )
+        type = "text/plain"
+        setPackage("com.discord")
     }
 
     try {
