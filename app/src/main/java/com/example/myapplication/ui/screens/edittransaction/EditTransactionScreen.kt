@@ -450,15 +450,19 @@ fun DropdownPayedByUser(
         val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
 
-        Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
-                //.fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
                 .height(20.dp)
         ) {
             Text(
-                items[selectedIndex],
+                if (selectedUserId.value.isNotEmpty()) {
+                    // Display the selected user's name instead of ID
+                    userListData.data!!.find { it.id == selectedUserId.value }?.getDisplayName()
+                        ?: "Select a user"
+                } else {
+                    "Select a user"
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(90.dp)
@@ -476,8 +480,8 @@ fun DropdownPayedByUser(
                         NewWhiteFontColor
                     )
             ) {
-                nameList.forEachIndexed { index, s ->
-                    DropdownMenuItem(text = { Text(text = s) }, onClick = {
+                nameList.forEachIndexed { index, displayName ->
+                    DropdownMenuItem(text = { Text(text = displayName) }, onClick = {
                         selectedUserId.value = userListData.data!![index].id.toString()
                         selectedIndex = index
                         expanded = false
