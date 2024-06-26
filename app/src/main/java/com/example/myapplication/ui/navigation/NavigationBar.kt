@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,22 +43,33 @@ data class TabBarItem(
 
 @Composable
 fun TabView(navController: NavController) {
-    val groupsTab = TabBarItem(title = "Groups", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home, null, AvailableScreens.GroupsScreen.name)
-    val profileTab = TabBarItem(title = "Profile", selectedIcon = Icons.Filled.AccountCircle, unselectedIcon = Icons.Outlined.AccountCircle, null, AvailableScreens.ProfileScreen.name)
-    //val moreTab = TabBarItem(title = "More", selectedIcon = Icons.Filled.Menu, unselectedIcon = Icons.Outlined.Menu, null, AvailableScreens.MoreScreen.name)
+    val groupsTab = TabBarItem(
+        title = "Groups",
+        selectedIcon = Icons.Filled.Home,
+        unselectedIcon = Icons.Outlined.Home,
+        null,
+        AvailableScreens.GroupsScreen.name
+    )
+    val profileTab = TabBarItem(
+        title = "Profile",
+        selectedIcon = Icons.Filled.AccountCircle,
+        unselectedIcon = Icons.Outlined.AccountCircle,
+        null,
+        AvailableScreens.ProfileScreen.name
+    )
 
     val tabBarItems = listOf(groupsTab, profileTab)
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     NavigationBar {
         tabBarItems.forEachIndexed { index, tabBarItem ->
             NavigationBarItem(
                 selected = selectedTabIndex == index,
                 onClick = {
-                        selectedTabIndex = index
-                        navController.navigate(tabBarItem.route) {
-                            launchSingleTop = true
-                            restoreState = true
+                    selectedTabIndex = index
+                    navController.navigate(tabBarItem.route) {
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 },
                 icon = {

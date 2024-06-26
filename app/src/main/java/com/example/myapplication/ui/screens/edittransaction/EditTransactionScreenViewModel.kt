@@ -19,7 +19,6 @@ class EditTransactionScreenViewModel @Inject constructor(
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val resetCalculateBalancesUseCase: ResetCalculateBalancesUseCase,
-    private val calculateBalancesUseCase: CalculateBalancesUseCase
 ) : ViewModel() {
     suspend fun deleteTransaction(
         groupId: String, transactionId: String
@@ -42,12 +41,10 @@ class EditTransactionScreenViewModel @Inject constructor(
             val process1 = updateTransactionUseCase(
                 groupId, transactionId, transactionData, singleAmountData
             )
-
             if (process1.exception != null) throw Exception("Error update transaction $transactionId")
             if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
                 return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
             }
-
             val process2 = resetCalculateBalancesUseCase(
                 groupId, transactionId = transactionId
             )
@@ -58,7 +55,6 @@ class EditTransactionScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)
         }
-        //return addTransactionUseCase(groupId, transactionData, singleAmountData)
     }
 
     suspend fun getUsersOfGroup(

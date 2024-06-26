@@ -32,16 +32,11 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AppNavigation(innerPaddingValues: PaddingValues) {
     val navController = rememberNavController()
-    //val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-
-    //val isDefined = navController.graph.hasDeepLink(Uri.parse("your.deep.link.uri"))
-
+    val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
 
     NavHost(
         navController = navController,
-        //startDestination = AvailableScreens.JoinGroupScreen.name,
-        startDestination = AvailableScreens.GroupsScreen.name,
-        //if (isUserLoggedIn) AvailableScreens.GroupsScreen.name else AvailableScreens.LoginScreen.name,
+        startDestination = if (isUserLoggedIn) AvailableScreens.GroupsScreen.name else AvailableScreens.LoginScreen.name,
         modifier = Modifier.padding(innerPaddingValues)
     ) {
         loginNav(navController)

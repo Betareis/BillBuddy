@@ -87,8 +87,8 @@ fun EditTransactionScreen(
     editTransactionScreenViewModel: EditTransactionScreenViewModel = hiltViewModel()
 ) {
 
-    val name by rememberSaveable { mutableStateOf(mutableStateOf("")) }
-    val amount by rememberSaveable { mutableStateOf(mutableStateOf("")) }
+    val name by rememberSaveable { mutableStateOf(mutableStateOf(transactionName)) }
+    val amount by rememberSaveable { mutableStateOf(mutableStateOf(transactionAmount.toString())) }
 
     val selectedUserId by rememberSaveable {
         mutableStateOf(
@@ -125,10 +125,10 @@ fun EditTransactionScreen(
             selectedUserId,
             selectedDate,
             fieldValues,
-            exceptionMessage
+            exceptionMessage,
+            transactionDate
         )
-    })
-    {
+    }) {
         Surface(
             modifier = Modifier
                 .padding(top = 60.dp)
@@ -204,6 +204,7 @@ fun NavigationBarEditTransactionScreen(
     selectedDate: OffsetDateTime?,
     fieldValues: MutableMap<String, Double>,
     exceptionMessage: MutableState<String>,
+    transactionDate: String,
 ) {
     CenterAlignedTopAppBar(navigationIcon = {
         IconButton(modifier = Modifier.then(Modifier.testTag("backArrow")), onClick = {
@@ -224,7 +225,7 @@ fun NavigationBarEditTransactionScreen(
                         "payedBy" to selectedUserId.value,
                         "date" to if (selectedDate !== null) selectedDate.format(
                             DateTimeFormatter.ISO_LOCAL_DATE
-                        ) else "",
+                        ) else transactionDate,
                     ), fieldValues.toMap()
                 )
                 if (result.exception != null) {
@@ -234,8 +235,6 @@ fun NavigationBarEditTransactionScreen(
                     navController.popBackStack()
                 }
             }
-            //navController.popBackStack()
-            //navController.popBackStack()
         }) {
             Icon(
                 imageVector = Icons.Outlined.Check, contentDescription = "Edit"
@@ -328,41 +327,6 @@ fun EditTransactionScreenContent(
                 selectedUserId
             )
 
-            //Text(color = Color.White, text = name)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(modifier = Modifier
-                .then(Modifier.testTag("backArrow"))
-                .width(200.dp),
-                onClick = {
-                    navController.navigate(AvailableScreens.GroupsScreen.name)
-                }) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.Add,
-                        contentDescription = "AddImage",
-                        tint = Color.LightGray
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        color = Color.LightGray,
-                        text = "File upload",
-                        modifier = Modifier.width(400.dp),
-                        fontSize = 20.sp
-                    )
-                }
-            }
-            /*EditTransactionButtonView(
-                navController,
-                editTransactionScreenViewModel,
-                transactionId,
-                groupId,
-                name,
-                amount,
-                selectedUserId,
-                selectedDate,
-                fieldValues,
-                exceptionMessage
-            )*/
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(50.dp))
@@ -465,7 +429,7 @@ fun SingleAmountMembers(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(400.dp)
                 .padding(bottom = 70.dp)
         ) {
             for (user in userListData.data!!) item() {
