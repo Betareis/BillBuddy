@@ -23,6 +23,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -63,6 +65,7 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
+import com.example.myapplication.ui.theme.MainButtonColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import kotlinx.coroutines.CoroutineScope
@@ -197,7 +200,9 @@ fun DeleteTransaction(
         }
         navController.popBackStack()
         navController.popBackStack()
-    }) {
+    },
+        colors = ButtonDefaults.buttonColors(Color.Red)
+    ) {
         Text(text = "Delete Transaction: $transactionName")
     }
 }
@@ -310,7 +315,8 @@ fun EditTransactionScreenContent(
             )
             Spacer(modifier = Modifier.height(10.dp))
             val showDatePicker = remember { mutableStateOf(false) }
-            Button(onClick = { showDatePicker.value = true }) {
+            Button(onClick = { showDatePicker.value = true },
+                colors = ButtonDefaults.buttonColors(MainButtonColor)) {
                 Text(text = "Select Date")
             }
 
