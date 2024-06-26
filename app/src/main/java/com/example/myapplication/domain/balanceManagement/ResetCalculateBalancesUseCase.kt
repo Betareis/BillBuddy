@@ -10,13 +10,12 @@ class ResetCalculateBalancesUseCase @Inject constructor(private val firestoreRep
     suspend operator fun invoke(
         groupId: String, transactionId: String,
     ): DataRequestWrapper<Unit, String, Exception> {
-
         return try {
             val transaction = firestoreRepository.getSingleTransaction(transactionId, groupId).data
             val getSingleAmounts = firestoreRepository.getSingleAmounts(groupId, transactionId)
 
             for (singleAmount in getSingleAmounts.data!!) {
-                Log.d("singleAmount", singleAmount.toString())
+                Log.d("singleAmountReset", singleAmount.toString())
                 if (transaction!!.payedBy == singleAmount.id) {
                     val amount: Double = transaction.amount - singleAmount.amount
                     firestoreRepository.setBalanceForUserInGroup(

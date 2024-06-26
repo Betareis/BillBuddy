@@ -8,6 +8,8 @@ import com.example.myapplication.domain.balanceManagement.CalculateBalancesUseCa
 import com.example.myapplication.domain.balanceManagement.ResetCalculateBalancesUseCase
 import com.example.myapplication.domain.transactionManagement.DeleteTransactionUseCase
 import com.example.myapplication.domain.transactionManagement.UpdateTransactionUseCase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,10 +42,6 @@ class EditTransactionScreenViewModel @Inject constructor(
             val process1 = updateTransactionUseCase(
                 groupId, transactionId, transactionData, singleAmountData
             )
-            if (process1.exception != null) throw Exception("Error update transaction $transactionId")
-            if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
-                return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
-            }
 
             if (process1.exception != null) throw Exception("Error update transaction $transactionId")
             if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
@@ -53,12 +51,8 @@ class EditTransactionScreenViewModel @Inject constructor(
             val process2 = resetCalculateBalancesUseCase(
                 groupId, transactionId = transactionId
             )
-            if (process2.exception != null) throw Exception(process2.exception)
 
-            val process3 = calculateBalancesUseCase(groupId, transactionId)
-
-            if (process3.exception != null) throw Exception(process3.exception)
-
+            if (process2.exception != null) throw Exception("Error reset resetCalculateBalancesUseCase")
 
             DataRequestWrapper(data = Unit)
         } catch (e: Exception) {
