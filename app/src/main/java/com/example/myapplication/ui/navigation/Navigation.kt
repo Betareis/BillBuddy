@@ -2,6 +2,7 @@ package com.example.myapplication.ui.navigation
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -205,13 +207,14 @@ private fun NavGraphBuilder.deepLinksNav(navController: NavHostController) {
         val groupId = backStackEntry.arguments?.getString("groupId");
 
         val auth = FirebaseAuth.getInstance().currentUser
-
+        val context = LocalContext.current
         if (groupId != null && auth != null) {
             JoinGroupScreen(
                 navController, groupId, auth.uid
             )
         } else {
             LoginScreen(navController)
+            Toast.makeText(context, "Login first. Then try again.", Toast.LENGTH_SHORT).show()
         }
     }
 }

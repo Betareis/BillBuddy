@@ -23,6 +23,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -63,6 +65,7 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.AvailableScreens
+import com.example.myapplication.ui.theme.MainButtonColor
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.example.myapplication.ui.theme.ScreenBackgroundColor
 import kotlinx.coroutines.CoroutineScope
@@ -142,27 +145,40 @@ fun EditTransactionScreen(
                         ScreenBackgroundColor
                     )
             ) {
-                EditTransactionScreenContent(
-                    navController = navController,
-                    transactionId = transactionId,
-                    groupId = groupId,
-                    editTransactionScreenViewModel,
-                    name,
-                    amount,
-                    selectedUserId,
-                    selectedDate,
-                    fieldValues,
-                    exceptionMessage,
-                    datePickerState
-                )
-                Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxHeight()) {
-                    DeleteTransaction(
-                        navController = navController,
-                        groupId = groupId,
-                        transactionId = transactionId,
-                        transactionName = transactionName,
-                        editTransactionScreenViewModel = editTransactionScreenViewModel
-                    )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    item {
+                        EditTransactionScreenContent(
+                            navController = navController,
+                            transactionId = transactionId,
+                            groupId = groupId,
+                            editTransactionScreenViewModel,
+                            name,
+                            amount,
+                            selectedUserId,
+                            selectedDate,
+                            fieldValues,
+                            exceptionMessage,
+                            datePickerState
+                        )
+                    }
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            DeleteTransaction(
+                                navController = navController,
+                                groupId = groupId,
+                                transactionId = transactionId,
+                                transactionName = transactionName,
+                                editTransactionScreenViewModel = editTransactionScreenViewModel
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -182,10 +198,12 @@ fun DeleteTransaction(
         CoroutineScope(Dispatchers.Main).launch {
             editTransactionScreenViewModel.deleteTransaction(groupId, transactionId)
         }
-        navController.popBackStack() // Pop once
-        navController.popBackStack() // Pop again for two levels back
-    }) {
-        Text(text = "Delete Transaction $transactionName")
+        navController.popBackStack()
+        navController.popBackStack()
+    },
+        colors = ButtonDefaults.buttonColors(Color.Red)
+    ) {
+        Text(text = "Delete Transaction: $transactionName")
     }
 }
 
@@ -298,7 +316,8 @@ fun EditTransactionScreenContent(
             )
             Spacer(modifier = Modifier.height(10.dp))
             val showDatePicker = remember { mutableStateOf(false) }
-            Button(onClick = { showDatePicker.value = true }) {
+            Button(onClick = { showDatePicker.value = true },
+                colors = ButtonDefaults.buttonColors(MainButtonColor)) {
                 Text(text = "Select Date")
             }
 
@@ -318,18 +337,20 @@ fun EditTransactionScreenContent(
                     }) {
                     DatePicker(state = datePickerState)
                 }
-            }/*Text(
-                color = Color.White,
-                text = "Selected: ${selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "no selection"}"
-            )*/
+            }
+            TextField(value = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "",
+            modifier = Modifier.width(150.dp),
+            enabled = false,
+            onValueChange = {})
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Payed by:", color = Color.White, fontSize = 20.sp)
             DropdownPayedByUser(
                 loadUsers = { editTransactionScreenViewModel.getUsersOfGroup(groupId) },
                 selectedUserId
             )
-
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Text(text = "For: ", color = Color.White, fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             SingleAmountMembers(
                 loadUsers = { editTransactionScreenViewModel.getUsersOfGroup(groupId) },
                 amount,
@@ -338,58 +359,6 @@ fun EditTransactionScreenContent(
         }
     }
 }
-
-/*@Composable
-fun EditTransactionButtonView(
-    navController: NavController,
-    editTransactionScreenViewModel: EditTransactionScreenViewModel,
-    transactionId: String,
-    groupId: String,
-    name: MutableState<String>,
-    amount: MutableState<String>,
-    selectedUserId: MutableState<String>,
-    selectedDate: OffsetDateTime?,
-    fieldValues: MutableMap<String, Double>,
-    exceptionMessage: MutableState<String>,
-) {
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 10.dp)
-    ) {
-        IconButton(modifier = Modifier
-            .padding(start = 15.dp, end = 15.dp)
-            .fillMaxWidth()
-            .width(300.dp)
-            .size(50.dp) // Adjust size as needed
-            .background(NewWhiteFontColor),// Set background color to blue
-            onClick = {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val result = editTransactionScreenViewModel.updateSpecificTransactionGroup(
-                        groupId, transactionId, mapOf(
-                            "name" to name,
-                            "amount" to amount,
-                            "payedBy" to selectedUserId.value,
-                            "date" to if (selectedDate !== null) selectedDate.format(
-                                DateTimeFormatter.ISO_LOCAL_DATE
-                            ) else "",
-                        ), fieldValues.toMap()
-                    )
-                    if (result.exception != null) {
-                        exceptionMessage.value = result.exception!!.message.toString()
-                    } else {
-                        navController.popBackStack()
-                        navController.popBackStack()
-                    }
-                }
-            }) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add a Group" // Provide a description for accessibility
-            )
-        }
-    }
-}*/
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -482,15 +451,19 @@ fun DropdownPayedByUser(
         val disabledValue = "B"
         var selectedIndex by remember { mutableIntStateOf(0) }
 
-        Text(text = selectedUserId.value, color = Color.White)
         Box(
             modifier = Modifier
-                //.fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
                 .height(20.dp)
         ) {
             Text(
-                items[selectedIndex],
+                if (selectedUserId.value.isNotEmpty()) {
+                    // Display the selected user's name instead of ID
+                    userListData.data!!.find { it.id == selectedUserId.value }?.getDisplayName()
+                        ?: "Select a user"
+                } else {
+                    "Select a user"
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(90.dp)
@@ -508,8 +481,8 @@ fun DropdownPayedByUser(
                         NewWhiteFontColor
                     )
             ) {
-                nameList.forEachIndexed { index, s ->
-                    DropdownMenuItem(text = { Text(text = s) }, onClick = {
+                nameList.forEachIndexed { index, displayName ->
+                    DropdownMenuItem(text = { Text(text = displayName) }, onClick = {
                         selectedUserId.value = userListData.data!![index].id.toString()
                         selectedIndex = index
                         expanded = false
