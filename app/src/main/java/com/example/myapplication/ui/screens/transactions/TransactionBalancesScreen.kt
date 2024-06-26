@@ -127,9 +127,9 @@ fun DisplayBalancesContent(
                                         if (debt.first.id == currentUserId) {
                                             Button(
                                                 onClick = {
-                                                    if(debt.second.getPayPalName() != null) {
+                                                    if(debt.second.retrievePayPalName() != null) {
                                                         val paypalMeLink =
-                                                            "https://www.paypal.me/${debt.second.getPayPalName()}/${debt.third}"
+                                                            "https://www.paypal.me/${debt.second.retrievePayPalName()}/${debt.third}"
                                                         val intent = Intent(
                                                             Intent.ACTION_VIEW,
                                                             Uri.parse(paypalMeLink)

@@ -46,7 +46,7 @@ class RegisterUserUseCase @Inject constructor() {
 
 fun createUserInDifferentCollection(firstname: String, name: String, auth: FirebaseAuth) {
     val userId = auth.currentUser?.uid
-    val user = User(id = userId, firstname, name)
+    val user = User(id = userId, firstname, name, null.toString())
 
     if (userId != null) {
         val usersCollection = FirebaseFirestore.getInstance().collection("users")

@@ -25,7 +25,7 @@ class FirestoreRepository @Inject constructor() {
             val result = firestore.collection("users").document(userId).get().await()
 
             val userObject =
-                User(result.id, result.getString("firstname") ?: "", result.getString("name") ?: "")
+                User(result.id, result.getString("firstname") ?: "", result.getString("name") ?: "", result.getString("paypalAddress") ?: "")
 
             if (result == null) DataRequestWrapper(data = "")
             else DataRequestWrapper(data = userObject.getDisplayName())
@@ -150,6 +150,8 @@ class FirestoreRepository @Inject constructor() {
                             id = userDoc.id,
                             firstname = userDoc.getString("firstname") ?: "",
                             name = userDoc.getString("name") ?: "",
+                            payPalName = userDoc.getString("paypalAddress") ?: ""
+
                         )
                         users.add(user)
                     }
@@ -408,35 +410,6 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
-//Todo: Update debts for members of specific transaction
-
-    /*private suspend fun updateBalanceOfUserInGroup(groupId: String, transactionData: Transaction): DataRequestWrapper<Unit, String, Exception> {
-        return try {
-            //val auth = FirebaseAuth.getInstance()
-            //val currentUser = auth.currentUser
-
-            val db = FirebaseFirestore.getInstance()
-
-            //if (currentUser != null) {
-            //val userId = currentUser.uid
-
-            val groupDocumentRef = db.collection("groups").document(groupId)
-
-            val transactionCollectionRef = groupDocumentRef.collection("transactions")
-            val newTransactionDocumentRef = transactionCollectionRef.document()
-
-            newTransactionDocumentRef.set(transactionData).await()
-
-            DataRequestWrapper(data = Unit)
-            /*} else {
-                throw Exception("User ID is null.")
-            }*/
-        } catch (e: Exception) {
-            Log.d("ADD_TRANSACTION_GROUP_RESPONSE", e.stackTraceToString())
-            DataRequestWrapper(exception = e)
-        }
-    }*/
-
     /********************************************* MUTATIONS DELETE ****************************************************************************/
 
     suspend fun deleteTransactionGroup(
@@ -466,6 +439,21 @@ class FirestoreRepository @Inject constructor() {
             DataRequestWrapper(data = Unit)
         } catch (e: Exception) {
             DataRequestWrapper(exception = e)
+        }
+    }
+
+    suspend fun getPayPalAddress(userId: String): DataRequestWrapper<String, String, Exception> {
+        return try {
+            val result = firestore.collection("users").document(userId).get().await()
+            val paypalAddress = result.getString("paypalAddress")
+            if (paypalAddress != null) {
+                DataRequestWrapper(data = paypalAddress)
+            } else {
+                DataRequestWrapper(data = "", exception = Exception("PayPal address not found"))
+            }
+        } catch (e: Exception) {
+            Log.d("GET_PAYPAL_ADDRESS", e.stackTraceToString())
+            DataRequestWrapper(data = "", exception = e)
         }
     }
 }

@@ -30,7 +30,8 @@ class ShowProfileUseCase @Inject constructor() {
                 User(
                     id = userData.id,
                     firstname = userData["firstname"].toString(),
-                    name = userData["name"].toString()
+                    name = userData["name"].toString(),
+                    payPalName = userData["paypalAddress"].toString(),
                 ), "", null
             )
         }
