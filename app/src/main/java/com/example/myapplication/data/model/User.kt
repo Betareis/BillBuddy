@@ -2,11 +2,9 @@ package com.example.myapplication.data.model
 
 data class User(
     val id: String?,
-    //val displayName: String,
     val firstname: String,
     val name: String,
     val payPalName: String
-    //val balance: Double = 0.0,
 ) {
     fun toMap(): MutableMap<String, Any?> {
         return mutableMapOf(
