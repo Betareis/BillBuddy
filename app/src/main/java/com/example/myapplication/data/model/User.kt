@@ -20,6 +20,6 @@ data class User(
     }
 
     fun retrievePayPalName(): String {
-        return "$payPalName"
+        return payPalName
     }
 }
