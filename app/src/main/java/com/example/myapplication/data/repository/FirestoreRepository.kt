@@ -50,7 +50,6 @@ class FirestoreRepository @Inject constructor() {
             val amount = document.getDouble("amount") ?: 0.0
             val payedBy = document.getString("payedBy") ?: ""
             val date = document.getString("date") ?: ""
-            // Access transactions subcollection (assuming it exists)
             Transaction(name = name, id = id, amount = amount, payedBy = payedBy, date = date)
         }.toMutableList()
 
@@ -194,11 +193,7 @@ class FirestoreRepository @Inject constructor() {
         groupData: Map<String, Any>, userId: String
     ): DataRequestWrapper<Unit, String, Exception> {
         return try {
-            //val auth = FirebaseAuth.getInstance()
-            //val currentUser = auth.currentUser
             val db = FirebaseFirestore.getInstance()
-            //if (currentUser != null) {
-            //val userId = currentUser.uid
 
             val groupCollectionRef = db.collection("groups")
 
