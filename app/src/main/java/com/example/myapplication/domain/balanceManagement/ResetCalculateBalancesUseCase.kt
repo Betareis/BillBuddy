@@ -3,7 +3,6 @@ package com.example.myapplication.domain.balanceManagement
 import android.util.Log
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class ResetCalculateBalancesUseCase @Inject constructor(private val firestoreRepository: FirestoreRepository) {

@@ -18,14 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +34,6 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.model.Group
 import com.example.myapplication.ui.navigation.AvailableScreens
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.myapplication.data.wrappers.DataRequestWrapper
 import com.example.myapplication.ui.navigation.TabView
 import com.example.myapplication.ui.theme.NewWhiteFontColor
 import com.example.myapplication.ui.theme.ListElementBackgroundColor
@@ -137,10 +134,10 @@ fun GroupsScreen(navController: NavController, groupViewModel: GroupsViewModel =
 
                                 groupViewModel.getGroupsFirestore()
 
-                                textFieldValue = "";
+                                textFieldValue = ""
                             }
                         }
-                        showTextFieldDialog = false;
+                        showTextFieldDialog = false
 
                     })
             }

@@ -1,5 +1,5 @@
 package com.example.myapplication.ui.screens
-enum class FetchingState(var message: String) {
+enum class FetchingState(private var message: String) {
     IDLE(""),
     FAILED("Error message is required"),
     LOADING("Loading message is required"),

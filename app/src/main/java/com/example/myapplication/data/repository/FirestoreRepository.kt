@@ -46,7 +46,7 @@ class FirestoreRepository @Inject constructor() {
 
         val transactions = result.documents.map { document ->
             val name = document.getString("name") ?: ""
-            val id = document.id;
+            val id = document.id
             val amount = document.getDouble("amount") ?: 0.0
             val payedBy = document.getString("payedBy") ?: ""
             val date = document.getString("date") ?: ""
@@ -60,7 +60,7 @@ class FirestoreRepository @Inject constructor() {
     suspend fun getSingleTransaction(
         transactionId: String, groupId: String
     ): DataRequestWrapper<Transaction, String, Exception> {
-        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"));
+        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"))
 
         return try {
             val transaction =
@@ -82,7 +82,7 @@ class FirestoreRepository @Inject constructor() {
 
     suspend fun getGroups(userId: String): DataRequestWrapper<MutableList<Group>, String, Exception> {
 
-        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"));
+        if (auth.currentUser == null) return DataRequestWrapper(exception = Exception("not authenticated"))
 
 
 
@@ -258,12 +258,12 @@ class FirestoreRepository @Inject constructor() {
         return map.any { (_, value) -> value !is Double }
     }
 
-    suspend fun setSingleAmounts(
+    fun setSingleAmounts(
         groupId: String, transactionId: String, singleAmountData: Map<String, Any>
     ) {
 
 
-        if (hasNonDoubleValues(singleAmountData)) return;
+        if (hasNonDoubleValues(singleAmountData)) return
         try {
             val transactionDocumentRef =
                 firestore.collection("groups").document(groupId).collection("transactions")
@@ -322,22 +322,6 @@ class FirestoreRepository @Inject constructor() {
         }
     }
 
-    suspend fun getPayPalAddress(userId: String): DataRequestWrapper<String, String, Exception> {
-        return try {
-            val result = firestore.collection("users").document(userId).get().await()
-            val paypalAddress = result.getString("paypalAddress")
-            if (paypalAddress != null) {
-                DataRequestWrapper(data = paypalAddress)
-            } else {
-                DataRequestWrapper(data = "", exception = Exception("PayPal address not found"))
-            }
-        } catch (e: Exception) {
-            Log.d("GET_PAYPAL_ADDRESS", e.stackTraceToString())
-            DataRequestWrapper(data = "", exception = e)
-        }
-    }
-
-
     /********************************************* MUTATIONS UPDATE ****************************************************************************/
 
     suspend fun updateTransactionInGroup(
@@ -374,27 +358,6 @@ class FirestoreRepository @Inject constructor() {
             DataRequestWrapper(exception = e)
         }
     }
-
-
-    suspend fun joinGroup(
-        userId: String,
-        groupId: String
-    ): DataRequestWrapper<Unit, String, Exception> {
-        return try {
-            val userDocumentRef = firestore.collection("users").document(userId)
-            val groupDocumentRef = firestore.collection("groups").document(groupId)
-
-            if (groupDocumentRef.get().await().exists() && userDocumentRef.get().await().exists()) {
-                userDocumentRef.update("groups", FieldValue.arrayUnion(groupId))
-                groupDocumentRef.update("users", FieldValue.arrayUnion(groupId))
-            } else throw Exception("Failed to get the data |join Group|")
-
-            DataRequestWrapper(data = Unit)
-        } catch (e: Exception) {
-            DataRequestWrapper(exception = Exception("Failed to join the group $groupId"))
-        }
-    }
-
 
     /********************************************* MUTATIONS DELETE ****************************************************************************/
 

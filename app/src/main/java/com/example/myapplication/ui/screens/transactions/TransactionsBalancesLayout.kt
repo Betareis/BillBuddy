@@ -195,8 +195,6 @@ fun SelectChoiceBalances(selectedChoice: MutableState<String>, modifier: Modifie
 @Composable
 fun TransactionsScreenBar(navController: NavController, groupName: String, groupId: String) {
     var menuExpanded by remember { mutableStateOf(false) }
-    var showOverlay by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
 

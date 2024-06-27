@@ -7,17 +7,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.ui.screens.FetchingState
-import com.google.firebase.Firebase;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore;
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel :ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
 
-    val state: MutableState<FetchingState> = mutableStateOf(FetchingState.IDLE)
+    private val state: MutableState<FetchingState> = mutableStateOf(FetchingState.IDLE)
 
     fun logUserIn(email: String, password: String, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
         state.value = FetchingState.LOADING.withMessage("Wait...")

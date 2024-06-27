@@ -1,9 +1,6 @@
 package com.example.myapplication.ui.screens.login
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,14 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.myapplication.domain.userManagement.LogoutUserUseCase
 import com.example.myapplication.ui.components.EmailInputField
 import com.example.myapplication.ui.components.PassInputField
 import com.example.myapplication.ui.navigation.AvailableScreens
 
-import com.example.myapplication.ui.theme.MainButtonColor;
-import com.example.myapplication.ui.theme.NewWhiteFontColor;
-import com.example.myapplication.ui.theme.ScreenBackgroundColor;
+import com.example.myapplication.ui.theme.MainButtonColor
+import com.example.myapplication.ui.theme.NewWhiteFontColor
+import com.example.myapplication.ui.theme.ScreenBackgroundColor
 
 data class UserLoginFormData(
     val username: MutableState<String>,
@@ -80,7 +76,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(80.dp))
         OnSubmitFormButton(navController, loginScreenViewModel, formData)
         Spacer(modifier = Modifier.height(40.dp))
-        SwitchTOSignUpButton(navController);
+        SwitchTOSignUpButton(navController)
     }
 }
 

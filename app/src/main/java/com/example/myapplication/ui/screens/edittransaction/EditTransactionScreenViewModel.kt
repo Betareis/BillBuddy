@@ -4,13 +4,9 @@ import androidx.lifecycle.ViewModel
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.repository.FirestoreRepository
 import com.example.myapplication.data.wrappers.DataRequestWrapper
-import com.example.myapplication.domain.balanceManagement.CalculateBalancesUseCase
 import com.example.myapplication.domain.balanceManagement.ResetCalculateBalancesUseCase
 import com.example.myapplication.domain.transactionManagement.DeleteTransactionUseCase
 import com.example.myapplication.domain.transactionManagement.UpdateTransactionUseCase
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -46,7 +42,6 @@ class EditTransactionScreenViewModel @Inject constructor(
             if (process1.data == null || process1.data!!.id?.isBlank() == true || process1.data!!.id == null) {
                 return DataRequestWrapper(exception = Exception("Error in process 1 updateTransaction"))
             }
-            val firebase = FirebaseFirestore.getInstance()
             val process2 = resetCalculateBalancesUseCase(
                 groupId, transactionId = transactionId
             )

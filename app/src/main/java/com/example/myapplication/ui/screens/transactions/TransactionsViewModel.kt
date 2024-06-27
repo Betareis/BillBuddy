@@ -2,8 +2,6 @@ package com.example.myapplication.ui.screens.transactions
 
 import com.example.myapplication.data.repository.FirestoreRepository
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.model.Group
 import com.example.myapplication.data.model.Transaction
 import com.example.myapplication.data.model.User
 import com.example.myapplication.data.wrappers.DataRequestWrapper

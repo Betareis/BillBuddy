@@ -206,7 +206,7 @@ private fun NavGraphBuilder.deepLinksNav(navController: NavHostController) {
             },
         )
     ) { backStackEntry ->
-        val groupId = backStackEntry.arguments?.getString("groupId");
+        val groupId = backStackEntry.arguments?.getString("groupId")
 
         val auth = FirebaseAuth.getInstance().currentUser
         val context = LocalContext.current
