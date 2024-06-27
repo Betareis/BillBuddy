@@ -1,27 +1,26 @@
 ## Basic functionality:
 - [x] The user can login
-- [ ] The user can register
+- [x] The user can register
 
 ## UI Layer
 - [x] GroupScreen
 - [x] LoginScreen
 - [x] NewEntryScreen
-- [ ] SignUpScreen
+- [x] SignUpScreen
 - [x] TransactionsScreen
-- [ ] BalanceScreen
+- [x] BalanceScreen
 - [ ] EditTransactionScreen
-- [ ] ProfileScreen
-- [ ] TransactionInfoScreen
+- [x] ProfileScreen
+- [x] TransactionInfoScreen
 
 ## Domain Layer
 ### Balance Management
-- [ ] CalculateBalancesUseCase
-- [ ] SettleDebtsUseCase
+- [x] CalculateBalancesUseCase
 
 
 ### Transaction Management
 - [x] AddTransactionUseCase
-- [ ] DeleteTransactionUseCase
+- [x] DeleteTransactionUseCase
 - [ ] EditTransactionUseCase
 
 ### User Management
@@ -34,21 +33,24 @@
 - [x] Firebase integration
 - [X] Function getTransactionsGroup
 - [x] Function getGroups
-- [ ] Function createGroup
+- [x] Function createGroup
 - [x] Function createTransactionForGroup
-- [ ] Function updateBalanceOfUserInGroup
-- [ ] Function updateDebtsOfUserInGroup
-- [ ] Function deleteTransactionGroup
+- [x] Function updateBalanceOfUserInGroup
+- [x] Function deleteTransactionGroup
 
 ## Test User Credentials
 
     ### User 1
-    Email = "bea@mail.com",
-    Password = "bea12345678",
+    Email = "betareis@mail.com",
+    Password = "bea1234567",
 
     ### User 2
     Email = "an@mail.com",
-    Password = "an12345678",
+    Password = "an1234",
+
+    ### User 3
+    Email = "ramon@mail.com",
+    Password = "ramon12345678",
     
 
     
